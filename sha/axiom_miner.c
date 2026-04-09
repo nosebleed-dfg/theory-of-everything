@@ -1,6 +1,5 @@
 /*
  * AXIOM_MINER — Bitcoin SHA-256d miner, golden center + pentagon band search
- * nos3bl33d
  *
  * Strategy:
  *   T_291: nonce_center = F(291)*seed + F(290) mod 2^32, seed from block-1 IV
@@ -16,8 +15,13 @@
  *
  * Usage:
  *   axiom_miner demo                         genesis verification + easy mine
- *   axiom_miner mine [bits] [prev_hex]       mine with coinbase nos3bl33d/DFG
+ *   axiom_miner mine [bits] [prev_hex]       mine with coinbase tag
  *   axiom_miner <80-byte-header-hex> [steps] mine given header
+ *
+ * CONFIGURE:
+ *   Set COINBASE_MSG to your tag.
+ *   Set REWARD_ADDR to your Bitcoin P2PKH address to claim block rewards.
+ *   Leave REWARD_ADDR "" to use OP_RETURN (coins unspendable — use for testing).
  */
 
 #include <stdio.h>
@@ -26,12 +30,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* ── Configure these ─────────────────────────────────────────────────────── */
+#define COINBASE_MSG  "YOUR_TAG / YOUR_GROUP"
+#define REWARD_ADDR   ""    /* P2PKH address e.g. "1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf..." */
+#define REWARD_SAT    5000000000ULL  /* 50 BTC */
+
 /* ── Framework constants ─────────────────────────────────────────────────── */
 #define F291  0x85824b02UL
 #define F290  0xc3e3c441UL
 #define BAND  0x33333333UL
-#define COINBASE_MSG  "nos3bl33d / DeadFoxGroup"
-#define REWARD_SAT    5000000000ULL  /* 50 BTC */
 
 /* ── SHA-256 round constants ─────────────────────────────────────────────── */
 static const uint32_t SHA_K[64] = {
@@ -60,10 +67,10 @@ static const uint32_t SHA_H0[8] = {
 #define SIG1(x)    (ROTR(x,17)^ROTR(x,19)^((x)>>10))
 #define WORD_BAND(w) (((uint64_t)(w)*5)>>32)
 
-/* ── SHA-256 context (arbitrary-length messages) ─────────────────────────── */
+/* ── SHA-256 context ─────────────────────────────────────────────────────── */
 typedef struct {
     uint32_t state[8];
-    uint64_t count;          /* total bits processed */
+    uint64_t count;
     uint8_t  buf[64];
     int      buf_len;
 } SHA256_CTX;
@@ -120,94 +127,102 @@ static void sha256_final(SHA256_CTX *ctx, uint8_t out[32])
 static void sha256d_bytes(const uint8_t *data, int len, uint8_t out[32])
 {
     SHA256_CTX ctx; uint8_t h1[32];
-    sha256_init(&ctx); sha256_update(&ctx,(uint8_t*)data,len); sha256_final(&ctx,h1);
+    sha256_init(&ctx); sha256_update(&ctx,data,len); sha256_final(&ctx,h1);
     sha256_init(&ctx); sha256_update(&ctx,h1,32); sha256_final(&ctx,out);
+}
+
+/* ── Base58Check decode (P2PKH address → 20-byte hash160) ───────────────── */
+static const char B58_ALPHA[] =
+    "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+static int base58check_decode(const char *addr, uint8_t hash160[20])
+{
+    uint8_t buf[25]; memset(buf,0,25);
+    int alen=(int)strlen(addr);
+    for(int i=0;i<alen;i++){
+        const char *p=strchr(B58_ALPHA,addr[i]);
+        if(!p) return 0;
+        int digit=(int)(p-B58_ALPHA);
+        uint32_t carry=(uint32_t)digit;
+        for(int j=24;j>=0;j--){
+            carry += 58*(uint32_t)buf[j];
+            buf[j]=(uint8_t)(carry&0xFF);
+            carry>>=8;
+        }
+        if(carry) return 0;
+    }
+    /* verify checksum: SHA256d(buf[0..20]) first 4 bytes == buf[21..24] */
+    uint8_t chk[32]; sha256d_bytes(buf,21,chk);
+    if(buf[21]!=chk[0]||buf[22]!=chk[1]||buf[23]!=chk[2]||buf[24]!=chk[3]) return 0;
+    if(buf[0]!=0x00) return 0; /* mainnet P2PKH version byte */
+    memcpy(hash160, buf+1, 20);
+    return 1;
 }
 
 /* ── Build coinbase transaction ──────────────────────────────────────────── */
 /*
- * Structure:
- *   [version:4] [input_count:1=01]
- *   [prev_txid:32=00s] [prev_vout:4=FF] [script_len:varint] [script] [seq:4=FF]
- *   [output_count:1=01]
- *   [value:8] [out_script_len:1] [out_script:OP_RETURN]
- *   [locktime:4=00]
- *
- * Coinbase script: [height_push] + [len] + [COINBASE_MSG]
+ * Output: P2PKH to REWARD_ADDR if set, else OP_RETURN (unspendable).
+ * Coinbase script: [height_push] [msg_push]
  */
 static int build_coinbase_tx(uint8_t *buf, uint32_t height,
-                              const char *msg, uint64_t reward)
+                              const char *msg, uint64_t reward,
+                              const char *reward_addr)
 {
     uint8_t *p = buf;
     int i;
 
-    /* version = 1 LE */
-    *p++=0x01;*p++=0x00;*p++=0x00;*p++=0x00;
+    *p++=0x01;*p++=0x00;*p++=0x00;*p++=0x00; /* version = 1 LE */
+    *p++=0x01;                                  /* input count */
+    memset(p,0x00,32); p+=32;                  /* prev txid = zeros */
+    *p++=0xFF;*p++=0xFF;*p++=0xFF;*p++=0xFF;  /* prev vout = FFFFFFFF */
 
-    /* input count = 1 */
-    *p++=0x01;
-
-    /* prev txid = 32 zeros (coinbase marker) */
-    memset(p,0x00,32); p+=32;
-
-    /* prev vout = 0xFFFFFFFF (coinbase marker) */
-    *p++=0xFF;*p++=0xFF;*p++=0xFF;*p++=0xFF;
-
-    /* build coinbase script */
+    /* coinbase script */
     uint8_t script[256]; int slen=0;
-
-    /* height encoding (BIP34): minimal-length little-endian push */
     {
         uint8_t hbytes[5]; int hlen=0;
         uint32_t h=height;
         do { hbytes[hlen++]=h&0xFF; h>>=8; } while(h);
-        /* if top bit of last byte set, append 0x00 (sign byte) */
         if(hbytes[hlen-1]&0x80) hbytes[hlen++]=0x00;
-        script[slen++]=(uint8_t)hlen; /* push N bytes */
+        script[slen++]=(uint8_t)hlen;
         memcpy(script+slen,hbytes,hlen); slen+=hlen;
     }
-
-    /* message push */
     int mlen=(int)strlen(msg);
-    if(mlen<76){
-        script[slen++]=(uint8_t)mlen;
-    } else {
-        script[slen++]=0x4C; /* OP_PUSHDATA1 */
-        script[slen++]=(uint8_t)mlen;
-    }
+    if(mlen<76){ script[slen++]=(uint8_t)mlen; }
+    else { script[slen++]=0x4C; script[slen++]=(uint8_t)mlen; }
     memcpy(script+slen,msg,mlen); slen+=mlen;
 
-    /* script length varint */
     *p++=(uint8_t)slen;
     memcpy(p,script,slen); p+=slen;
+    *p++=0xFF;*p++=0xFF;*p++=0xFF;*p++=0xFF; /* sequence */
 
-    /* sequence = 0xFFFFFFFF */
-    *p++=0xFF;*p++=0xFF;*p++=0xFF;*p++=0xFF;
+    *p++=0x01; /* output count */
+    for(i=0;i<8;i++) *p++=(reward>>(8*i))&0xFF; /* value LE */
 
-    /* output count = 1 */
-    *p++=0x01;
+    /* output script: P2PKH if address provided, else OP_RETURN */
+    uint8_t hash160[20];
+    if(reward_addr && strlen(reward_addr)>0 && base58check_decode(reward_addr,hash160)){
+        *p++=0x19;  /* script length = 25 */
+        *p++=0x76;  /* OP_DUP */
+        *p++=0xa9;  /* OP_HASH160 */
+        *p++=0x14;  /* push 20 bytes */
+        memcpy(p,hash160,20); p+=20;
+        *p++=0x88;  /* OP_EQUALVERIFY */
+        *p++=0xac;  /* OP_CHECKSIG */
+    } else {
+        *p++=0x01;  /* script length */
+        *p++=0x6a;  /* OP_RETURN */
+    }
 
-    /* value (8 bytes LE) */
-    for(i=0;i<8;i++) *p++=(reward>>(8*i))&0xFF;
-
-    /* output script: OP_RETURN (unspendable, no address needed) */
-    *p++=0x01; /* script length */
-    *p++=0x6A; /* OP_RETURN */
-
-    /* locktime = 0 */
-    *p++=0x00;*p++=0x00;*p++=0x00;*p++=0x00;
-
+    *p++=0x00;*p++=0x00;*p++=0x00;*p++=0x00; /* locktime */
     return (int)(p-buf);
 }
 
 /* ── Build 80-byte block header ──────────────────────────────────────────── */
 static void build_header(uint32_t version,
-                          const uint8_t prev[32],
-                          const uint8_t merkle[32],
+                          const uint8_t prev[32], const uint8_t merkle[32],
                           uint32_t ntime, uint32_t bits, uint32_t nonce,
                           uint8_t hdr[80])
 {
-    /* all multi-byte fields are little-endian in Bitcoin */
     hdr[0]=version&0xFF; hdr[1]=(version>>8)&0xFF;
     hdr[2]=(version>>16)&0xFF; hdr[3]=(version>>24)&0xFF;
     memcpy(hdr+4, prev, 32);
@@ -220,11 +235,8 @@ static void build_header(uint32_t version,
     hdr[78]=(nonce>>16)&0xFF; hdr[79]=(nonce>>24)&0xFF;
 }
 
-/* ── SHA-256d of 80-byte header (Bitcoin block hash) ────────────────────── */
 static void hash_header(const uint8_t hdr[80], uint8_t out[32])
-{
-    sha256d_bytes(hdr, 80, out);
-}
+{ sha256d_bytes(hdr, 80, out); }
 
 /* ── Bitcoin compact bits -> 256-bit target ──────────────────────────────── */
 static void bits_to_target(uint32_t bits, uint32_t target[8])
@@ -244,7 +256,6 @@ static void bits_to_target(uint32_t bits, uint32_t target[8])
 /* ── Hash comparison (Bitcoin reversed byte order) ───────────────────────── */
 static void reverse_hash_bytes(const uint8_t h[32], uint32_t rh[8])
 {
-    /* Bitcoin display = all 32 bytes reversed byte-by-byte, then read as big-endian words */
     for(int i=0;i<8;i++){
         uint32_t w=((uint32_t)h[31-i*4  ]<<24)|((uint32_t)h[31-i*4-1]<<16)
                   |((uint32_t)h[31-i*4-2]<< 8)|            h[31-i*4-3];
@@ -265,9 +276,7 @@ static int hash_below_target(const uint8_t h[32], const uint32_t target[8])
 
 /* ── T_291 golden center: F(291)*seed + F(290) mod 2^32 ─────────────────── */
 static uint32_t golden_center(uint32_t seed)
-{
-    return (uint32_t)((uint64_t)F291*seed+F290);
-}
+{ return (uint32_t)((uint64_t)F291*seed+F290); }
 
 /* ── Golden spiral delta: 0, +1, -1, +2, -2, ... ───────────────────────── */
 static int64_t spiral_delta(uint64_t step)
@@ -288,7 +297,6 @@ static int hex_to_bytes(const char *hex, uint8_t *out, int n)
 static int mine(const uint8_t header_template[80], const uint32_t target[8],
                 uint64_t max_steps, uint32_t *found_nonce, uint8_t found_hash[32])
 {
-    /* seed from SHA256d of first 76 bytes (everything except nonce) */
     uint8_t seed_hash[32];
     sha256d_bytes(header_template, 76, seed_hash);
     uint32_t seed = ((uint32_t)seed_hash[0]<<24)|((uint32_t)seed_hash[1]<<16)
@@ -302,15 +310,11 @@ static int mine(const uint8_t header_template[80], const uint32_t target[8],
 
     uint8_t hdr[80];
     memcpy(hdr, header_template, 80);
-
     clock_t t0=clock();
-    uint64_t step;
 
-    for(step=0;step<max_steps;step++){
+    for(uint64_t step=0;step<max_steps;step++){
         int64_t  delta=spiral_delta(step);
         uint32_t nonce=(uint32_t)((int64_t)center+delta);
-
-        /* write nonce LE into header bytes 76-79 */
         hdr[76]=nonce&0xFF; hdr[77]=(nonce>>8)&0xFF;
         hdr[78]=(nonce>>16)&0xFF; hdr[79]=(nonce>>24)&0xFF;
 
@@ -327,7 +331,7 @@ static int mine(const uint8_t header_template[80], const uint32_t target[8],
             uint32_t rh[8]; reverse_hash_bytes(h,rh);
             printf("hash: "); for(int i=0;i<8;i++) printf("%08x",rh[i]); printf("\n");
             printf("steps=%llu  time=%.3fs  kH/s=%.1f\n",
-                   (unsigned long long)step,el,step/el/1000.0);
+                   (unsigned long long)step,el,el>0?step/el/1000.0:0.0);
             return 1;
         }
 
@@ -343,23 +347,16 @@ static int mine(const uint8_t header_template[80], const uint32_t target[8],
 /* ── Main ────────────────────────────────────────────────────────────────── */
 int main(int argc, char *argv[])
 {
-    /* ── DEMO: genesis verification + easy mine ─────────────────────────── */
     if(argc<2 || strcmp(argv[1],"demo")==0){
         printf("=== GENESIS VERIFICATION ===\n");
-        uint8_t genesis[80];
-        /* version=1, prev=0*32, merkle=genesis_coinbase_txid, time, bits, nonce */
-        memset(genesis,0,80);
-        genesis[0]=0x01; /* version LE */
-        /* merkle root (internal byte order) */
+        uint8_t genesis[80]; memset(genesis,0,80);
+        genesis[0]=0x01;
         const char *merkle_hex="3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a";
         hex_to_bytes(merkle_hex, genesis+36, 32);
-        /* time = 1231006505 LE */
         uint32_t t=1231006505;
         genesis[68]=t&0xFF;genesis[69]=(t>>8)&0xFF;
         genesis[70]=(t>>16)&0xFF;genesis[71]=(t>>24)&0xFF;
-        /* bits = 0x1d00ffff LE */
         genesis[72]=0xFF;genesis[73]=0xFF;genesis[74]=0x00;genesis[75]=0x1D;
-        /* nonce = 2083236893 = 0x7C2BAC1D LE */
         genesis[76]=0x1D;genesis[77]=0xAC;genesis[78]=0x2B;genesis[79]=0x7C;
 
         uint8_t gh[32]; hash_header(genesis,gh);
@@ -369,79 +366,58 @@ int main(int argc, char *argv[])
         int ok=(rgh[0]==0x00000000&&rgh[1]==0x0019d668&&rgh[2]==0x9c085ae1);
         printf("match: %s\n\n",ok?"YES":"NO");
 
-        printf("=== EASY MINE (first displayed byte = 0x00) ===\n");
-        uint32_t target[8];
-        memset(target,0,32);
-        target[0]=0x00FFFFFF;
-        for(int i=1;i<8;i++) target[i]=0xFFFFFFFF;
-        /* use genesis header template with nonce=0 */
+        printf("=== EASY MINE ===\n");
+        uint32_t target[8]; memset(target,0,32);
+        target[0]=0x00FFFFFF; for(int i=1;i<8;i++) target[i]=0xFFFFFFFF;
         genesis[76]=genesis[77]=genesis[78]=genesis[79]=0;
         uint32_t fn; uint8_t fh[32];
         mine(genesis,target,0x100000000ULL,&fn,fh);
         return 0;
     }
 
-    /* ── MINE: build coinbase, compute merkle, mine block ───────────────── */
-    if(argc>=2 && strcmp(argv[1],"mine")==0){
+    if(strcmp(argv[1],"mine")==0){
         uint32_t bits    = (argc>=3) ? (uint32_t)strtoul(argv[2],NULL,16) : 0x207fffff;
         uint32_t blk_height = (argc>=5) ? (uint32_t)atoi(argv[4]) : 1;
-
-        /* prev_hash from argv[3] or zero */
         uint8_t prev[32]; memset(prev,0,32);
         if(argc>=4 && strlen(argv[3])==64) hex_to_bytes(argv[3],prev,32);
 
-        printf("AXIOM MINER -- nos3bl33d / DeadFoxGroup\n");
-        printf("F291=0x%08X  F290=0x%08X  BAND=0x%08X\n",F291,F290,BAND);
+        const char *addr = REWARD_ADDR;
+        printf("AXIOM MINER\n");
+        printf("tag:    %s\n", COINBASE_MSG);
+        printf("reward: %s\n", strlen(addr)>0 ? addr : "OP_RETURN (no address set)");
         printf("bits=0x%08X  height=%u\n\n",bits,blk_height);
 
-        /* Build coinbase transaction */
         uint8_t cb_tx[512]; int cb_len;
-        cb_len = build_coinbase_tx(cb_tx, blk_height, COINBASE_MSG, REWARD_SAT);
+        cb_len = build_coinbase_tx(cb_tx, blk_height, COINBASE_MSG, REWARD_SAT, addr);
         printf("Coinbase tx (%d bytes):\n",cb_len);
-        printf("  message: \"%s\"\n", COINBASE_MSG);
-        printf("  hex: ");
-        for(int i=0;i<cb_len&&i<32;i++) printf("%02x",cb_tx[i]);
-        printf("...\n");
+        printf("  hex: "); for(int i=0;i<cb_len&&i<32;i++) printf("%02x",cb_tx[i]); printf("...\n");
 
-        /* Coinbase TXID = SHA256d of raw tx */
         uint8_t txid[32];
         sha256d_bytes(cb_tx, cb_len, txid);
-        printf("  txid: "); for(int i=0;i<32;i++) printf("%02x",txid[31-i]); /* reversed display */
-        printf("\n\n");
+        printf("  txid: "); for(int i=0;i<32;i++) printf("%02x",txid[31-i]); printf("\n\n");
 
-        /* Merkle root = txid (single-tx block, internal byte order = txid as-is) */
         uint32_t target[8]; bits_to_target(bits,target);
         printf("target: "); for(int i=0;i<8;i++) printf("%08X",target[i]); printf("\n\n");
 
-        /* Build header template (nonce=0, will be filled by miner) */
         uint8_t hdr[80];
         build_header(1, prev, txid, (uint32_t)time(NULL), bits, 0, hdr);
 
-        printf("Block header template:\n");
-        printf("  version:  1\n");
-        printf("  prev:     "); for(int i=0;i<8;i++) printf("%08x",((uint32_t*)prev)[i]); printf("\n");
-        printf("  merkle:   "); for(int i=0;i<32;i++) printf("%02x",txid[31-i]); printf("\n");
-        printf("  coinbase: %s\n\n",COINBASE_MSG);
-
         uint32_t fn; uint8_t fh[32];
-        uint64_t max = 0x100000000ULL;
-        if(!mine(hdr,target,max,&fn,fh)){
+        if(!mine(hdr,target,0x100000000ULL,&fn,fh)){
             printf("no solution found in full nonce space.\n");
             return 1;
         }
 
-        /* Print full mined block */
         printf("\n=== MINED BLOCK ===\n");
-        printf("coinbase: %s\n",COINBASE_MSG);
-        printf("nonce:    0x%08X\n",fn);
-        printf("txid:     "); for(int i=0;i<32;i++) printf("%02x",txid[31-i]); printf("\n");
+        printf("tag:    %s\n",COINBASE_MSG);
+        printf("nonce:  0x%08X\n",fn);
+        printf("txid:   "); for(int i=0;i<32;i++) printf("%02x",txid[31-i]); printf("\n");
         uint32_t rh[8]; reverse_hash_bytes(fh,rh);
-        printf("hash:     "); for(int i=0;i<8;i++) printf("%08x",rh[i]); printf("\n");
+        printf("hash:   "); for(int i=0;i<8;i++) printf("%08x",rh[i]); printf("\n");
         return 0;
     }
 
-    /* ── RAW HEADER: mine given 80-byte hex header ──────────────────────── */
-    if(argc>=2 && strlen(argv[1])==160){
+    if(strlen(argv[1])==160){
         uint8_t hdr[80];
         if(!hex_to_bytes(argv[1],hdr,80)){ fprintf(stderr,"bad hex\n"); return 1; }
         uint64_t max=(argc>=3)?(uint64_t)strtoull(argv[2],NULL,0):0x100000000ULL;
@@ -458,6 +434,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    fprintf(stderr,"Usage:\n  axiom_miner demo\n  axiom_miner mine [bits_hex] [prev_hex] [height]\n  axiom_miner <160-hex-chars> [max_steps]\n");
+    fprintf(stderr,"Usage:\n"
+            "  axiom_miner demo\n"
+            "  axiom_miner mine [bits_hex] [prev_hex] [height]\n"
+            "  axiom_miner <160-hex-chars> [max_steps]\n");
     return 1;
 }

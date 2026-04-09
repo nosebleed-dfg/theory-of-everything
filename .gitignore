@@ -6,3 +6,5 @@ dist/
 *.spec
 snapshots/
 theory/SHA_Analysis_Private.md
+sha/axiom_miner_live.c
+sha/axiom_miner_live
