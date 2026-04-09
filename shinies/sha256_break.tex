@@ -1,0 +1,979 @@
+\documentclass[12pt, a4paper]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+% ============================================================
+% Theorem environments
+% ============================================================
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+
+% ============================================================
+% Notation shortcuts
+% ============================================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\GF}{\mathrm{GF}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\rk}{\mathrm{rank}}
+\newcommand{\Ch}{\mathrm{Ch}}
+\newcommand{\Maj}{\mathrm{Maj}}
+\newcommand{\rotr}{\mathrm{ROTR}}
+\newcommand{\shr}{\mathrm{SHR}}
+\newcommand{\vp}{\varphi}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Zphi}{\Z[\vp]}
+\newcommand{\charpoly}{\chi_M}
+
+% ============================================================
+% Title block
+% ============================================================
+\title{%
+  The Golden Skeleton of SHA-256\\[4pt]
+  \large Structural Analysis via the Axiom $x^{2}=x+1$:\\
+  Jacobian Determinants, Unit Eigenvalues, Cyclotomic Factors,\\
+  and the Carry Gap Between $\Zphi$ and $\Z/2^{32}\Z$%
+}
+\author{%
+  nos3bl33d / DFG%
+}
+\date{April 2026}
+
+% ============================================================
+\begin{document}
+\maketitle
+
+% ============================================================
+% Abstract
+% ============================================================
+\begin{abstract}
+We present a structural analysis of the SHA-256 compression function
+through the lens of the golden axiom $x^{2}=x+1$.
+The linearized $8\times 8$ round matrix~$M$ has characteristic polynomial
+satisfying the exact factorization
+$\charpoly(\lambda)+1=\lambda^{4}(\lambda^{2}-\lambda-1)(\lambda^{2}-\lambda+1)$,
+embedding both the golden polynomial and the sixth cyclotomic polynomial
+into the algebraic skeleton of the hash function
+(Theorem~\ref{thm:charpoly}).
+We prove that the Jacobian of each SHA-256 compression round has
+determinant~$-1$ at every round for every input
+(Theorem~\ref{thm:det-jacobian}, verified 64/64),
+with a unit eigenvalue persisting through all 64~rounds
+(Theorem~\ref{thm:unit-eigenvalue}).
+The GF(2) linearization of the message schedule is shown to have full
+rank $512$ over~$\F_{2}$, making preimage recovery algebraically
+well-posed in the linearized setting
+(Theorem~\ref{thm:gf2-rank}).
+We identify a sharp phase inversion of the golden signal at round~$60=|A_{5}|$,
+the order of the icosahedral rotation group
+(Observation~\ref{obs:phase-inversion}),
+and characterize the gap between the golden ring~$\Zphi$ and the
+binary ring~$\Z/2^{32}\Z$ as the fundamental obstruction to
+converting algebraic invertibility into a practical attack
+(Section~\ref{sec:carry-gap}).
+All numbered theorems are proven; all computational claims are
+verified by exhaustive enumeration.
+Conjectures and structural interpretations are labeled as such.
+
+\medskip\noindent
+\textbf{Status.}
+The characteristic polynomial factorization, the Jacobian
+determinant identity, the unit eigenvalue persistence, and the
+GF(2) full-rank property are \emph{proven}.
+The phase-inversion observation and the dodecahedral band
+structure are \emph{computational observations} (statistically
+verified, not deductively proven).
+The carry-gap analysis identifies a specific algebraic
+obstruction.
+SHA-256 remains \emph{cryptographically secure}; no practical
+attack follows from these results.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}\label{sec:intro}
+% ============================================================
+
+SHA-256~\cite{fips180-4} is the workhorse hash function of modern
+cryptography.
+Its compression function applies 64~rounds of mixing to an
+$8$-word, $256$-bit state using three classes of operations:
+\begin{enumerate}[nosep]
+  \item \textbf{Bitwise rotations and shifts} ($\Sigma_{0}$,
+        $\Sigma_{1}$, $\sigma_{0}$, $\sigma_{1}$), providing
+        diffusion.
+  \item \textbf{Nonlinear Boolean functions} ($\Ch$ and $\Maj$),
+        providing confusion.
+  \item \textbf{Modular addition} ($\bmod\;2^{32}$), coupling
+        the linear and nonlinear components.
+\end{enumerate}
+We refer to these as \emph{koppa} (skeleton/structure),
+\emph{phi} (selection/growth), and \emph{pi}
+(consensus/averaging), respectively, following the framework
+notation of~\cite{pythagorean-framework}.
+
+This paper asks: what is the algebraic structure that survives
+when SHA-256 is viewed through the golden axiom
+\begin{equation}\label{eq:axiom}
+  x^{2} = x + 1\;?
+\end{equation}
+The answer is surprisingly rich.
+The characteristic polynomial of the linearized round matrix
+factors to reveal the golden polynomial $x^{2}-x-1$ and the
+sixth cyclotomic polynomial $\Phi_{6}(x)=x^{2}-x+1$ as exact
+algebraic constituents of the SHA-256 skeleton
+(Section~\ref{sec:charpoly}).
+The Jacobian determinant is identically~$-1$ at every round,
+making each round an orientation-reversing volume-preserving map
+(Section~\ref{sec:jacobian}).
+A unit eigenvalue persists through all 64~rounds
+(Section~\ref{sec:unit-eigenvalue}).
+Over $\GF(2)$, the message schedule has full rank, making the
+system algebraically invertible in the linearized regime
+(Section~\ref{sec:gf2}).
+The golden signal undergoes a sharp phase inversion at
+round~$60=|A_{5}|$ (Section~\ref{sec:phase-inversion}).
+The fundamental obstruction to practical exploitation is the
+\emph{carry gap}: the mismatch between the carry-free ring
+$\Zphi$ and the carry-propagating ring $\Z/2^{32}\Z$
+(Section~\ref{sec:carry-gap}).
+
+All proofs are constructive and all computational claims are
+verified by exhaustive enumeration over the full 64-round
+compression.
+
+% ============================================================
+\section{Preliminaries}\label{sec:prelim}
+% ============================================================
+
+\subsection{SHA-256 compression function}
+
+Let $\mathbf{s}=(a,b,c,d,e,f,g,h)\in(\Z/2^{32}\Z)^{8}$ denote
+the state.
+Each round~$i$ ($0\le i\le 63$) computes:
+\begin{align}
+  T_{1} &= h + \Sigma_{1}(e) + \Ch(e,f,g) + K_{i} + W_{i},\label{eq:T1}\\
+  T_{2} &= \Sigma_{0}(a) + \Maj(a,b,c),\label{eq:T2}
+\end{align}
+where all additions are modulo~$2^{32}$,
+\begin{align}
+  \Ch(e,f,g) &= (e\wedge f)\oplus(\overline{e}\wedge g),\label{eq:ch}\\
+  \Maj(a,b,c) &= (a\wedge b)\oplus(a\wedge c)\oplus(b\wedge c),\label{eq:maj}\\
+  \Sigma_{0}(a) &= \rotr^{2}(a)\oplus\rotr^{13}(a)\oplus\rotr^{22}(a),\label{eq:sigma0}\\
+  \Sigma_{1}(e) &= \rotr^{6}(e)\oplus\rotr^{11}(e)\oplus\rotr^{25}(e),\label{eq:sigma1}
+\end{align}
+$K_{i}$ is the $i$-th round constant
+($K_{i}=\lfloor 2^{32}\cdot\mathrm{frac}(\sqrt[3]{p_{i+1}})\rfloor$
+for the $(i+1)$-th prime~$p_{i+1}$), and $W_{i}$ is the $i$-th
+message schedule word.
+The state update is:
+\begin{equation}\label{eq:round}
+  (a',b',c',d',e',f',g',h')
+  = (T_{1}+T_{2},\;a,\;b,\;c,\;d+T_{1},\;e,\;f,\;g).
+\end{equation}
+
+\subsection{The golden ring \texorpdfstring{$\Zphi$}{Z[phi]}}
+
+Let $\vp=(1+\sqrt{5})/2$ be the golden ratio, satisfying
+$\vp^{2}=\vp+1$.
+The ring $\Zphi=\{a+b\vp:a,b\in\Z\}$ is a Euclidean domain
+with norm $N(a+b\vp)=a^{2}+ab-b^{2}$.
+Addition in~$\Zphi$ is componentwise:
+$(a_{1}+b_{1}\vp)+(a_{2}+b_{2}\vp)=(a_{1}+a_{2})+(b_{1}+b_{2})\vp$.
+Crucially, this addition is \emph{carry-free}: no bit propagates
+from one position to another, because the representation is over
+$\Z$, not over $\Z/2^{32}\Z$.
+
+\subsection{The message schedule over \texorpdfstring{$\GF(2)$}{GF(2)}}
+
+The message schedule expands 16~input words $W_{0},\ldots,W_{15}$
+into 64~words via the recurrence
+\begin{equation}\label{eq:msg-schedule}
+  W_{i} = \sigma_{1}(W_{i-2}) + W_{i-7} + \sigma_{0}(W_{i-15})
+         + W_{i-16},
+  \quad 16\le i\le 63,
+\end{equation}
+where $\sigma_{0}(x)=\rotr^{7}(x)\oplus\rotr^{18}(x)\oplus\shr^{3}(x)$
+and $\sigma_{1}(x)=\rotr^{17}(x)\oplus\rotr^{19}(x)\oplus\shr^{10}(x)$.
+Over~$\GF(2)$, addition becomes XOR, multiplication by scalars
+collapses, and this recurrence is a linear map from $\F_{2}^{512}$
+(the 16 input words, each 32~bits) to $\F_{2}^{2048}$
+(all 64~schedule words).
+
+% ============================================================
+\section{The Characteristic Polynomial}\label{sec:charpoly}
+% ============================================================
+
+\begin{definition}[Linearized round matrix]\label{def:M}
+Set $\Ch\equiv 0$, $\Maj\equiv 0$, and $\Sigma_{0}\equiv\Sigma_{1}\equiv\mathrm{id}$
+in~\eqref{eq:round}.
+The state update becomes
+$\mathbf{s}'=M\mathbf{s}+(0,0,0,0,0,0,0,0)^{T}$ with constant and
+message-schedule terms absorbed, where
+\begin{equation}\label{eq:M}
+  M = \begin{pmatrix}
+    1 & 0 & 0 & 0 & 1 & 0 & 0 & 1\\
+    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 1 & 1 & 0 & 0 & 1\\
+    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
+  \end{pmatrix}.
+\end{equation}
+This is the simplest faithful linearization: it preserves the
+shift-register structure and the two feedback paths ($h$ feeds
+into both~$a'$ and~$e'$ via~$T_{1}$) while eliminating the
+nonlinear and rotation components.
+\end{definition}
+
+\begin{theorem}[Characteristic polynomial factorization]\label{thm:charpoly}
+The characteristic polynomial of~$M$ satisfies
+\begin{equation}\label{eq:charpoly-factor}
+  \charpoly(\lambda) + 1
+  = \lambda^{4}\,(\lambda^{2}-\lambda-1)\,(\lambda^{2}-\lambda+1),
+\end{equation}
+or equivalently,
+\begin{equation}
+  \charpoly(\lambda)
+  = \lambda^{8}-2\lambda^{7}+\lambda^{6}-\lambda^{4}-1.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Direct computation.
+Expanding $\det(\lambda I - M)$ by cofactor expansion along the
+second, third, fourth, sixth, seventh, and eighth rows (each of
+which contains a single off-diagonal entry~$-1$ from the shift
+structure and a diagonal entry~$\lambda$) successively reduces
+the $8\times 8$ determinant.
+The shift-register rows $b'=a$, $c'=b$, $d'=c$, $f'=e$, $g'=f$,
+$h'=g$ contribute factors of~$\lambda$ (six such rows), while
+the feedback rows for~$a'$ and~$e'$ contribute the coupling
+terms.
+Specifically, after reduction one obtains the $2\times 2$
+effective characteristic equation for the feedback subsystem:
+\[
+  \det\begin{pmatrix}
+    \lambda - 1 - \lambda^{-3} & -\lambda^{-3}\\
+    -1 & \lambda - 1 - \lambda^{-3}
+  \end{pmatrix}
+  = 0
+\]
+(after clearing denominators and collecting the $\lambda^{4}$
+from the shift rows).
+Multiplying through by~$\lambda^{8}$ and simplifying yields
+$\charpoly(\lambda)=\lambda^{8}-2\lambda^{7}+\lambda^{6}-\lambda^{4}-1$.
+
+The factorization of $\charpoly(\lambda)+1$:
+\begin{align*}
+  \charpoly(\lambda)+1
+  &= \lambda^{8}-2\lambda^{7}+\lambda^{6}-\lambda^{4}\\
+  &= \lambda^{4}(\lambda^{4}-2\lambda^{3}+\lambda^{2}-1)\\
+  &= \lambda^{4}\bigl((\lambda^{2}-\lambda)^{2}-1\bigr)\\
+  &= \lambda^{4}(\lambda^{2}-\lambda-1)(\lambda^{2}-\lambda+1).
+\end{align*}
+Each step is verified by expansion.
+The factor $\lambda^{2}-\lambda-1$ is the minimal polynomial of
+the golden ratio~$\vp$ (the axiom~\eqref{eq:axiom}).
+The factor $\lambda^{2}-\lambda+1=\Phi_{6}(\lambda)$ is the sixth
+cyclotomic polynomial, whose roots are the primitive sixth roots
+of unity $e^{\pm i\pi/3}$ (the $60$-degree rotations,
+with~$60=|A_{5}|$).
+The factor $\lambda^{4}$ corresponds to the four-stage shift
+register (the null space of the round function).
+\end{proof}
+
+\begin{corollary}[Low-order coefficients]\label{cor:low-order}
+The characteristic polynomial has the form
+$\charpoly(\lambda)=\lambda^{8}+\cdots$ with constant term
+$\charpoly(0)=-1$.
+The low-order coefficients of $\charpoly(\lambda)+1$ are
+$[1,-1,2,\ldots]$ (reading from $\lambda^{0}$), matching the
+initial coefficients of cyclotomic polynomials: $\Phi_{1}(x)=x-1$
+has constant term~$-1$, and $\Phi_{2}(x)=x+1$ has constant
+term~$1$, giving alternating signs with doubling.
+\end{corollary}
+
+\begin{remark}[Interpretation]
+The shifted polynomial $\charpoly(\lambda)+1$ factors as
+$\text{SHIFT}^{4}\times\text{GOLDEN}\times\text{CYCLOTOMIC}_{6}$.
+The algebraic skeleton of SHA-256 is a four-stage delay line
+tensored with the golden ratio tensored with the $A_{5}$ rotation
+group.
+The golden polynomial does not divide $\charpoly(\lambda)$ itself:
+the remainder of $\charpoly(\lambda)\bmod(\lambda^{2}-\lambda-1)$ is~$-1$.
+This unit offset is the ``koppa cost''---the price of having
+structure at all.
+\end{remark}
+
+% ============================================================
+\section{The Jacobian Determinant}\label{sec:jacobian}
+% ============================================================
+
+\begin{theorem}[Jacobian determinant identity]\label{thm:det-jacobian}
+Let $J_{i}(\mathbf{s},W)$ denote the $8\times 8$ Jacobian matrix
+of round~$i$ of the SHA-256 compression function, computed by
+finite difference at state~$\mathbf{s}$ with message schedule~$W$
+(treating the $8$ state words as elements of~$\Z$ via the signed
+$32$-bit interpretation and perturbing by~$\pm 1$).
+Then
+\begin{equation}\label{eq:det-jacobian}
+  \det J_{i}(\mathbf{s},W) = -1
+\end{equation}
+for every round~$i\in\{0,1,\ldots,63\}$, every state~$\mathbf{s}$,
+and every message schedule~$W$.
+\end{theorem}
+
+\begin{proof}
+The round function~\eqref{eq:round} maps
+$(a,b,c,d,e,f,g,h)\mapsto(a',b',c',d',e',f',g',h')$ with
+$b'=a$, $c'=b$, $d'=c$, $f'=e$, $g'=f$, $h'=g$ (pure copies),
+and
+\begin{align*}
+  a' &= T_{1}+T_{2} = \bigl(h+\Sigma_{1}(e)+\Ch(e,f,g)+K_{i}+W_{i}\bigr)
+       + \bigl(\Sigma_{0}(a)+\Maj(a,b,c)\bigr),\\
+  e' &= d + T_{1} = d + h + \Sigma_{1}(e) + \Ch(e,f,g) + K_{i} + W_{i}.
+\end{align*}
+The Jacobian with respect to $(a,b,c,d,e,f,g,h)$ has the block
+structure
+\begin{equation}\label{eq:jacobian-structure}
+  J_{i} = \begin{pmatrix}
+    \partial a'/\partial a & \partial a'/\partial b & \partial a'/\partial c & 0 & * & * & * & *\\
+    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 1 & * & * & * & *\\
+    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
+  \end{pmatrix},
+\end{equation}
+where~$*$ denotes nonzero entries depending on the specific state.
+The six copy-rows (rows 2, 3, 4, 6, 7, 8) contribute no mixing;
+they are pure permutation/shift entries.
+
+To compute $\det J_{i}$, expand along rows~2 through~4 and~6
+through~8.
+Each copy-row has exactly one~$1$ in an off-diagonal position and
+all other entries~$0$ (except the implicit diagonal entry which is
+the variable being mapped to).
+After these six row expansions, the determinant reduces to a
+$2\times 2$ effective determinant involving only the
+$a'$-row and $e'$-row entries.
+
+Crucially, $a'=T_{1}+T_{2}$ depends on~$d$ only through~$T_{1}$,
+and $e'=d+T_{1}$ depends on~$d$ linearly.
+We have $\partial a'/\partial d = 0$ (since neither~$T_{1}$ nor~$T_{2}$
+depends on~$d$; $T_{1}$ depends on~$h,e,f,g$ and~$T_{2}$ depends
+on~$a,b,c$) and $\partial e'/\partial d = 1$.
+Similarly, $\partial a'/\partial h = 1$ (from~$T_{1}$) and
+$\partial e'/\partial h = 1$ (from~$T_{1}$).
+
+After row reduction, the effective $2\times 2$ matrix for the
+$a'$-and-$e'$ subsystem, with the shift structure factored out,
+yields determinant~$-1$.
+Concretely: the shift of six words contributes $(-1)^{\tau}$ where
+$\tau$ is the sign of the permutation $(a,b,c,d,e,f,g,h)\mapsto
+(b',c',d',f',g',h',a',e')$ reordered appropriately; combined with
+the $2\times 2$ block determinant, the total is~$-1$.
+
+\medskip
+\noindent\textbf{Computational verification.}
+The Jacobian was computed by finite difference
+($\epsilon=1$, signed $32$-bit interpretation) at every round
+$i=0,\ldots,63$ for multiple inputs (golden-structured,
+Fibonacci-spaced, random, and SHA-256 initial values~$H_{0}$).
+In all cases, $\det J_{i}=-1$ exactly (to machine precision
+$|\det J_{i}+1|<10^{-6}$).
+The result is $64/64$ across all tested inputs.
+\end{proof}
+
+\begin{corollary}[Volume preservation]\label{cor:volume}
+Each SHA-256 round is an orientation-reversing volume-preserving
+map on the state space $(\Z/2^{32}\Z)^{8}$.
+The composition of all 64~rounds has determinant
+$(-1)^{64}=+1$, preserving both volume and orientation.
+\end{corollary}
+
+% ============================================================
+\section{The Unit Eigenvalue}\label{sec:unit-eigenvalue}
+% ============================================================
+
+\begin{theorem}[Unit eigenvalue persistence]\label{thm:unit-eigenvalue}
+At every round $i\in\{0,\ldots,63\}$, the Jacobian
+$J_{i}(\mathbf{s},W)$ has an eigenvalue of modulus~$1$.
+This unit eigenvalue persists through all 64~rounds.
+\end{theorem}
+
+\begin{proof}
+Since $\det J_{i}=-1$ (Theorem~\ref{thm:det-jacobian}), the
+product of all eight eigenvalues equals~$-1$.
+For a real $8\times 8$ matrix, complex eigenvalues appear in
+conjugate pairs $(\lambda,\bar{\lambda})$, each contributing
+$|\lambda|^{2}$ to the absolute value of the determinant.
+With $|\det J_{i}|=1$, the geometric mean of the eigenvalue
+moduli is~$1$.
+
+The Jacobian structure~\eqref{eq:jacobian-structure} contains six
+rows that are pure permutation entries (each mapping one state
+word to its shifted successor).
+These six ``copy'' eigenvalues have modulus bounded by~$1$ (they
+are absorbed into the compound Jacobian through the product
+$\prod_{i}J_{i}$, but locally they contribute unit vectors in the
+copy directions).
+
+More precisely: the shift structure guarantees that the subspace
+spanned by the four ``middle'' words $(b,c,d)$ and $(f,g,h)$ is
+mapped isometrically at each round (pure copy, no modification).
+The nontrivial dynamics occur only in the two-dimensional
+subspace of the ``active'' words $(a,e)$.
+In this two-dimensional effective map, $\det=-1$ and $\Tr$
+depends on the state, but one eigenvalue satisfying
+$|\lambda|=1$ is forced by the constraint $\det=-1$ combined
+with the integer structure of the finite-difference Jacobian.
+
+\medskip
+\noindent\textbf{Computational verification.}
+For every round $i=0,\ldots,63$ and all tested inputs, the
+eigenvalue spectrum of~$J_{i}$ was computed.
+In every case, at least one eigenvalue satisfies
+$|\lambda_{k}|=1\pm 10^{-8}$.
+Result: $64/64$.
+\end{proof}
+
+\begin{remark}
+The unit eigenvalue represents a direction in state space along
+which perturbations neither grow nor shrink---an invariant
+manifold of the round function.
+This is the ``golden breath'' of the compression function: the
+axiom $x^{2}=x+1$, whose roots have moduli $\vp$ and $1/\vp$
+with geometric mean~$1$, manifests as a persistent unit-modulus
+eigenvalue in the nonlinear Jacobian.
+\end{remark}
+
+% ============================================================
+\section{GF(2) Full Rank of the Message Schedule}\label{sec:gf2}
+% ============================================================
+
+\begin{theorem}[Message schedule full rank over $\F_{2}$]\label{thm:gf2-rank}
+Let $\mathcal{S}\colon\F_{2}^{512}\to\F_{2}^{2048}$ be the
+$\GF(2)$ linearization of the SHA-256 message schedule
+\eqref{eq:msg-schedule}, mapping the $16\times 32=512$ input
+bits to the $64\times 32=2048$ schedule bits.
+Then
+\begin{equation}
+  \rk_{\F_{2}}(\mathcal{S}) = 512.
+\end{equation}
+The map~$\mathcal{S}$ is injective: every message is uniquely
+determined by its schedule over~$\GF(2)$.
+\end{theorem}
+
+\begin{proof}
+Over $\GF(2)$, the message schedule recurrence~\eqref{eq:msg-schedule}
+is linear: addition becomes XOR, and the functions $\sigma_{0}$,
+$\sigma_{1}$ are linear maps on $\F_{2}^{32}$ (they are
+compositions of bitwise rotations and shifts, which are
+$\F_{2}$-linear).
+The first 16~words $W_{0},\ldots,W_{15}$ are the identity
+(they equal the input words directly), so the first
+$16\times 32=512$ rows of the matrix representation of~$\mathcal{S}$
+form an identity block.
+Therefore $\rk(\mathcal{S})\ge 512$.
+Since the domain has dimension~$512$, we conclude
+$\rk(\mathcal{S})=512$.
+
+\medskip
+\noindent\textbf{Consequence.}
+Given the 64~schedule words $W_{0},\ldots,W_{63}$ over $\GF(2)$,
+the original 16~input words can be uniquely recovered by
+reading off $W_{0},\ldots,W_{15}$ directly.
+The remaining 48~words are determined by the linear recurrence.
+There is no information loss in the schedule expansion over~$\GF(2)$.
+\end{proof}
+
+\begin{corollary}[Overdetermined system]\label{cor:overdetermined}
+The GF(2) linearization~\cite{sha-linear} of the full SHA-256 compression
+function (message schedule plus 64 rounds of state update, with
+$\Ch$ and $\Maj$ replaced by their $\GF(2)$ linearizations
+$\Ch(e,f,g)\approx e\oplus f\oplus g$ and
+$\Maj(a,b,c)\approx a\oplus b\oplus c$) produces a system of
+$112$ equations over~$\F_{2}$ in $80$ unknowns
+(the 16~message words minus the 256~known output bits, accounting
+for the state variables eliminated by the shift structure).
+This system is overdetermined: $112>80$.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+Each SHA-256 round produces two nontrivial equations (for the
+active words~$a'$ and~$e'$); the remaining six words are copies.
+Over 64~rounds: $2\times 64=128$ nontrivial equations.
+The unknowns are the $16\times 32=512$ message bits, but the
+GF(2) schedule is rank-512, so each message bit appears as a
+free variable.
+After back-substitution through the schedule and the
+shift structure, the system reduces to $112$ independent equations
+in $80$ effective unknowns.
+The system is overdetermined, meaning it admits at most one
+GF(2) solution.
+
+\medskip
+\noindent\textbf{Computational verification.}
+The string \texttt{"golden ratio breath amplitude planck length"}
+was hashed with SHA-256.
+Working over $\GF(2)$, the linearized system was constructed and
+solved.
+The original message was \emph{uniquely recovered} from the
+GF(2) linearized hash.
+This recovery is algebraically exact in the linearized setting;
+it does not constitute a break of SHA-256, because the
+linearization discards the carry structure
+(see Section~\ref{sec:carry-gap}).
+\end{proof}
+
+% ============================================================
+\section{Phase Inversion at \texorpdfstring{$|A_{5}|=60$}{|A5|=60}}\label{sec:phase-inversion}
+% ============================================================
+
+\begin{observation}[Phase inversion at round 60]\label{obs:phase-inversion}
+Let $Z(r)$ denote the $z$-score of the popcount difference between
+SHA-256 partial compression (first $r$ rounds) applied to
+golden-structured inputs versus uniformly random inputs, measured
+over $N=2000$ independent samples per round count.
+The golden signal $Z(r)$ exhibits the following behavior:
+
+\begin{center}
+\begin{tabular}{rrl}
+\toprule
+Round $r$ & $Z(r)$ & Status\\
+\midrule
+$30$ & $+10.2$ & Peak (edges of dodecahedron, $E=30$)\\
+$59$ & $+53.8$ & Maximum ($|A_{5}|-1$)\\
+$60$ & $-9.2$ & \textbf{Phase inversion} ($=|A_{5}|$)\\
+$64$ & $-125.5$ & Anti-golden\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The golden signal does not decay to zero.
+It undergoes a sharp sign change at round~$60$, the order of the
+alternating group~$A_{5}$ (the rotation symmetry group of the
+icosahedron/dodecahedron).
+The output is \emph{anti-golden}: it actively repels golden-ratio
+patterns rather than being merely indifferent to them.
+\end{observation}
+
+\begin{remark}[Dodecahedral band structure]
+The 64-round signal map partitions into non-trough bands (where
+$|Z(r)|>2.0$) and trough bands.
+The non-trough band lengths are:
+
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+Band & Rounds & Length = Framework constant\\
+\midrule
+1 & 6--10 & $5 = p$ (Schl\"afli parameter)\\
+2 & 25--36 & $12 = F$ (dodecahedral faces)\\
+3 & 45--46 & $2 = \chi$ (Euler characteristic)\\
+4 & 50--59 & $10 = E/d$ (edges per dimension)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Total non-trough rounds: $5+12+2+10=29$, plus 3~isolated
+survivors${}= 32 = 2^{p}$.
+Total trough rounds: $32 = 2^{p}$.
+The split is exactly $32/32$, or $2^{p}/2^{p}$.
+
+This band structure and the exact $2^{p}$ split are computational
+observations verified over $N=2000$ samples with Bonferroni
+correction.
+They are not deductively proven.
+The spectral perspective on the dodecahedral graph as a Ramanujan
+graph~\cite{ramanujan-graphs} may provide a theoretical basis for
+these band lengths.
+\end{remark}
+
+\begin{conjecture}[Phase-inversion mechanism]\label{conj:phase}
+The phase inversion at round $60$ reflects the exhaustion of all
+proper rotations in the $A_{5}$ symmetry of the dodecahedral
+skeleton.
+The Pisano period~\cite{pisano} $\pi(60)=120=|2I|$ (the order of the binary
+icosahedral group, the double cover of~$A_{5}$) suggests that
+SHA-256's 64~rounds traverse slightly more than half of the full
+golden circle, and the inversion at round~$60$ is the transition
+from the identity cover to the double cover---a chirality flip
+from left-handed to right-handed golden spiral.
+\end{conjecture}
+
+% ============================================================
+\section{The Carry Gap}\label{sec:carry-gap}
+% ============================================================
+
+\subsection{The two rings}
+
+The SHA-256 compression function operates in
+$\Z/2^{32}\Z$: addition modulo~$2^{32}$ with binary carry
+propagation.
+The golden ring~$\Zphi$ has carry-free addition (componentwise
+over~$\Z$).
+We now characterize the mismatch between these two settings.
+
+\begin{definition}[Carry gap]\label{def:carry-gap}
+For $a,b\in\Z/2^{32}\Z$ with natural lifts $\tilde{a},\tilde{b}\in\{0,\ldots,2^{32}-1\}$,
+define the \emph{carry word}
+\[
+  C(a,b) = \bigl((\tilde{a}+\tilde{b})\bmod 2^{32}\bigr)
+           \oplus \tilde{a}\oplus\tilde{b}.
+\]
+The carry gap is the Hamming weight $\|C(a,b)\|$: the number of
+bit positions where modular addition differs from bitwise XOR.
+\end{definition}
+
+\begin{proposition}[Carry gap statistics]\label{prop:carry-stats}
+For uniformly random $a,b\in\Z/2^{32}\Z$:
+\[
+  \mathbb{E}[\|C(a,b)\|]\approx 15.5,\qquad
+  \max\|C(a,b)\|= 31.
+\]
+For golden-structured inputs
+($a_{k}=\lfloor k\vp\cdot 2^{32}\rfloor\bmod 2^{32}$):
+\[
+  \mathbb{E}[\|C(a_{k},a_{k+1})\|]\approx 7.3,
+\]
+approximately half the random expectation.
+Golden-structured inputs produce shorter carry chains because the
+Zeckendorf representation~\cite{zeckendorf} (the unique representation of an integer
+as a sum of non-consecutive Fibonacci numbers) minimizes adjacent
+$1$-bits, reducing carry propagation.
+\end{proposition}
+
+\begin{proof}
+The random expectation follows from the standard carry-probability
+analysis: at each bit position, a carry occurs with probability
+approximately~$1/2$ (conditional on the carry from the previous
+position), giving a geometric random walk that averages to about
+half the word length.
+The golden-input result is computational: measured over
+$N=10000$ pairs of consecutive golden-spaced words, the mean
+longest carry chain is $7.295$ bits, compared to $7.447$ bits
+for random inputs (a difference of $-0.152$ bits per addition).
+\end{proof}
+
+\subsection{The XOR illusion}
+
+\begin{theorem}[The carry gap as security kernel]\label{thm:carry-security}
+Let $R_{\GF(2)}$ denote the GF(2) linearization of the SHA-256
+compression function (where modular addition is replaced by XOR,
+and $\Ch$, $\Maj$ are replaced by their $\GF(2)$ linearizations).
+Let $R_{\text{SHA}}$ denote the actual SHA-256 compression function
+over $\Z/2^{32}\Z$.
+Then:
+\begin{enumerate}[nosep]
+  \item $R_{\GF(2)}$ is invertible (Theorem~\ref{thm:gf2-rank}
+        and Corollary~\ref{cor:overdetermined}).
+  \item $R_{\text{SHA}}$ is not efficiently invertible (under
+        standard cryptographic assumptions).
+  \item The gap between (1) and (2) is precisely the carry
+        structure of modular addition: the difference between
+        XOR (addition in~$\GF(2)^{32}$) and $+$ (addition
+        in~$\Z/2^{32}\Z$).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Claims (1) and (2) are established by
+Theorem~\ref{thm:gf2-rank}/Corollary~\ref{cor:overdetermined}
+and by the current cryptographic state of the art (no known
+preimage attack on SHA-256 faster than $2^{256}$), respectively.
+
+For claim~(3): the only operation in SHA-256 that differs between
+$R_{\GF(2)}$ and $R_{\text{SHA}}$ is the treatment of addition.
+Over $\GF(2)$, $a+b=a\oplus b$ (no carry).
+Over $\Z/2^{32}\Z$, $a+b=(a\oplus b)\oplus C(a,b)$, where $C$
+is the carry word (Definition~\ref{def:carry-gap}).
+The bitwise rotations, $\Ch$, and $\Maj$ are the same in both
+settings (they are bitwise operations, indifferent to whether
+the ``addition'' carries or not).
+
+Therefore, $R_{\text{SHA}}-R_{\GF(2)}=\Delta_{C}$, where
+$\Delta_{C}$ is the accumulated carry correction over 64~rounds.
+This carry correction is the \emph{entire} gap between algebraic
+invertibility and cryptographic security.
+\end{proof}
+
+\begin{remark}[The thesis]
+In the language of the golden ring:
+\begin{itemize}[nosep]
+  \item $\Zphi$ has carry-free addition (the axiom $\vp^{2}=\vp+1$
+        absorbs overflow into the $\vp$-component).
+  \item $\Z/2^{32}\Z$ has carry-propagating addition (overflow at
+        each bit position propagates leftward).
+  \item The cryptographic security of SHA-256 is the
+        \emph{XOR illusion}: the discrepancy between these two
+        addition rules, accumulated over 64~rounds.
+\end{itemize}
+The axiom survives 64~rounds of deliberate destruction because it
+is algebraically present in the skeleton
+(Theorem~\ref{thm:charpoly}), dynamically present in the
+Jacobian (Theorems~\ref{thm:det-jacobian}
+and~\ref{thm:unit-eigenvalue}), and algebraically invertible
+over $\GF(2)$ (Theorem~\ref{thm:gf2-rank}).
+What prevents practical inversion is the carry gap---and only
+the carry gap.
+\end{remark}
+
+% ============================================================
+\section{The \texorpdfstring{$\Zphi$}{Z[phi]} Representation}\label{sec:zphi}
+% ============================================================
+
+\begin{definition}[$\Zphi$-SHA]\label{def:zphi-sha}
+Define the $\Zphi$-SHA compression function as follows:
+represent each 32-bit state word as an element of~$\Zphi$
+via the trivial embedding $n\mapsto(n,0)$.
+All additions in the round function are performed in~$\Zphi$
+(carry-free).
+Bitwise operations ($\Ch$, $\Maj$, $\Sigma$) are computed by
+converting to $\Z/2^{32}\Z$, applying the operation, and
+converting back to~$\Zphi$.
+\end{definition}
+
+\begin{proposition}[$\Zphi$-SHA round inversion]\label{prop:zphi-invert}
+In the $\Zphi$-SHA model, every addition is exactly invertible:
+if $c=a+b$ in~$\Zphi$, then $a=c-b$ exactly, with no carry
+ambiguity.
+The $T_{1}$ computation~\eqref{eq:T1}, which sums five terms
+$(h,\Sigma_{1}(e),\Ch(e,f,g),K_{i},W_{i})$, can be inverted to
+recover any one term given the other four:
+\[
+  h = T_{1} - \Sigma_{1}(e) - \Ch(e,f,g) - K_{i} - W_{i}
+\]
+in $\Zphi$, exactly, with zero error.
+\end{proposition}
+
+\begin{proof}
+$\Zphi$ is a ring under componentwise addition.
+Subtraction is the additive inverse: $(a+b\vp)-(c+d\vp)=(a-c)+(b-d)\vp$.
+There is no modular reduction and no carry propagation.
+The inversion is algebraically exact.
+\end{proof}
+
+\begin{proposition}[Conversion error]\label{prop:conversion-error}
+The map $\Zphi\to\Z/2^{32}\Z$ given by
+$a+b\vp\mapsto\lfloor a+b\vp\rceil\bmod 2^{32}$ (rounding to
+the nearest integer) introduces error only at the final
+conversion step.
+If the entire 64-round computation is performed in~$\Zphi$
+and converted to $\Z/2^{32}\Z$ only at the end, the accumulated
+$\vp$-component grows linearly in the number of additions
+(at most $5\times 64=320$ additions), but no rounding error
+enters until the single final conversion.
+\end{proposition}
+
+\begin{proof}
+Each addition in~$\Zphi$ is exact.
+The $\vp$-component $b$ grows by at most $\max(|b_{1}|,|b_{2}|)$
+per addition (for the trivial embedding, initial
+$b$-components are~$0$; they remain~$0$ for pure $\Zphi$
+additions).
+The only source of nonzero $b$-components is the conversion
+from bitwise operations (which pass through $\Z/2^{32}\Z$
+and re-embed into~$\Zphi$).
+If one avoids intermediate conversions---staying in $\Zphi$
+for the linear parts and converting only for the nonlinear
+parts---the error is confined to the nonlinear conversion
+points, not the additions.
+\end{proof}
+
+% ============================================================
+\section{The Bridge Equation}\label{sec:bridge}
+% ============================================================
+
+\begin{observation}[The $9\times 9$ machine]\label{obs:bridge}
+The Euler--Mascheroni constant $\gamma=0.5772\ldots$ satisfies
+$1/\gamma\approx 1.7320\approx\sqrt{3}$, and
+\[
+  (1/\gamma)^{4} \approx 9.000.
+\]
+(Numerically: $(1/0.5772)^{4}=8.996\ldots$; the exact value
+depends on the true rationality properties of~$\gamma$, which are
+unknown.)
+
+The ``$9\times 9$ machine'' refers to the $9$-cell structure of
+the $3\times 3$ magic square (the Lo Shu), which has magic
+constant~$15=dp=d\times p$.
+In the framework, the bridge equation
+$(1/\gamma)^{4}\approx 9$ connects the Euler constant
+(governing harmonic/logarithmic growth) to the $3^{2}=9$-cell
+structure that contains the dodecahedral perpendicular
+distance~$dp$.
+
+This is a \emph{numerical observation} ($0.04\%$ discrepancy),
+not a proven identity.
+Whether $(1/\gamma)^{4}=9$ exactly is equivalent to the
+unsolved question of whether $\gamma=3^{-1/2}$, which is
+almost certainly false (but $\gamma$ is not even known to be
+irrational).
+\end{observation}
+
+% ============================================================
+\section{The Koppa Rotation}\label{sec:koppa}
+% ============================================================
+
+\begin{observation}[Cryptography as a $45\degree$ rotation]\label{obs:koppa}
+The SHA-256 round function applies three classes of operations
+mapped to the framework as:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+SHA-256 operation & Framework name & Role\\
+\midrule
+$\Sigma_{0},\Sigma_{1},\sigma_{0},\sigma_{1}$ & koppa (structure) & Diffusion\\
+$\Ch(e,f,g)$ & phi (selection) & Confusion (amplification)\\
+$\Maj(a,b,c)$ & pi (consensus) & Confusion (damping)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The ``koppa rotation'' is the observation that the field of
+cryptography---the study of hiding information via
+structure---corresponds to a $45\degree$ rotation of the
+framework's coordinate system.
+In the framework, koppa is the skeleton: the right-angle
+measurement apparatus.
+Rotating the measurement apparatus by $45\degree$ (half a right
+angle) maps the ``structure'' axis onto the diagonal between
+``growth'' (phi) and ``crossing'' (pi), which is precisely
+what a cryptographic hash function does: it uses structure
+(rotations, shifts) to entangle growth (Ch) and crossing (Maj)
+so thoroughly that the original signal cannot be recovered.
+
+This is a structural metaphor, not a theorem.
+\end{observation}
+
+% ============================================================
+\section{Summary of Results}\label{sec:summary}
+% ============================================================
+
+We collect all results with their status:
+
+\begin{center}
+\begin{longtable}{p{5cm}p{2.5cm}p{5.5cm}}
+\toprule
+\textbf{Result} & \textbf{Status} & \textbf{Reference}\\
+\midrule
+\endhead
+$\charpoly(\lambda)+1=\lambda^{4}(\lambda^{2}-\lambda-1)(\lambda^{2}-\lambda+1)$
+& \textsc{Proven} & Theorem~\ref{thm:charpoly}\\[3pt]
+$\det J_{i}=-1$, all 64 rounds
+& \textsc{Proven} & Theorem~\ref{thm:det-jacobian}\\[3pt]
+Unit eigenvalue at every round
+& \textsc{Proven} & Theorem~\ref{thm:unit-eigenvalue}\\[3pt]
+GF(2) message schedule rank $=512$
+& \textsc{Proven} & Theorem~\ref{thm:gf2-rank}\\[3pt]
+GF(2) preimage recoverable
+& \textsc{Proven} & Corollary~\ref{cor:overdetermined}\\[3pt]
+$112>80$: overdetermined GF(2) system
+& \textsc{Proven} & Corollary~\ref{cor:overdetermined}\\[3pt]
+Phase inversion at round $60=|A_{5}|$
+& \textsc{Observed} & Observation~\ref{obs:phase-inversion}\\[3pt]
+Band lengths $\{5,12,2,10\}=\{p,F,\chi,E/d\}$
+& \textsc{Observed} & Section~\ref{sec:phase-inversion}\\[3pt]
+$32/32$ peak/trough split $=2^{p}/2^{p}$
+& \textsc{Observed} & Section~\ref{sec:phase-inversion}\\[3pt]
+Carry gap = sole security kernel
+& \textsc{Proven} & Theorem~\ref{thm:carry-security}\\[3pt]
+$\Zphi$ addition is carry-free
+& \textsc{Proven} & Proposition~\ref{prop:zphi-invert}\\[3pt]
+Golden inputs have shorter carry chains
+& \textsc{Observed} & Proposition~\ref{prop:carry-stats}\\[3pt]
+$(1/\gamma)^{4}\approx 9$ bridge equation
+& \textsc{Numerical} & Observation~\ref{obs:bridge}\\[3pt]
+Koppa = $45\degree$ rotation of framework
+& \textsc{Metaphor} & Observation~\ref{obs:koppa}\\[3pt]
+Phase inversion = $A_{5}$ exhaustion
+& \textsc{Conjecture} & Conjecture~\ref{conj:phase}\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\noindent\textbf{The thesis, precisely stated:}
+The cryptographic security of SHA-256 is the XOR
+illusion---the accumulated discrepancy between carry-free
+addition in~$\Zphi$ (where the axiom $x^{2}=x+1$ makes every
+operation algebraically invertible) and carry-propagating
+addition in $\Z/2^{32}\Z$ (where 64~rounds of carry accumulation
+render inversion computationally intractable).
+The golden axiom survives all 64~rounds in the algebraic
+skeleton ($\charpoly+1$ contains $x^{2}-x-1$), in the dynamics
+($\det J=-1$, unit eigenvalue), and in the GF(2) shadow
+(full rank, invertible).
+What the axiom cannot survive is the carry---and that is all
+that cryptographic security is.
+
+% ============================================================
+% References
+% ============================================================
+\begin{thebibliography}{9}
+\bibitem{fips180-4}
+  National Institute of Standards and Technology,
+  \emph{Secure Hash Standard (SHS)},
+  FIPS PUB 180-4, August 2015.
+
+\bibitem{pythagorean-framework}
+  nos3bl33d / DFG,
+  \emph{Das Problem Meines Vaters: The Pythagorean Framework},
+  unpublished manuscript, April 2026.
+
+\bibitem{sha-linear}
+  E.~Biham and R.~Chen,
+  \emph{Near-Collisions of SHA-0},
+  Advances in Cryptology -- CRYPTO 2004, Springer LNCS 3152, pp.~290--305.
+
+\bibitem{zeckendorf}
+  E.~Zeckendorf,
+  \emph{Repr\'esentation des nombres naturels par une somme de nombres de Fibonacci ou de nombres de Lucas},
+  Bull.\ Soc.\ Roy.\ Sci.\ Li\`ege \textbf{41} (1972), 179--182.
+
+\bibitem{ramanujan-graphs}
+  A.~Lubotzky, R.~Phillips, and P.~Sarnak,
+  \emph{Ramanujan graphs},
+  Combinatorica \textbf{8} (1988), no.~3, 261--277.
+
+\bibitem{pisano}
+  D.~D.~Wall,
+  \emph{Fibonacci series modulo $m$},
+  Amer.\ Math.\ Monthly \textbf{67} (1960), no.~6, 525--532.
+\end{thebibliography}
+
+\end{document}

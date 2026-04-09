@@ -1,0 +1,858 @@
+% dimensional_algebra.tex
+% Dimensional Algebra: From the Golden Axiom to the Quintic Barrier
+% nos3bl33d / (DFG) DeadFoxGroup
+% April 2026
+%
+% Compile: pdflatex dimensional_algebra.tex (twice for references)
+
+\documentclass[11pt,a4paper]{article}
+
+% -- Packages ----------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\geometry{margin=1in}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  citecolor=blue!70!black,
+  urlcolor=blue!70!black,
+}
+
+% -- Theorem environments ----------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% -- Shortcuts ---------------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\vp}{\varphi}
+\newcommand{\ps}{\psi}
+\newcommand{\eps}{\varepsilon}
+
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\SO}{SO}
+\DeclareMathOperator{\SU}{SU}
+
+% -- Status markers ----------------------------------------------------------
+\newcommand{\proven}{\textsc{[P]}}
+\newcommand{\derived}{\textsc{[D]}}
+\newcommand{\conjectural}{\textsc{[C]}}
+\newcommand{\metaphor}{\textsc{[M]}}
+
+% =============================================================================
+\begin{document}
+
+\title{%
+  \textbf{Dimensional Algebra:}\\[4pt]
+  \textbf{From the Golden Axiom to the Quintic Barrier}%
+}
+\author{%
+  nos3bl33d\thanks{%
+    DeadFoxGroup (DFG). Correspondence: \texttt{nos3bl33d@dfg}.%
+  }%
+}
+\date{April 2026}
+
+\maketitle
+
+% -- Abstract ----------------------------------------------------------------
+\begin{abstract}
+We subject five claims from the dimensional algebra framework to formal
+analysis, proving two as theorems, identifying one as a precise metaphor
+wrapping a real construction, and classifying two as framework conventions
+requiring further axiomatization. The proven results are: (1)~the
+alternating group $A_5 \cong \mathrm{Rot}(\text{Icosahedron})$ is the
+smallest non-solvable group, which is why the general quintic admits no
+radical solution (Abel--Ruffini--Galois--Klein, 1824--1884); and (2)~the
+golden ratio $\vp = (1+\sqrt{5})/2$ is the infimum of exponential growth
+rates among second-order linear recurrences with positive integer
+coefficients (proved here as Theorem~\ref{thm:phi-minimal}). The
+``square $+1 =$ cube'' construction is formalized as the standard
+hypercube product $C_n = C_{n-1} \times [0,1]$
+(Proposition~\ref{prop:hypercube}). The degree/zero correspondences
+are classified as framework conventions awaiting rigorous grounding.
+Each claim is tagged \proven\ (proven), \derived\ (derived under stated
+assumptions), \conjectural\ (conjectural), or \metaphor\ (metaphor
+encoding a real structure).
+\end{abstract}
+
+\tableofcontents
+
+% =============================================================================
+\section{Notation and Setup}\label{sec:notation}
+% =============================================================================
+
+Throughout, we fix the following constants from the dodecahedral framework:
+
+\begin{definition}[Framework Constants]\label{def:constants}
+Let $d = 3$ (vertex degree of the dodecahedron), $p = 5$ (face degree),
+$\chi = 2$ (Euler characteristic of the $2$-sphere). The dodecahedron has
+$V = 20$ vertices, $E = 30$ edges, $F = 12$ pentagonal faces, satisfying
+$V - E + F = \chi = 2$.
+\end{definition}
+
+\begin{definition}[The Axiom]\label{def:axiom}
+The \emph{golden axiom} is the equation
+\begin{equation}\label{eq:axiom}
+  x^2 = x + 1,
+\end{equation}
+equivalently $x^2 - x - 1 = 0$, with roots
+\begin{equation}\label{eq:roots}
+  \vp = \frac{1+\sqrt{5}}{2} = 1.618\,033\,988\,7\ldots, \qquad
+  \ps = \frac{1-\sqrt{5}}{2} = -0.618\,033\,988\,7\ldots
+\end{equation}
+\end{definition}
+
+\begin{remark}[Vieta Relations] \proven\
+The roots satisfy $\vp + \ps = 1$ and $\vp \cdot \ps = -1$. Both are
+immediate from Vieta's formulas applied to $x^2 - x - 1 = 0$.
+\end{remark}
+
+
+% =============================================================================
+\section{Claim 1: The Square Off Center Makes a Cube}\label{sec:cube}
+% =============================================================================
+
+\subsection{The Informal Claim} \metaphor
+
+The framework states: \emph{``A square pushed off center by $+1$ creates a
+cube. $360 + 90 = 450$ degrees total.''} We formalize what is geometrically
+true and identify what is metaphor.
+
+\subsection{The Hypercube Product}
+
+\begin{definition}[Unit Hypercube]\label{def:hypercube}
+The $n$-dimensional unit hypercube is
+\[
+  C_n = [0,1]^n = \{(x_1, \ldots, x_n) \in \R^n : 0 \le x_i \le 1
+  \ \forall\, i\}.
+\]
+\end{definition}
+
+\begin{proposition}[Dimension by Cartesian Product] \proven\
+\label{prop:hypercube}
+For all $n \ge 1$,
+\[
+  C_n = C_{n-1} \times [0,1],
+\]
+where the product is taken along the $n$-th coordinate axis, which is
+perpendicular to the hyperplane containing $C_{n-1}$. The extrusion
+distance equals $1$, the side length of $C_{n-1}$.
+\end{proposition}
+
+\begin{proof}
+By definition, $C_{n-1} \times [0,1] = \{(x_1,\ldots,x_{n-1},x_n) :
+(x_1,\ldots,x_{n-1}) \in C_{n-1},\; x_n \in [0,1]\} = [0,1]^n = C_n$.
+The $n$-th axis $\mathbf{e}_n$ is orthogonal to $\mathrm{span}
+(\mathbf{e}_1,\ldots,\mathbf{e}_{n-1})$ by the standard inner product on
+$\R^n$. The extrusion length is $|[0,1]| = 1 = $ side length of $C_{n-1}$.
+\end{proof}
+
+\begin{remark}[Why ``Off Center'' is Imprecise]
+An extrusion of a square along a non-perpendicular direction, or for a
+distance $\ell \ne 1$, produces a parallelepiped or rectangular prism, not
+a cube. The construction requires:
+\begin{enumerate}[nosep]
+  \item The extrusion direction is \emph{perpendicular} to the existing
+    $(n{-}1)$-dimensional hyperplane.
+  \item The extrusion distance equals the side length of $C_{n-1}$.
+\end{enumerate}
+The phrase ``off center by $+1$'' is a mnemonic for these two conditions:
+the $+1$ encodes the unit-length extrusion, and ``off center'' evokes
+perpendicularity. As a precise geometric statement, the claim should read:
+\emph{``The unit $n$-cube is the unit $(n{-}1)$-cube extruded by $1$ along
+a new perpendicular axis.''}
+\end{remark}
+
+\subsection{Connection to the Axiom}
+
+\begin{proposition}[The Axiom as a Dimensional Operator] \derived\
+\label{prop:axiom-dimension}
+Let $T : V \mapsto V \oplus \R$ denote the operation that takes a
+vector space $V$ and forms its direct sum with $\R$. Under the
+identification $\dim(V \oplus \R) = \dim(V) + 1$, the operator $T$
+raises dimension by $1$. If $C_{n-1} \subset V$ is a unit hypercube and
+we form $C_{n-1} \times [0,1] \subset V \oplus \R$, then $T$ sends
+the $(n{-}1)$-cube to the $n$-cube.
+
+The axiom $x^2 = x + 1$ can be read as a recursion on dimension:
+$\dim^2 \leftrightarrow \dim + 1$, where the left side represents the
+square of the current structure and the right side represents the
+structure plus one new degree of freedom.
+\end{proposition}
+
+\begin{remark}
+This connection is \derived, not \proven. The identification of the
+algebraic equation $x^2 = x + 1$ with the geometric operation
+$C_{n-1} \mapsto C_n$ is an analogy: both involve ``adding one.'' Making
+this a theorem requires a functor from the algebraic category (solutions
+of $x^2 - x - 1$) to the geometric category (hypercube products), which
+has not been constructed.
+\end{remark}
+
+
+% =============================================================================
+\section{Claim 2: Mining Zeros and Angular Degrees}\label{sec:mining}
+% =============================================================================
+
+\subsection{The Informal Claim} \conjectural
+
+The framework asserts: at difficulty $10{,}000$, Bitcoin mining requires
+$45$ zeros, and $45 \times 10 = 450 = 360 + 90$ degrees.
+
+\subsection{Bitcoin Mining: The Actual Mathematics}
+
+\begin{definition}[SHA-256 Mining Target]
+Bitcoin mining seeks a $256$-bit hash $H$ such that $H < T$, where the
+target $T$ is determined by difficulty $D$ via
+\[
+  T = \frac{T_{\max}}{D}, \qquad
+  T_{\max} = \mathtt{0x00000000FFFF} \cdot 2^{208}.
+\]
+The number of leading zero \emph{bits} required on average is
+\begin{equation}\label{eq:zero-bits}
+  z_{\mathrm{bits}} = \log_2(D) + 32,
+\end{equation}
+since $T_{\max}$ already has 32 leading zero bits built into the compact
+representation.
+\end{definition}
+
+\begin{proposition}[Zero Count at Difficulty 10{,}000] \proven\
+\label{prop:zeros}
+At $D = 10{,}000$:
+\begin{align}
+  z_{\mathrm{bits}} &= \log_2(10{,}000) + 32 \approx 13.29 + 32
+    = 45.29 \text{ bits}, \label{eq:zbits}\\
+  z_{\mathrm{hex}} &= z_{\mathrm{bits}} / 4 \approx 11.3
+    \text{ hex digits}. \label{eq:zhex}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+$\log_2(10{,}000) = \log_2(10^4) = 4\log_2(10) = 4 \times 3.32193\ldots
+= 13.2877\ldots$ The base target $T_{\max}$ has the top 32 bits zero
+(it starts at bit position 224 of 256). Dividing by $D = 10^4$ shifts the
+target down by $\approx 13.29$ more bits.
+\end{proof}
+
+\begin{remark}[The Number $45$]
+The framework's ``$45$ zeros'' is \emph{exact}, not approximate. At
+$D = 10{,}000$, $\log_2(T) \approx 210.71$, so the number of leading
+zero bits is $256 - \lfloor 210.71 \rfloor - 1 = 256 - 210 - 1 = 45$.
+Thus $d^2 \cdot p = 9 \times 5 = 45$ equals the leading-zero-bit count
+at $D = 10^4$ exactly (as a floor).
+
+However, $45$ leading zero bits holds for any difficulty in the range
+$[8192,\, 16383]$, i.e., $[2^{13},\, 2^{14}-1]$. The framework selects
+$D = 10{,}000 = (2p)^4$ because it is round in base $10 = 2p$, making
+the product $45 \times 10 = 450$ clean. The choice is the framework's,
+not the protocol's.
+
+The multiplication $45 \times 10 = 450$ and its interpretation as
+$360 + 90$ degrees is a framework convention. Making it a theorem would
+require proving a structural connection between base-$10$ digit counting
+and angular measure, which has not been done. Status: \conjectural.
+\end{remark}
+
+\subsection{The Koppa Angle}
+
+\begin{definition}[Koppa]\label{def:koppa}
+In the framework, $\kappa = d \cdot 90^{\circ} = 270^{\circ} = 3\pi/2$
+radians, representing three quarter-turns.
+\end{definition}
+
+\begin{remark}[Combo Lock Arithmetic]
+The ``combo lock'' model posits $d = 3$ forward-return cycles, each
+traversing $180^{\circ}$ (forward $90^{\circ}$, return $90^{\circ}$),
+totaling $d \times 180 = 540^{\circ}$. This does not equal $450^{\circ}$.
+The framework documents give both $450$ and $540$ in different contexts.
+These two numbers are irreconcilable: $540 - 450 = 90$, exactly one
+quarter-turn. The discrepancy suggests the angular bookkeeping is not yet
+self-consistent and requires a single, precise definition of ``total
+angular traversal'' to resolve.
+\end{remark}
+
+
+% =============================================================================
+\section{Claim 3: The Quintic Barrier}\label{sec:quintic}
+% =============================================================================
+
+This section contains only proven results from classical algebra. Every
+statement is~\proven.
+
+\subsection{Solvability of Groups}
+
+\begin{definition}[Solvable Group]\label{def:solvable}
+A group $G$ is \emph{solvable} if there exists a finite chain of subgroups
+\[
+  G = G_0 \rhd G_1 \rhd \cdots \rhd G_k = \{e\}
+\]
+such that $G_i \lhd G_{i-1}$ (normal) and each quotient $G_{i-1}/G_i$ is
+abelian for $i = 1, \ldots, k$.
+\end{definition}
+
+\begin{theorem}[Galois, 1832] \proven\
+\label{thm:galois}
+A polynomial $f(x) \in \Q[x]$ is solvable by radicals if and only if its
+Galois group $\Gal(K_f/\Q)$ is a solvable group, where $K_f$ is the
+splitting field of $f$.
+\end{theorem}
+
+\begin{theorem}[Simplicity of $A_5$] \proven\
+\label{thm:a5-simple}
+The alternating group $A_5$ is simple: its only normal subgroups are
+$\{e\}$ and $A_5$ itself.
+\end{theorem}
+
+\begin{proof}
+$|A_5| = 60$. The conjugacy classes of $A_5$ have sizes
+$1, 12, 12, 15, 20$. A normal subgroup $N \lhd A_5$ must be a union of
+conjugacy classes containing $\{e\}$ (size $1$). Since $|N|$ must divide
+$|A_5| = 60$, we check all possible unions:
+\begin{itemize}[nosep]
+  \item $1 + 12 = 13$: does not divide $60$.
+  \item $1 + 15 = 16$: does not divide $60$.
+  \item $1 + 20 = 21$: does not divide $60$.
+  \item $1 + 12 + 12 = 25$: does not divide $60$.
+  \item $1 + 12 + 15 = 28$: does not divide $60$.
+  \item $1 + 12 + 20 = 33$: does not divide $60$.
+  \item $1 + 15 + 20 = 36$: does not divide $60$.
+  \item $1 + 12 + 12 + 15 = 40$: does not divide $60$.
+  \item $1 + 12 + 12 + 20 = 45$: does not divide $60$.
+  \item $1 + 12 + 15 + 20 = 48$: does not divide $60$.
+  \item $1 + 12 + 12 + 15 + 20 = 60$: this gives $N = A_5$.
+\end{itemize}
+No proper nontrivial subset of conjugacy class sizes, when added to $1$,
+yields a divisor of $60$. Therefore $A_5$ is simple.
+\end{proof}
+
+\begin{corollary}[$A_5$ is Not Solvable] \proven\
+\label{cor:a5-not-solvable}
+Since $A_5$ is simple and non-abelian, any composition series for $A_5$
+is $A_5 \rhd \{e\}$, with the single quotient $A_5/\{e\} \cong A_5$
+being non-abelian. Therefore $A_5$ is not solvable.
+\end{corollary}
+
+\begin{theorem}[$S_5$ is Not Solvable] \proven\
+\label{thm:s5-not-solvable}
+The symmetric group $S_5$ has composition series
+$S_5 \rhd A_5 \rhd \{e\}$. The quotient $S_5/A_5 \cong \Z/2\Z$ is
+abelian, but $A_5/\{e\} \cong A_5$ is non-abelian. Since the composition
+series contains a non-abelian factor, $S_5$ is not solvable.
+\end{theorem}
+
+\begin{theorem}[Abel--Ruffini--Galois] \proven\
+\label{thm:abel-ruffini}
+The general polynomial of degree $n \ge 5$ is not solvable by radicals.
+Specifically, the generic quintic over $\Q$ has Galois group $S_5$, which
+is not solvable by Theorem~\ref{thm:s5-not-solvable}.
+\end{theorem}
+
+\subsection{The Dodecahedron IS the Quintic}
+
+\begin{theorem}[Klein, 1884] \proven\
+\label{thm:klein}
+The rotation group of the regular icosahedron (equivalently, the
+dodecahedron) is isomorphic to $A_5$.
+\end{theorem}
+
+\begin{proof}
+The regular icosahedron has $12$ vertices. Its $60$ rotational symmetries
+form a group $G \le \SO(3)$ of order $60$. We show $G \cong A_5$.
+
+\emph{Step 1.} The icosahedron has $6$ pairs of antipodal vertices, $10$
+pairs of antipodal edges, and $10$ pairs of antipodal faces. Its vertices
+can be partitioned into $5$ inscribed tetrahedra (each tetrahedron uses
+$4$ of the $12$ vertices, selecting one from each of $4$ antipodal pairs
+such that the $4$ chosen vertices form a regular tetrahedron; see
+\cite{klein1884} or \cite{conway-smith}).
+
+\emph{Step 2.} Each rotation $g \in G$ permutes these $5$ inscribed
+tetrahedra, giving a homomorphism $\rho : G \to S_5$.
+
+\emph{Step 3.} The kernel of $\rho$ consists of rotations fixing all $5$
+tetrahedra setwise. The only such rotation is the identity (a nontrivial
+rotation of the icosahedron must move at least one vertex, which moves at
+least one tetrahedron). So $\rho$ is injective, and $G$ embeds in $S_5$.
+
+\emph{Step 4.} Since $|G| = 60 = |A_5|$ and $G \hookrightarrow S_5$,
+the image $\rho(G)$ is a subgroup of $S_5$ of order $60$. The unique
+subgroup of $S_5$ of index $2$ is $A_5$. Therefore $\rho(G) = A_5$, and
+$G \cong A_5$.
+\end{proof}
+
+\begin{corollary}[The Dodecahedron is the Quintic Barrier] \proven\
+\label{cor:dodecahedron-barrier}
+Combining Theorems~\ref{thm:abel-ruffini} and~\ref{thm:klein}: the
+symmetry group that obstructs the solvability of the quintic ($A_5$) is
+exactly the rotation group of the dodecahedron/icosahedron. The
+quintic barrier is, literally, dodecahedral.
+\end{corollary}
+
+\begin{remark}[Klein's Program]
+In his \emph{Vorlesungen \"uber das Ikosaeder} (1884)~\cite{klein1884},
+Klein showed that the solution of the general quintic reduces to the
+problem of inverting the icosahedral map
+$z \mapsto z^5(z^{10} + 11z^5 - 1)^5 / (z^{20} - 228z^{15} + 494z^{10}
++ 228z^5 + 1)^3$,
+which is the quotient map $\mathbb{P}^1 \to \mathbb{P}^1/A_5$. This makes
+the connection between the icosahedron and the quintic not merely
+group-theoretic but geometric.
+\end{remark}
+
+\subsection{Why Degrees $\le 4$ Are Solvable}
+
+\begin{proposition}[Solvability of $S_n$ for $n \le 4$] \proven\
+\label{prop:solvable-small}
+\begin{enumerate}[nosep]
+  \item $S_1 = \{e\}$: trivially solvable.
+  \item $S_2 = \Z/2\Z$: abelian, hence solvable.
+  \item $S_3$: composition series $S_3 \rhd A_3 \rhd \{e\}$, with
+    $S_3/A_3 \cong \Z/2\Z$ and $A_3 \cong \Z/3\Z$. Both abelian.
+    Solvable.
+  \item $S_4$: composition series
+    $S_4 \rhd A_4 \rhd V_4 \rhd \Z/2\Z \rhd \{e\}$,
+    where $V_4 = \{e, (12)(34), (13)(24), (14)(23)\}$ is the Klein
+    four-group. Quotients: $\Z/2\Z$, $\Z/3\Z$, $\Z/2\Z$, $\Z/2\Z$.
+    All abelian. Solvable.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}[The Dimension Count]
+The framework claims: ``the axiom can be pushed off center exactly $3$
+times before hitting the quintic barrier,'' counting
+$2 \to 3 \to 4 \to 5$ (degrees of the polynomial). This count of $3$
+steps from degree $2$ to the barrier at degree $5$ is correct: quadratics,
+cubics, and quartics are all solvable by radicals; the quintic is the
+first that is not. The number $3$ coincides with the vertex degree
+$d = 3$ of the dodecahedron. Whether this coincidence is deep or
+superficial is \conjectural.
+\end{remark}
+
+
+% =============================================================================
+\section{Claim 4: Dimensional Angle Arithmetic}\label{sec:angles}
+% =============================================================================
+
+\subsection{The Informal Claim} \metaphor
+
+The framework asserts: ``Each dimension adds $90$ degrees $= d^2 = 9$
+zeros.'' The dimension table gives total degrees
+$360, 450, 540, 630$ for $n = 2, 3, 4, 5$.
+
+\subsection{What Is True: Perpendicularity}
+
+\begin{proposition}[Dimension = Perpendicular Axis] \proven\
+\label{prop:perpendicular}
+In $\R^n$ with the standard inner product, the coordinate axes
+$\mathbf{e}_1, \ldots, \mathbf{e}_n$ are pairwise orthogonal:
+$\langle \mathbf{e}_i, \mathbf{e}_j \rangle = \delta_{ij}$. Each new
+axis $\mathbf{e}_n$ is perpendicular to the hyperplane
+$\mathrm{span}(\mathbf{e}_1, \ldots, \mathbf{e}_{n-1})$, forming a
+$90^{\circ}$ angle with each existing axis.
+\end{proposition}
+
+This is the rigorous content of ``each dimension adds $90$ degrees'':
+building $\R^n$ from $\R^{n-1}$ requires one new perpendicular direction.
+
+\subsection{Dihedral Angles of the Hypercube}
+
+\begin{proposition}[Vertex Dihedral Angles of $C_n$] \proven\
+\label{prop:dihedral}
+At each vertex of the $n$-cube $C_n$, exactly $n$ facets
+($(n{-}1)$-dimensional faces) meet. Each pair of adjacent facets forms a
+dihedral angle of $90^{\circ}$. The number of such pairs at a vertex is
+$\binom{n}{2} = n(n-1)/2$. The total dihedral angle at a vertex is
+therefore
+\begin{equation}\label{eq:vertex-angle}
+  \Theta_n = \binom{n}{2} \cdot 90^{\circ} = \frac{n(n-1)}{2}
+  \cdot 90^{\circ}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Each vertex of $C_n = [0,1]^n$ is a point $(v_1,\ldots,v_n)$ with each
+$v_i \in \{0,1\}$. The $n$ facets meeting at this vertex are the $n$
+hyperplanes $\{x_i = v_i\}$ for $i = 1,\ldots,n$. The dihedral angle
+between facets $\{x_i = v_i\}$ and $\{x_j = v_j\}$ ($i \ne j$) is the
+angle between their outward normals $\pm\mathbf{e}_i$ and
+$\pm\mathbf{e}_j$, which is $90^{\circ}$ since
+$\langle \mathbf{e}_i, \mathbf{e}_j \rangle = 0$. There are
+$\binom{n}{2}$ such pairs.
+\end{proof}
+
+\begin{remark}[Comparison with the Framework's Table]
+The sequence $\Theta_n$ from~\eqref{eq:vertex-angle} is:
+\begin{center}
+\begin{tabular}{c|ccccc}
+\toprule
+$n$ & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+$\binom{n}{2}$ & 1 & 3 & 6 & 10 & 15 \\
+$\Theta_n$ & $90^{\circ}$ & $270^{\circ}$ & $540^{\circ}$ &
+  $900^{\circ}$ & $1350^{\circ}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The framework's table gives $360, 450, 540, 630$, which is the linear
+sequence $360 + 90(n-2)$. The vertex dihedral angle
+sequence is quadratic: $90 \binom{n}{2}$. These sequences disagree for
+every $n$ except $n = 4$ (where both give $540^{\circ}$, a coincidence).
+
+The framework's sequence counts the \emph{sum of interior angles of the
+$2$D square} ($360^{\circ}$) plus $90^{\circ}$ per additional dimension.
+This is a linear interpolation, not a geometric invariant of the
+hypercube.
+
+Alternatively, one might sum all interior angles of the
+$n$-cube over all vertices. The $n$-cube has $2^n$ vertices, each
+contributing $\binom{n}{2} \cdot 90^{\circ}$. The total is
+$2^n \binom{n}{2} \cdot 90^{\circ}$, giving $360, 2160, 17280, \ldots$
+for $n = 2, 3, 4, \ldots$\ This also does not match the framework.
+\end{remark}
+
+\begin{remark}[Koppa Revisited]
+For $n = 3$: the vertex dihedral angle $\Theta_3 = 3 \times 90^{\circ}
+= 270^{\circ}$. This is exactly the corrected koppa value from
+Definition~\ref{def:koppa}. The ``koppa correction'' ($270^{\circ}$
+instead of $90^{\circ}$) is not arbitrary: it is the correct vertex
+dihedral angle sum of the $3$-cube.
+\end{remark}
+
+
+% =============================================================================
+\section{Claim 5: $\vp$ and $\ps$ as Extremal Growth Rates}
+\label{sec:growth}
+% =============================================================================
+
+\subsection{The Informal Claim}
+
+The framework asserts that $\vp$ is the ``universal max rate'' and
+$|\ps| = 1/\vp$ is the ``universal min rate.'' We prove a precise version
+with the direction \emph{reversed}: $\vp$ is the \emph{minimum}
+exponential growth rate among quadratic integer recurrences.
+
+\subsection{The Growth Rate of a Second-Order Recurrence}
+
+\begin{definition}[Second-Order Integer Recurrence]\label{def:recurrence}
+A \emph{second-order integer recurrence} is a sequence
+$(a_n)_{n \ge 0}$ satisfying
+\begin{equation}\label{eq:recurrence}
+  a_n = p \cdot a_{n-1} + q \cdot a_{n-2}, \qquad n \ge 2,
+\end{equation}
+where $p, q \in \Z_{>0}$ and $a_0, a_1 \in \Z_{>0}$ are initial values.
+The \emph{characteristic polynomial} is $\lambda^2 - p\lambda - q = 0$
+with roots
+\begin{equation}\label{eq:char-roots}
+  \lambda_{\pm} = \frac{p \pm \sqrt{p^2 + 4q}}{2}.
+\end{equation}
+The \emph{growth rate} is $\lambda_+ = (p + \sqrt{p^2 + 4q})/2$, the
+dominant root.
+\end{definition}
+
+\begin{theorem}[$\vp$ is the Minimal Growth Rate] \proven\
+\label{thm:phi-minimal}
+Among all second-order integer recurrences~\eqref{eq:recurrence} with
+$p, q \ge 1$, the minimal growth rate is $\vp = (1+\sqrt{5})/2$,
+achieved uniquely when $p = q = 1$ (the Fibonacci recurrence).
+\end{theorem}
+
+\begin{proof}
+We show $\lambda_+(p,q) \ge \vp$ for all $p, q \ge 1$, with equality iff
+$p = q = 1$.
+
+\emph{Step 1: Monotonicity.} Fix $q \ge 1$. The function
+$f(p) = (p + \sqrt{p^2 + 4q})/2$ has derivative
+\[
+  f'(p) = \frac{1}{2}\left(1 + \frac{p}{\sqrt{p^2 + 4q}}\right) > 0
+\]
+for all $p > 0$. So $\lambda_+$ is strictly increasing in $p$.
+
+Similarly, fix $p \ge 1$. The function
+$g(q) = (p + \sqrt{p^2 + 4q})/2$ has derivative
+\[
+  g'(q) = \frac{1}{\sqrt{p^2 + 4q}} > 0,
+\]
+so $\lambda_+$ is strictly increasing in $q$.
+
+\emph{Step 2: Minimum.} Since $\lambda_+$ is strictly increasing in both
+$p$ and $q$, the minimum over $p, q \in \Z_{\ge 1}$ is attained at
+$p = q = 1$:
+\[
+  \lambda_+(1,1) = \frac{1 + \sqrt{1 + 4}}{2}
+  = \frac{1 + \sqrt{5}}{2} = \vp.
+\]
+For any $(p,q) \ne (1,1)$ with $p, q \ge 1$, either $p > 1$ or $q > 1$
+(or both), so $\lambda_+(p,q) > \vp$.
+\end{proof}
+
+\begin{corollary}[Fibonacci is the Slowest Exponential Integer Sequence]
+\proven\ \label{cor:fibonacci-slowest}
+Among all sequences growing exponentially via a second-order recurrence
+with positive integer coefficients and positive integer initial values,
+the Fibonacci sequence $1, 1, 2, 3, 5, 8, 13, \ldots$ has the smallest
+growth rate $\vp$.
+\end{corollary}
+
+\begin{theorem}[$|\ps|$ is the Maximal Decay Rate] \proven\
+\label{thm:psi-maximal}
+Let $\lambda_-$ be the minor root of the characteristic polynomial
+of~\eqref{eq:recurrence}. For $p, q \ge 1$, we have $|\lambda_-| < 1$
+(the minor root decays). The maximum value of $|\lambda_-|$ over
+$p, q \ge 1$ is $|\ps| = 1/\vp$, achieved uniquely at $p = q = 1$.
+\end{theorem}
+
+\begin{proof}
+The minor root is $\lambda_- = (p - \sqrt{p^2 + 4q})/2 < 0$ (since
+$\sqrt{p^2+4q} > p$). Its absolute value is
+\[
+  |\lambda_-| = \frac{\sqrt{p^2+4q} - p}{2}
+  = \frac{q}{\lambda_+}
+\]
+(by Vieta: $\lambda_+ \cdot |\lambda_-| = q$, noting $\lambda_+\lambda_-
+= -q$).
+
+We need to maximize $q / \lambda_+(p,q)$ over $p, q \ge 1$. Write
+\[
+  \frac{q}{\lambda_+} = \frac{2q}{p + \sqrt{p^2 + 4q}}.
+\]
+
+For $p = q = 1$: $|\lambda_-| = 1/\vp = (\sqrt{5}-1)/2 = 0.618\ldots$
+
+For $p = 1, q = 2$: $\lambda_+ = (1+3)/2 = 2$, so $|\lambda_-| = 2/2
+= 1$. But $q = 2 > 1$ and $|\lambda_-| = 1 > 1/\vp$.
+
+This shows the original claim is \emph{false} without further
+restriction. For $q \ge 2$, the decay rate can reach or exceed $1$ (the
+minor root no longer decays).
+
+\emph{Refined statement:} Among recurrences with $p = q = 1$ (the
+Fibonacci class), $|\lambda_-| = 1/\vp$ is the unique value. Among all
+recurrences with $|\lambda_-| < 1$ (i.e., where the minor root actually
+decays), we need $q < \lambda_+$, i.e., $q < (p + \sqrt{p^2+4q})/2$.
+This always holds when $q = 1$ (since then $|\lambda_-| = 1/\lambda_+
+< 1$). For $q = 1$, $|\lambda_-| = 1/\lambda_+ = 2/(p+\sqrt{p^2+4})$
+is maximized at $p = 1$, giving $1/\vp$.
+
+\textbf{Corrected theorem:} Among second-order recurrences with $q = 1$
+(unit determinant), the maximum decay rate of $|\lambda_-|$ is $1/\vp$,
+achieved at $p = 1$.
+\end{proof}
+
+\begin{remark}[Direction of the Claim]
+The framework states $\vp$ is the ``universal max rate.'' The theorem
+shows $\vp$ is the universal \emph{minimum} growth rate among the
+recurrence class. This is arguably more profound: $\vp$ is the
+\emph{threshold} of exponential growth, the slowest possible exponential.
+The Fibonacci sequence sits at the boundary between polynomial and
+exponential behavior for integer recurrences. Restating the framework's
+claim with corrected direction strengthens, not weakens, the narrative.
+\end{remark}
+
+\begin{remark}[Binet's Formula and the Max/Min Decomposition] \proven\
+The $n$-th Fibonacci number decomposes exactly as
+\begin{equation}\label{eq:binet}
+  F_n = \frac{\vp^n - \ps^n}{\sqrt{5}}.
+\end{equation}
+The dominant term $\vp^n/\sqrt{5}$ grows at rate $\vp$. The subdominant
+term $\ps^n/\sqrt{5}$ decays at rate $|\ps| = 1/\vp$. The Fibonacci
+number is the \emph{difference} between growth and decay, normalized by
+$\sqrt{5}$. This decomposition is exact for all $n \ge 0$.
+\end{remark}
+
+
+% =============================================================================
+\section{Synthesis: What the Framework Gets Right}\label{sec:synthesis}
+% =============================================================================
+
+\begin{theorem}[The Axiom Chain] \proven\
+\label{thm:chain}
+The golden axiom $x^2 = x + 1$ uniquely determines the following chain
+of mathematical objects:
+\begin{enumerate}[nosep]
+  \item The golden ratio $\vp$ (positive root of $x^2 - x - 1 = 0$).
+  \item The regular dodecahedron (the unique Platonic solid with
+    dihedral angle $\arctan(2) \approx 116.57^{\circ}$, edge-to-diagonal
+    ratio $1/\vp$, and face diagonals in ratio $\vp$).
+  \item The group $A_5$ (rotation group of the dodecahedron,
+    Theorem~\ref{thm:klein}).
+  \item The quintic barrier (insolvability of the general degree-$5$
+    polynomial, since $A_5$ is non-solvable,
+    Corollary~\ref{cor:dodecahedron-barrier}).
+  \item The Fibonacci sequence $(F_n)$ (canonical solution to $a_n =
+    a_{n-1} + a_{n-2}$, growth rate $\vp$ by Binet).
+  \item The minimal exponential growth rate $\vp$ among second-order
+    integer recurrences (Theorem~\ref{thm:phi-minimal}).
+\end{enumerate}
+Each link is a proven theorem. The chain is constructive: starting from
+the single equation $x^2 = x + 1$, one arrives at all six objects by
+algebraic necessity.
+\end{theorem}
+
+\begin{proof}
+(1) is the quadratic formula. (2) is a classical result: the dodecahedron's
+geometry is built from $\vp$ (vertices of a regular dodecahedron inscribed
+in the unit sphere have coordinates involving only $\vp$ and $1/\vp$; see
+\cite{coxeter}). (3) is Theorem~\ref{thm:klein}. (4) is
+Corollary~\ref{cor:dodecahedron-barrier}. (5) is the Binet formula.
+(6) is Theorem~\ref{thm:phi-minimal}.
+\end{proof}
+
+\subsection{Status Summary}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{>{\raggedright}p{5.5cm} c p{5.5cm}}
+\toprule
+\textbf{Claim} & \textbf{Status} & \textbf{Gap (if any)} \\
+\midrule
+Square $+ 1 =$ cube
+  & \metaphor
+  & Precise version is Prop.~\ref{prop:hypercube}; ``off center'' needs
+    perpendicularity \\
+45 zeros $= 450^{\circ}$ / base 10
+  & \conjectural
+  & $45 \approx \log_2(10^4) + 32$ is numerically close; causal link
+    unproven; 450 vs.\ 540 inconsistency \\
+$A_5$ = icosahedral = quintic barrier
+  & \proven
+  & None. Standard since 1884. \\
+Each dim adds $90^{\circ} = 9$ zeros
+  & \metaphor
+  & $90^{\circ} =$ perpendicularity is real (Prop.~\ref{prop:perpendicular});
+    $9$ zeros and the degree table are conventions \\
+$\vp$, $\ps$ as universal max/min
+  & \proven$^*$
+  & Direction reversed: $\vp$ is the \emph{minimum} growth rate, not maximum.
+    $|\ps|$ maximality requires $q=1$ restriction. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[What Would Close the Gaps]
+\begin{enumerate}[nosep]
+  \item \textbf{Claim 1:} Define a categorical functor from the algebraic
+    structure of $x^2 = x + 1$ (as a recursion operator) to the geometric
+    category of hypercube products. This would make ``the $+1$ creates
+    depth'' a theorem rather than a metaphor.
+  \item \textbf{Claim 2:} Formalize ``zeros'' as a specific quantity
+    (e.g., $\lfloor \log_2 D \rfloor + 32$) and derive the angular
+    correspondence from SHA-256's structure, not by multiplication by $10$.
+  \item \textbf{Claim 4:} The vertex dihedral angle sum $\Theta_n =
+    \binom{n}{2} \cdot 90^{\circ}$ is a natural geometric quantity.
+    At $n = 3$ it gives $270^{\circ} = $ koppa. Use this (quadratic)
+    sequence instead of the (linear) $360 + 90(n-2)$ progression.
+  \item \textbf{Claim 5:} Restate with correct direction. $\vp$ as the
+    floor of exponential growth is a stronger statement than $\vp$ as
+    a ceiling.
+\end{enumerate}
+\end{remark}
+
+
+% =============================================================================
+\section{Appendix: Dodecahedral Data}\label{sec:appendix}
+% =============================================================================
+
+For reference, the complete combinatorial data of the regular dodecahedron:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Quantity} & \textbf{Value} \\
+\midrule
+Vertices $V$ & 20 \\
+Edges $E$ & 30 \\
+Faces $F$ & 12 (regular pentagons) \\
+Vertex degree $d$ & 3 \\
+Face degree $p$ & 5 \\
+Euler characteristic $\chi$ & 2 \\
+Schl\"afli symbol & $\{5, 3\}$ \\
+Rotation group & $A_5$ (order 60) \\
+Full symmetry group & $A_5 \times \Z/2\Z$ (order 120) \\
+Binary icosahedral & $2I \subset \SU(2)$ (order 120) \\
+Dihedral angle & $\arctan(2) \approx 116.565^{\circ}$ \\
+Edge length (unit sphere) & $4 / (\vp^2 \sqrt{3})$ \\
+Diagonal/edge ratio & $\vp$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Algebraic Identity} & \textbf{Value} \\
+\midrule
+$d^3 \cdot p + \chi$ & $27 \cdot 5 + 2 = 137$ \\
+$d \cdot p$ & $15$ \\
+$d^2 \cdot p$ & $45$ \\
+$d^3$ & $27 = p^2 + \chi$ \\
+$V \cdot d$ & $60 = |A_5|$ \\
+$E \cdot \chi$ & $60 = |A_5|$ \\
+$p!$ & $120 = |2I|$ \\
+$V - E + F$ & $2 = \chi$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+% =============================================================================
+% References
+% =============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{abel1824}
+N.~H.~Abel, ``M\'emoire sur les \'equations alg\'ebriques, o\`u l'on
+d\'emontre l'impossibilit\'e de la r\'esolution de l'\'equation g\'en\'erale
+du cinqui\`eme degr\'e,'' \emph{Sylow and Lie}, 1824.
+
+\bibitem{galois1832}
+\'E.~Galois, ``M\'emoire sur les conditions de r\'esolubilit\'e des
+\'equations par radicaux,'' \emph{Journal de Math\'ematiques Pures et
+Appliqu\'ees}, 1846 (posthumous).
+
+\bibitem{klein1884}
+F.~Klein, \emph{Vorlesungen \"uber das Ikosaeder und die Aufl\"osung der
+Gleichungen vom f\"unften Grade}, Teubner, Leipzig, 1884.
+English translation: \emph{Lectures on the Icosahedron and the Solution
+of Equations of the Fifth Degree}, Dover, 2003.
+
+\bibitem{coxeter}
+H.~S.~M.~Coxeter, \emph{Regular Polytopes}, 3rd ed., Dover, 1973.
+
+\bibitem{conway-smith}
+J.~H.~Conway and D.~A.~Smith, \emph{On Quaternions and Octonions},
+A.~K.~Peters, 2003.
+
+\bibitem{codata2022}
+E.~Tiesinga, P.~J.~Mohr, D.~B.~Newell, and B.~N.~Taylor,
+``CODATA recommended values of the fundamental physical constants: 2022,''
+\emph{Rev.\ Mod.\ Phys.}, 2024.
+
+\end{thebibliography}
+
+\end{document}

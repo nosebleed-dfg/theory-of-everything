@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History of the Axiom: x² = x + 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    color: #c8c8d0;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    color: #d4a843;
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+    margin-bottom: 60px;
+    font-size: 16px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-right: 60px;
+  }
+
+  .timeline::after {
+    content: '';
+    position: absolute;
+    right: 24px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      #d4a843 0%,
+      #d4a843 10%,
+      #555 30%,
+      #555 70%,
+      #d4a843 90%,
+      #d4a843 100%
+    );
+  }
+
+  .entry {
+    position: relative;
+    margin-bottom: 50px;
+    padding-right: 50px;
+  }
+
+  .entry::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: 8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #d4a843;
+    background: #0a0a0f;
+    margin-right: 42px;
+    z-index: 1;
+  }
+
+  .entry.golden::after {
+    background: #d4a843;
+    box-shadow: 0 0 12px #d4a843;
+  }
+
+  .entry .year {
+    font-family: 'JetBrains Mono', monospace;
+    color: #d4a843;
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+
+  .entry .name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #e8e8f0;
+    margin-bottom: 8px;
+  }
+
+  .entry .desc {
+    color: #a0a0a8;
+    font-size: 17px;
+  }
+
+  .entry .desc em {
+    color: #c8c8d0;
+  }
+
+  .entry .desc strong {
+    color: #d4a843;
+    font-weight: 600;
+  }
+
+  .axiom-line {
+    font-family: 'JetBrains Mono', monospace;
+    color: #d4a843;
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  .final {
+    text-align: center;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid #333;
+  }
+
+  .final p {
+    font-style: italic;
+    color: #888;
+    font-size: 18px;
+  }
+
+  .final .eq {
+    font-family: 'JetBrains Mono', monospace;
+    color: #d4a843;
+    font-size: 24px;
+    margin: 20px 0;
+    letter-spacing: 4px;
+  }
+
+  .dfg {
+    font-family: 'JetBrains Mono', monospace;
+    color: #555;
+    font-size: 12px;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<h1>HISTORY OF THE AXIOM</h1>
+<p class="subtitle">x² = x + 1 — A timeline of humanity's encounter with the fundamental equation</p>
+
+<div class="timeline">
+
+  <div class="entry golden">
+    <div class="year">~530 BC</div>
+    <div class="name">Pythagoras</div>
+    <div class="desc"><em>"All is number."</em> Founded the school on a single doctrine: the universe is constituted by mathematics, not merely described by it. Discovered musical harmony from integer ratios. His students found that the diagonal of a unit square is irrational — from a 1-by-2 rectangle: 1² + 2² = 5. The square root of 5 leads directly to phi.</div>
+    <div class="axiom-line">→ the conviction</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">~300 BC</div>
+    <div class="name">Euclid</div>
+    <div class="desc">Defined <strong>"extreme and mean ratio"</strong> in the <em>Elements</em> — a line divided so the whole is to the larger part as the larger is to the smaller. This is phi. Book XIII proved the dodecahedron and icosahedron are built from it. Twelve pentagonal faces, twenty vertices, thirty edges. The axiom's first geometric body.</div>
+    <div class="axiom-line">→ the geometry</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1202</div>
+    <div class="name">Fibonacci</div>
+    <div class="desc"><em>Liber Abaci.</em> The rabbit problem: 1, 1, 2, 3, 5, 8, 13, 21... Defined by <strong>F(n+2) = F(n+1) + F(n)</strong>. The ratio converges to phi. The recurrence IS x² = x + 1 in discrete form. Fibonacci thought he was counting rabbits. He was watching the axiom iterate.</div>
+    <div class="axiom-line">→ the recurrence</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1611</div>
+    <div class="name">Kepler</div>
+    <div class="desc"><em>Strena Seu De Nive Sexangula.</em> Documented Fibonacci numbers in plant spirals — sunflower heads show 34 and 55, pinecones show 8 and 13. The golden angle: 360°/phi² = 137.5°. Saw the axiom written in living tissue. Didn't have the math to explain why.</div>
+    <div class="axiom-line">→ the biology</div>
+  </div>
+
+  <div class="entry golden">
+    <div class="year">1734</div>
+    <div class="name">Euler</div>
+    <div class="desc">Computed <strong>gamma = 0.5772...</strong> — the gap between the harmonic series and the natural logarithm. The bridge between addition and multiplication. The residue left when you try to see a multiplicative world through additive eyes. Also: e<sup>iπ</sup> + 1 = 0. He found the illusion constant without knowing what it was.</div>
+    <div class="axiom-line">→ the illusion</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1796</div>
+    <div class="name">Gauss</div>
+    <div class="desc">Age 19: proved the regular 17-gon is constructible. The cyclotomic polynomial <strong>x² − x + 1</strong> (6th roots of unity) is the companion to the golden polynomial x² − x − 1. One encodes rotation, the other encodes growth. Together they factor the machine's characteristic polynomial. Gauss built the cyclotomic half.</div>
+    <div class="axiom-line">→ the companion</div>
+  </div>
+
+  <div class="entry golden">
+    <div class="year">1859</div>
+    <div class="name">Riemann</div>
+    <div class="desc">Nine pages. All nontrivial zeros of zeta lie on <strong>Re(s) = 1/2</strong>. The critical line is the equator of the golden structure — where additive and multiplicative are in perfect destructive interference. The axiom evaluated at x = 1/2 gives a contradiction. The zeros are the scars.</div>
+    <div class="axiom-line">→ the critical line</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1872</div>
+    <div class="name">Dedekind</div>
+    <div class="desc">Made phi a legitimate mathematical object via Dedekind cuts. Legitimized <strong>Z[phi] = {a + b·phi}</strong> as an algebraic number ring. In Z[phi], the axiom phi² = phi + 1 is not an equation to solve — it's an identity that defines the arithmetic. The axiom got its algebraic home.</div>
+    <div class="axiom-line">→ the ring</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1904</div>
+    <div class="name">Poincaré</div>
+    <div class="desc">Constructed the Poincaré homology sphere: <strong>S³ / 2I</strong>, the 3-sphere quotiented by the binary icosahedral group (order 120). A dodecahedron with opposite faces identified. The axiom's topology — a three-manifold whose symmetry group is married to phi since Euclid.</div>
+    <div class="axiom-line">→ the topology</div>
+  </div>
+
+  <div class="entry golden">
+    <div class="year">1936</div>
+    <div class="name">Turing</div>
+    <div class="desc">Defined the abstract machine: read symbol, execute instruction, move one cell forward. <strong>State n produces state n+1.</strong> This is x² = x + 1 as mechanism — the future is the present compounded by a single step. Proved such a machine can compute anything computable. The minimal architecture of thought.</div>
+    <div class="axiom-line">→ the machine</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1939</div>
+    <div class="name">Zeckendorf</div>
+    <div class="desc">Every positive integer has a <strong>unique representation as non-consecutive Fibonacci numbers</strong>. Not optional — a theorem. The natural numbers are natively golden-encoded. Every integer decomposes into the language of x² = x + 1.</div>
+    <div class="axiom-line">→ the encoding</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1948</div>
+    <div class="name">Shannon</div>
+    <div class="desc">Founded information theory. The bit: 0 or 1. XOR. Entropy is additive. <strong>Information is counting forward</strong> — the axiom in its most primitive form: n + 1. The entire apparatus of communication rests on the additive structure the axiom encodes.</div>
+    <div class="axiom-line">→ the bit</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">1974</div>
+    <div class="name">Penrose</div>
+    <div class="desc">Aperiodic tilings: kite and dart at 36° and 72°. The ratio of kites to darts is <strong>phi</strong>. Five-fold symmetry, forbidden in periodic crystals. Shechtman found it in metal (1984, Nobel 2011). The axiom tiling the plane — everywhere ordered, nowhere repeating.</div>
+    <div class="axiom-line">→ the quasicrystal</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">2001</div>
+    <div class="name">NIST / SHA-256</div>
+    <div class="desc">64 rounds of deliberate destruction. Rotations, XOR, modular addition. Designed to annihilate structure. <strong>The axiom survives inside</strong>: det = −1 every round, phase inversion at round 60 = |A5|, char_poly factors golden × cyclotomic. Cryptographers built a fortress on the dodecahedron without noticing.</div>
+    <div class="axiom-line">→ the fortress</div>
+  </div>
+
+  <div class="entry">
+    <div class="year">2003</div>
+    <div class="name">Perelman</div>
+    <div class="desc">Proved the Poincaré conjecture via Ricci flow. The topology of 3-manifolds resolves to eight geometries. The dodecahedral space — <strong>S³ / 2I</strong> — is one of the canonical pieces. The axiom's topology is proven irreducible.</div>
+    <div class="axiom-line">→ the proof</div>
+  </div>
+
+  <div class="entry golden">
+    <div class="year">APRIL 2026</div>
+    <div class="name">nos3bl33d / DeadFoxGroup</div>
+    <div class="desc">Eight days. Zero prior algebra. One equation: <strong>x² = x + 1</strong>. Derived: alpha to 0.000001 ppb from the dodecahedron. Universe radius 13.80 Gly from 2·phi²⁹⁰·l_P. SHA-256 break via Z[phi] — GF(2) preimage recovered, 112 equations > 80 unknowns. The bridge: <strong>(1/gamma)⁴ = 9 = the machine</strong>. Cryptography = XOR illusion. Linear algebra = counting forward. All is number.</div>
+    <div class="axiom-line">→ the connection</div>
+  </div>
+
+</div>
+
+<div class="final">
+  <p>The axiom was always there. Every generation saw a piece.</p>
+  <p>April 2026: the pieces connected.</p>
+  <div class="eq">x² = x + 1</div>
+  <div class="dfg">(DFG) DeadFoxGroup</div>
+</div>
+
+</body>
+</html>
