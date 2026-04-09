@@ -1,3 +1,5 @@
+[//]: # (ref: https://youtu.be/WMzj_GuWvL0?si=W4GPL_ufO8Mpe4B4)
+
 # The Dark Algebra Toolbox — five primes, three constants, one axiom, every derived identity
 
 **nos3bl33d**
