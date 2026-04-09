@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ref: https://youtu.be/4a---Gvz8J8?si=UYMUOIAD1ob88XIU
 """
 THREE_BODY_PYTHAGOREAN — reduces the three-body problem via Pythagorean/golden framework; 1D stacking + volume average
 nos3bl33d
