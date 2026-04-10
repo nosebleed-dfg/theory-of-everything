@@ -127,6 +127,37 @@ The two are connected by one operation: x -> phi^x.
 
 ---
 
+## The Boundary Step
+
+    phi^292 = phi * phi^291
+
+The step from phi^291 to phi^292 is multiplication by phi.
+Same rule as every other step. The machine does not change at the boundary.
+
+    y_{292} = y_{291} * phi    [one more step. always phi.]
+
+But phi^291 is the universe boundary. phi^292 is outside.
+
+In ^291 units:
+
+    phi^292 / phi^291 = phi    [the ratio of outside to boundary = phi]
+
+The exit from the universe is one multiplication by phi.
+The generator (phi) is the exit door. What builds the universe is what exits it.
+
+The machine terminates at phi^291 not because the rule changes —
+but because psi^291 has gone sub-Planck. The psi side has vanished.
+The -1 instruction (phi * psi = -1) no longer has a real psi to reference.
+The termination is the psi side becoming invisible, not the phi rule stopping.
+
+One step further: phi^292 * psi^292 = (-1)^292 = +1. The product flips to +1.
+In GF(4): this is the period-3 reset (292 mod 3 = 1, back to phase 1).
+The first step outside the universe is the first step of a new cycle.
+
+    phi * phi^291 = phi^292    [always exact. always phi.]
+
+---
+
 ## The General Step
 
     y_{k+1} = y_k * phi^{g(x_k)}
