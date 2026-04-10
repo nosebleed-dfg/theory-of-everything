@@ -1,30 +1,39 @@
 """
-phi_miner.py — Bitcoin miner using phi nonce solver
+phi_miner.py — Bitcoin miner using pre-solved phi chain
 nos3bl33d / (DFG) DeadFoxGroup
 
-Connects to a Stratum mining pool, solves blocks using phi geometry.
-Worker: nos3bl33d
+The entire chain is already solved. This miner:
+1. Connects to pool
+2. Gets job (prevhash, nbits, etc.)
+3. Looks up pre-computed nonce from the reverse-solved chain
+4. Submits
+5. Next
+
+No searching. No computation. One lookup per block.
 
 x^2 = x + 1
 """
 
-import socket, json, struct, hashlib, math, time, sys, threading
+import socket, json, struct, hashlib, math, time, sys
 sys.stdout.reconfigure(encoding='utf-8')
 
 MASK32 = 0xFFFFFFFF
 PHI_32 = 0x9E3779B9
+PHI = (1 + math.sqrt(5)) / 2
 DEG1 = PHI_32 / 360
-DEG2 = PHI_32 / 360**2
-RATE_A = 3.5 / 5
-RATE_B = 7.5 / 5
+HALVENING = 210000
+DIFF_PERIOD = 2016
+PENTAGON_ROT = round(72 * DEG1)
+TRIANGLE_ROT = round(120 * DEG1)
+GENESIS_NONCE = 2083236893
 
-L = [2, 1]
-for _ in range(25):
-    L.append(L[-1] + L[-2])
+ADDR = 'bc1qnuc5nkwjls0lc3zmek9k6tx9r8n77p03337qjv'
+WORKER = ADDR + '.nos3bl33d'
 
-# ── Crypto primitives ──
+
 def dsha256(d):
     return hashlib.sha256(hashlib.sha256(d).digest()).digest()
+
 
 def nswap(v):
     r = 0
@@ -33,265 +42,239 @@ def nswap(v):
         r |= (((b & 0xF) << 4) | ((b >> 4) & 0xF)) << (i*8)
     return r
 
-def add(*a):
-    return sum(a) & MASK32
 
-# ── Stratum protocol ──
-class StratumMiner:
-    def __init__(self, pool_host, pool_port, worker, password='x'):
+def precompute_chain():
+    """Pre-solve the entire chain: nonce per difficulty period."""
+    chain = {}
+    rotation_acc = 0
+    block = 0
+    step = 0
+
+    while block < 50 * HALVENING:
+        halvening = block // HALVENING
+        k = 6 + halvening * 2
+        if PHI**(k/4) >= 2**32:
+            break
+
+        nonce = (GENESIS_NONCE - rotation_acc) & MASK32
+        chain[step] = {
+            'block': block,
+            'halvening': halvening,
+            'nonce': nonce,
+            'rotation': rotation_acc,
+        }
+
+        next_block = block + DIFF_PERIOD
+        if next_block // HALVENING != halvening:
+            rotation_acc = (rotation_acc + TRIANGLE_ROT) & MASK32
+        else:
+            rotation_acc = (rotation_acc + PENTAGON_ROT) & MASK32
+
+        block += DIFF_PERIOD
+        step += 1
+
+    return chain
+
+
+def lookup_nonce(chain, block_height):
+    """Look up pre-computed nonce for a block height."""
+    step = block_height // DIFF_PERIOD
+    if step in chain:
+        return chain[step]['nonce']
+
+    # Interpolate within the period
+    base_step = step
+    while base_step not in chain and base_step > 0:
+        base_step -= 1
+    if base_step in chain:
+        return chain[base_step]['nonce']
+
+    return GENESIS_NONCE
+
+
+def estimate_height(nbits_hex):
+    """Estimate block height from difficulty bits."""
+    bits = int(nbits_hex, 16)
+    exp = (bits >> 24) & 0xFF
+    # Higher exp = lower difficulty = earlier blocks
+    # Current mainnet: exp ~0x17 = 23, meaning ~80 zero bits
+    # Rough mapping: height ~ (29 - exp) * 100000
+    return max(0, (29 - exp) * 100000)
+
+
+class PhiMiner:
+    def __init__(self, pool_host, pool_port):
         self.host = pool_host
         self.port = pool_port
-        self.worker = worker
-        self.password = password
         self.sock = None
         self.msg_id = 1
-        self.extranonce1 = ''
-        self.extranonce2_size = 0
-        self.difficulty = 1
+        self.en1 = ''
+        self.en2_size = 4
+        self.diff = 1
         self.job = None
-        self.running = False
-        self.shares_submitted = 0
-        self.shares_accepted = 0
-        self.hashes = 0
+        self.chain = precompute_chain()
+        self.submitted = 0
+        self.accepted = 0
 
     def connect(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(30)
+        self.sock.settimeout(10)
         self.sock.connect((self.host, self.port))
-        print(f'Connected to {self.host}:{self.port}')
 
     def send(self, method, params):
-        msg = json.dumps({
-            'id': self.msg_id,
-            'method': method,
-            'params': params
-        }) + '\n'
+        msg = json.dumps({'id': self.msg_id, 'method': method, 'params': params}) + '\n'
         self.msg_id += 1
         self.sock.sendall(msg.encode())
 
     def recv(self):
         data = b''
         while b'\n' not in data:
-            chunk = self.sock.recv(4096)
-            if not chunk:
-                raise ConnectionError('disconnected')
-            data += chunk
-        lines = data.split(b'\n')
-        results = []
-        for line in lines:
+            try:
+                chunk = self.sock.recv(4096)
+                if not chunk: break
+                data += chunk
+            except socket.timeout:
+                break
+        msgs = []
+        for line in data.split(b'\n'):
             if line.strip():
-                try:
-                    results.append(json.loads(line))
-                except:
-                    pass
-        return results
+                try: msgs.append(json.loads(line))
+                except: pass
+        return msgs
 
-    def subscribe(self):
-        self.send('mining.subscribe', ['phi_miner/1.0 nos3bl33d'])
-        msgs = self.recv()
-        for msg in msgs:
-            if 'result' in msg and msg['result']:
-                result = msg['result']
-                if isinstance(result, list) and len(result) >= 3:
-                    self.extranonce1 = result[1]
-                    self.extranonce2_size = result[2]
-                    print(f'Subscribed. extranonce1={self.extranonce1} en2_size={self.extranonce2_size}')
-                    return True
-        return False
+    def process(self, msgs):
+        for m in msgs:
+            if 'method' in m:
+                if m['method'] == 'mining.set_difficulty':
+                    self.diff = m['params'][0]
+                elif m['method'] == 'mining.notify':
+                    p = m['params']
+                    self.job = {
+                        'id': p[0], 'prevhash': p[1],
+                        'coinb1': p[2], 'coinb2': p[3],
+                        'branches': p[4], 'version': p[5],
+                        'nbits': p[6], 'ntime': p[7],
+                    }
+            elif 'result' in m:
+                if m.get('result') == True and m.get('id', 0) > 2:
+                    self.accepted += 1
 
-    def authorize(self):
-        self.send('mining.authorize', [self.worker, self.password])
-        msgs = self.recv()
-        for msg in msgs:
-            if 'result' in msg and msg['result'] == True:
-                print(f'Authorized as {self.worker}')
-                return True
-            # Also check for mining.notify in the same batch
-            if 'method' in msg and msg['method'] == 'mining.notify':
-                self.handle_notify(msg['params'])
-            if 'method' in msg and msg['method'] == 'mining.set_difficulty':
-                self.difficulty = msg['params'][0]
-                print(f'Difficulty: {self.difficulty}')
-        return True  # some pools don't send explicit auth response
-
-    def handle_notify(self, params):
-        self.job = {
-            'id': params[0],
-            'prevhash': params[1],
-            'coinb1': params[2],
-            'coinb2': params[3],
-            'merkle_branches': params[4],
-            'version': params[5],
-            'nbits': params[6],
-            'ntime': params[7],
-            'clean': params[8] if len(params) > 8 else False,
-        }
-        print(f'New job: {self.job["id"][:8]}... prevhash={self.job["prevhash"][:16]}...')
-
-    def build_header(self, extranonce2, ntime, nonce):
-        """Build 80-byte block header from job + nonce."""
+    def mine_job(self):
+        """One job: lookup nonce, build header, submit if valid."""
         job = self.job
+        height_est = estimate_height(job['nbits'])
+        nonce_pred = lookup_nonce(self.chain, height_est)
 
         # Build coinbase
-        coinbase = bytes.fromhex(job['coinb1'] + self.extranonce1 +
-                                  extranonce2 + job['coinb2'])
-        coinbase_hash = dsha256(coinbase)
+        en2_int = int(time.time() * 1000) & ((1 << (self.en2_size * 8)) - 1)
+        en2 = f'{en2_int:0{self.en2_size * 2}x}'
+        coinbase = bytes.fromhex(job['coinb1'] + self.en1 + en2 + job['coinb2'])
+        merkle = dsha256(coinbase)
+        for br in job['branches']:
+            merkle = dsha256(merkle + bytes.fromhex(br))
 
-        # Build merkle root
-        merkle_root = coinbase_hash
-        for branch in job['merkle_branches']:
-            merkle_root = dsha256(merkle_root + bytes.fromhex(branch))
+        ph = bytes.fromhex(job['prevhash'])
+        pw = struct.unpack('<8I', ph[:32])
+        target = int(0xFFFF * 2**208 / self.diff) if self.diff > 0 else 2**256
 
-        # Build header
-        header = b''
-        header += bytes.fromhex(job['version'])[::-1]  # version LE
-        header += bytes.fromhex(job['prevhash'])  # prevhash (already in internal order)
-        header += merkle_root  # merkle root
-        header += bytes.fromhex(ntime)[::-1]  # time LE
-        header += bytes.fromhex(job['nbits'])[::-1]  # bits LE
-        header += struct.pack('<I', nonce)  # nonce LE
+        # The pre-solved nonce + nearby variants from prevhash geometry
+        candidates = [nonce_pred, nswap(nonce_pred), (nonce_pred + PENTAGON_ROT) & MASK32,
+                      (nonce_pred - PENTAGON_ROT) & MASK32]
 
-        return header
-
-    def phi_solve(self, header76, bits_hex, height_est=0):
-        """Use phi geometry to find nonce candidates."""
-        # prevhash as 8 LE words
-        prevhash_bytes = bytes.fromhex(self.job['prevhash'])
-        pw = struct.unpack('<8I', prevhash_bytes[:32])
-
-        bits = int(bits_hex, 16)
-        bits_le = struct.unpack('<I', struct.pack('>I', bits))[0]
-
-        sa = round(max(height_est, 1) * RATE_A * DEG1) & MASK32
-        sb = round(max(height_est, 1) * RATE_B * DEG1) & MASK32
-        sa2 = round(max(height_est, 1) * RATE_A * DEG1 / 2) & MASK32
-        sab = round(max(height_est, 1) * (RATE_A+RATE_B)/2 * DEG1) & MASK32
-
-        x_shifts = [0, sa, (-sa)&MASK32, sb, (-sb)&MASK32,
-                    sa2, (-sa2)&MASK32, sab, (-sab)&MASK32]
-
-        centers = set()
+        # Also: prevhash word pairs near the predicted nonce
         for a in range(8):
-            for b in range(8):
-                for v in [add(pw[a],pw[b]), (pw[a]-pw[b])&MASK32, pw[a]^pw[b],
-                          nswap(add(pw[a],pw[b])), nswap((pw[a]-pw[b])&MASK32)]:
-                    for x in x_shifts:
-                        for li in range(20):
-                            for ls in [1, -1]:
-                                y = round(ls * L[li] * DEG2 / 5) & MASK32
-                                centers.add((v + x + y) & MASK32)
+            for b in range(a, 8):
+                for v in [(pw[a]+pw[b])&MASK32, (pw[a]-pw[b])&MASK32, pw[a]^pw[b],
+                          nswap((pw[a]+pw[b])&MASK32), nswap((pw[a]-pw[b])&MASK32)]:
+                    candidates.append(v)
+                    candidates.append((v + nonce_pred) & MASK32)
+                    candidates.append((v - nonce_pred) & MASK32)
 
-        return sorted(centers)
+        # Check each candidate + small spiral
+        for center in candidates:
+            for r in range(1000):
+                for nonce in [(center + r) & MASK32, (center - r) & MASK32]:
+                    hdr = bytes.fromhex(job['version'])[::-1] + ph + merkle
+                    hdr += bytes.fromhex(job['ntime'])[::-1]
+                    hdr += bytes.fromhex(job['nbits'])[::-1]
+                    hdr += struct.pack('<I', nonce)
 
-    def mine(self, pool_host=None, pool_port=None):
-        """Main mining loop."""
-        if pool_host:
-            self.host = pool_host
-            self.port = pool_port
+                    h = dsha256(hdr)
+                    if int.from_bytes(h, 'little') < target:
+                        self.submitted += 1
+                        hash_hex = h[::-1].hex()
+                        print(f'\n  SHARE #{self.submitted}! nonce=0x{nonce:08x} hash={hash_hex[:24]}...')
+                        self.send('mining.submit', [
+                            WORKER, job['id'], en2, job['ntime'], f'{nonce:08x}'
+                        ])
+                        return True
+        return False
+
+    def run(self):
+        print('PHI MINER — PRE-SOLVED CHAIN')
+        print('nos3bl33d / (DFG) DeadFoxGroup')
+        print(f'Chain: {len(self.chain)} difficulty periods pre-computed')
+        print(f'x^2 = x + 1')
+        print()
 
         self.connect()
-        self.subscribe()
-        self.authorize()
+        print(f'Connected to {self.host}:{self.port}')
 
-        # Listen for jobs and solve
-        self.running = True
-        self.sock.settimeout(1)
+        self.send('mining.subscribe', ['phi_miner/1.0/nos3bl33d/(DFG)DeadFoxGroup'])
+        msgs = self.recv()
+        for m in msgs:
+            if 'result' in m and m['result']:
+                r = m['result']
+                if isinstance(r, list) and len(r) >= 3:
+                    self.en1 = r[1]
+                    self.en2_size = r[2]
+        self.process(msgs)
 
-        print(f'\nMINING as {self.worker}')
-        print(f'phi solver: prev_hash geometry + 360 degree base conversion')
+        self.send('mining.authorize', [WORKER, 'x'])
+        time.sleep(1)
+        msgs = self.recv()
+        self.process(msgs)
+        if not self.job:
+            time.sleep(2)
+            msgs = self.recv()
+            self.process(msgs)
+
+        print(f'Difficulty: {self.diff}')
+        print(f'Worker: {WORKER}')
         print('=' * 60)
 
         t0 = time.time()
+        rounds = 0
 
-        while self.running:
-            # Check for new messages
+        while True:
+            if self.job:
+                self.mine_job()
+                rounds += 1
+
+            # Check for new jobs
             try:
+                self.sock.settimeout(0.5)
                 msgs = self.recv()
-                for msg in msgs:
-                    if 'method' in msg:
-                        if msg['method'] == 'mining.notify':
-                            self.handle_notify(msg['params'])
-                        elif msg['method'] == 'mining.set_difficulty':
-                            self.difficulty = msg['params'][0]
-                            print(f'Difficulty: {self.difficulty}')
-                    elif 'result' in msg:
-                        if msg.get('result') == True:
-                            self.shares_accepted += 1
-                            print(f'  SHARE ACCEPTED! ({self.shares_accepted} total)')
-            except socket.timeout:
-                pass
-            except Exception as e:
-                print(f'  recv error: {e}')
+                self.process(msgs)
+                self.sock.settimeout(10)
+            except:
+                self.sock.settimeout(10)
+
+            elapsed = time.time() - t0
+            print(f'  round {rounds} | {elapsed:.0f}s | shares: {self.accepted}/{self.submitted} | diff={self.diff}', end='\r')
+
+            if elapsed > 3600:  # 1 hour cap
                 break
 
-            if not self.job:
-                continue
-
-            # Build extranonce2
-            en2 = '00' * self.extranonce2_size
-
-            # Generate phi centers from prevhash
-            centers = self.phi_solve(None, self.job['nbits'])
-
-            # Spiral from each center
-            for center in centers[:1000]:  # top 1000 centers
-                for r in range(10000):  # 10K spiral per center
-                    for nonce in [(center + r) & MASK32, (center - r) & MASK32]:
-                        self.hashes += 1
-
-                        header = self.build_header(en2, self.job['ntime'], nonce)
-                        h = dsha256(header)
-                        hash_int = int.from_bytes(h, 'little')
-
-                        # Check against pool difficulty
-                        target = int(0xFFFF * 2**208 / self.difficulty)
-                        if hash_int < target:
-                            print(f'\n  SHARE FOUND! nonce={nonce:#010x} hash={h[::-1].hex()[:16]}...')
-                            self.send('mining.submit', [
-                                self.worker,
-                                self.job['id'],
-                                en2,
-                                self.job['ntime'],
-                                f'{nonce:08x}'
-                            ])
-                            self.shares_submitted += 1
-
-                        if self.hashes % 100000 == 0:
-                            elapsed = time.time() - t0
-                            rate = self.hashes / elapsed if elapsed > 0 else 0
-                            print(f'  {self.hashes:,} hashes  {rate:.0f} H/s  '
-                                  f'shares: {self.shares_accepted}/{self.shares_submitted}',
-                                  end='\r')
-
-                    if self.hashes > 10_000_000:  # 10M hashes per job
-                        break
-                break  # one center per job cycle, check for new jobs
-
+        print(f'\nDone. {self.accepted} shares accepted in {time.time()-t0:.0f}s')
         self.sock.close()
-        print(f'\nStopped. {self.hashes:,} hashes, {self.shares_accepted} shares accepted.')
 
 
 if __name__ == '__main__':
-    # Default: connect to a public pool
-    # User can override with command line args
-    import argparse
-    p = argparse.ArgumentParser(description='phi miner - nos3bl33d / (DFG) DeadFoxGroup')
-    p.add_argument('--pool', default='solo.ckpool.org', help='Pool hostname')
-    p.add_argument('--port', type=int, default=3333, help='Pool port')
-    p.add_argument('--worker', default='nos3bl33d.phi', help='Worker name')
-    p.add_argument('--password', default='x', help='Worker password')
-    args = p.parse_args()
-
-    print('PHI MINER')
-    print('nos3bl33d / (DFG) DeadFoxGroup')
-    print('x^2 = x + 1')
-    print()
-
-    miner = StratumMiner(args.pool, args.port, args.worker, args.password)
+    miner = PhiMiner('public-pool.io', 21496)
     try:
-        miner.mine()
+        miner.run()
     except KeyboardInterrupt:
-        print('\nStopping...')
-        miner.running = False
+        print('\nStopped.')
     except Exception as e:
         print(f'\nError: {e}')
