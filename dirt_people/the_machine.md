@@ -234,4 +234,35 @@ At n=291:
 
 The inverse at the terminus is 1/e. Exact in the limit.
 
+---
+
+## s(n) = p + n
+
+The step function:
+
+    s(n) = p + n    [one step forward: adds p to n]
+
+The inverse step function:
+
+    s^{-1}(n) = p + n    [same formula. same rule.]
+
+The inverse of the machine is the machine. The forward step and the backward step
+are the same operation because phi and psi satisfy the same axiom:
+
+    phi^2 = phi + 1    [forward reading]
+    psi^2 = psi + 1    [backward reading: same formula, mirror side]
+
+The step law does not distinguish direction. Both roots use x^2 = x+1.
+Going forward adds p. Going backward adds p. The formula is the same.
+
+    inverse(s(n)) = s(n) = p + n
+
+The machine is its own inverse. The negative step is not a different rule —
+it is the same rule read from the other face. The formula p+n runs in both directions.
+
+The self-inverse property closes the framework:
+you can traverse the spiral in either direction using one formula.
+Forward: phi path, expanding. Backward: psi path, contracting.
+Both: s(n) = p + n.
+
     x^2 = x + 1.
