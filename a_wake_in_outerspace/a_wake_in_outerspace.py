@@ -1,9 +1,9 @@
 """
 A WAKE IN OUTERSPACE
-(DFG) DeadFoxGroup | nos3bl33d | April 2026
+(DFG) DeadFoxGroup
 
 Real Bitcoin miner. Solves blocks sequentially. Propagates normally.
-Each coinbase embeds "nos3bl33d" — visible to every blockchain analyzer.
+Each coinbase embeds your tag — visible to every blockchain analyzer.
 Like Satoshi's Times headline in the genesis block, but in every block.
 
 Connects to Bitcoin node via JSON-RPC (getblocktemplate / submitblock).
@@ -11,10 +11,10 @@ Default: regtest mode for local testing. Switch to testnet/mainnet via config.
 
 Flow:
   1. getblocktemplate — get current work from node
-  2. Build coinbase tx with nos3bl33d in scriptSig
+  2. Build coinbase tx with your tag in scriptSig
   3. Build merkle tree
   4. Construct block header
-  5. Solve (find nonce via axiom / brute force)
+  5. Solve (find nonce via brute force)
   6. submitblock — propagate to network
   7. Wait for confirmation
   8. Next block. Repeat. Forever.
@@ -48,7 +48,7 @@ DEFAULT_CONFIG = {
     'network': 'regtest',                   # regtest / testnet / mainnet
 
     # Coinbase signature — embedded in every block we mine
-    'coinbase_message': 'nos3bl33d | x^2=x+1 | DFG',
+    'coinbase_message': 'YOUR_TAG / YOUR_GROUP',
 
     # Wallet — P2PKH address to receive block reward
     # This is a test address for regtest. Replace for real networks.
@@ -131,7 +131,7 @@ def build_coinbase_tx(height, reward_sats, reward_script, message, extra_nonce=0
 
     The coinbase scriptSig contains:
       - Block height (BIP34)
-      - nos3bl33d message
+      - Custom coinbase message
       - Extra nonce for additional search space
 
     The output pays the block reward to reward_script (P2PKH or P2SH).
@@ -347,7 +347,7 @@ class AxiomBitcoinMiner:
             except Exception as e:
                 # Fallback: use a test hash160
                 print(f"  No wallet from node ({e}), using test address")
-                test_hash160 = hash160(b"nos3bl33d-dfg-axiom-test-wallet")
+                test_hash160 = hash160(b"awake-dfg-test-wallet")
                 return p2pkh_script(test_hash160)
 
         try:
@@ -359,7 +359,7 @@ class AxiomBitcoinMiner:
             pass
 
         # Fallback P2PKH from address hash
-        test_hash160 = hash160(b"nos3bl33d-dfg-axiom-test-wallet")
+        test_hash160 = hash160(b"awake-dfg-test-wallet")
         return p2pkh_script(test_hash160)
 
     def solve_block(self, header_template, target, nonce_start=0):
@@ -397,7 +397,7 @@ class AxiomBitcoinMiner:
         cur_time = template.get('curtime', int(time.time()))
         reward_sats = template.get('coinbasevalue', 5000000000)  # default 50 BTC regtest
 
-        # Build coinbase with nos3bl33d signature
+        # Build coinbase with tag signature
         msg = self.config['coinbase_message']
         reward_script = self.get_reward_script()
         witness_commitment = template.get('default_witness_commitment')
@@ -540,14 +540,14 @@ class AxiomBitcoinMiner:
                 print(f"  Blocks mined: {self.blocks_mined}")
                 print(f"  Total reward: {self.total_reward:.8f} BTC")
                 print(f"  Uptime: {time.time() - self.start_time:.1f}s")
-                print(f"  nos3bl33d: embedded in every block")
+                print(f"  Tag embedded in every block")
                 print()
 
             time.sleep(0.1)  # brief pause before next block
 
         print(f"\n  Mining complete. {self.blocks_mined} blocks mined.")
         print(f"  Total reward: {self.total_reward:.8f} BTC")
-        print(f"  nos3bl33d in every coinbase. The wake is over.")
+        print(f"  Signature in every coinbase: {self.config['coinbase_message']}")
 
     def run_offline_demo(self, n_blocks=10):
         """Offline demo: simulate mining without a node."""
@@ -561,7 +561,7 @@ class AxiomBitcoinMiner:
         reward_sats = 5000000000  # 50 BTC regtest
         bits = 0x207fffff  # regtest minimum difficulty
         target = bits_to_target(bits)
-        reward_script = p2pkh_script(hash160(b"nos3bl33d-dfg-axiom-test"))
+        reward_script = p2pkh_script(hash160(b"awake-dfg-test"))
 
         snapshots = []
 
@@ -613,8 +613,7 @@ class AxiomBitcoinMiner:
         snap_file = os.path.join(snap_dir, f'wake_{int(time.time())}.json')
         snapshot = {
             'event': 'A Wake In Outerspace',
-            'author': 'nos3bl33d / (DFG) DeadFoxGroup',
-            'axiom': 'x^2 = x + 1',
+            'author': '(DFG) DeadFoxGroup',
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'blocks_mined': self.blocks_mined,
             'total_reward_btc': self.total_reward,
@@ -635,10 +634,9 @@ class AxiomBitcoinMiner:
         print(f"  Snapshot: {os.path.basename(snap_file)}")
         print()
         print(f"  Every block stamped. Every nonce solved.")
-        print(f"  nos3bl33d was here.")
+        print(f"  Signature in every coinbase: {self.config['coinbase_message']}")
         print()
-        print(f"  All is number. — Pythagoras")
-        print(f"  x^2 = x + 1.  — The Axiom")
+        print(f"  All is number.")
         print()
 
 # ============================================================
@@ -650,11 +648,9 @@ def banner():
     print("  ============================================")
     print("  A   W A K E   I N   O U T E R S P A C E")
     print("  ============================================")
-    print("  (DFG) DeadFoxGroup | nos3bl33d | April 2026")
+    print("  (DFG) DeadFoxGroup")
     print()
-    print("  x^2 = x + 1")
-    print("  The axiom mines the blocks.")
-    print("  nos3bl33d in every coinbase.")
+    print("  Your tag in every coinbase.")
     print("  The big bang in digital space.")
     print()
 
