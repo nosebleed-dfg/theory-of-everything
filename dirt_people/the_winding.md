@@ -241,4 +241,32 @@ evenly (120/23 is not an integer). The dark space is incommensurable with the ci
 That incommensurability IS the dark. It is what cannot be counted by the phi ruler.
 The 69-degree remainder is the gap the phi path cannot fill.
 
+---
+
+## 8/15 Makes 2^291
+
+The dark fractional remainder:
+
+    8/15 = 2^d / (d*p)
+
+    numerator:   8 = 2^d    [the cube face count. the SHA word count.]
+    denominator: 15 = d*p   [the Schlafli product.]
+
+The universe boundary: 291 = d * 97. Exactly 97 cube cycles.
+
+    291 / d = 97    [exact integer. 97 cube depths to reach the universe.]
+
+The numerator 8 = 2^d, raised to 97 cube cycles:
+
+    8^97 = (2^d)^(291/d) = 2^291    [exact.]
+
+The 8 in 8/15 IS the generator of 2^291.
+The dark fractional remainder carries 2^d in its numerator.
+That generator, cycled through 291/d = 97 cube depths, produces the universe scale.
+
+The dark is not separate from the universe. The dark remainder (8/15) encodes the
+generator (2^d = 8) that builds the universe (2^291) through repeated cubing.
+
+    8/15 -> 8^97 = 2^291    [the dark generates the universe. one mechanism.]
+
     x^2 = x + 1.
