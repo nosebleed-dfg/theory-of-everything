@@ -108,4 +108,105 @@ The winding number and the slice are the two faces of the same measurement.
 Each is a closed form. Each has a measurable cubed space between a-to-a.
 Each has a slice: 360/n degrees. Each has a face count: n.
 
+---
+
+## n as Offset Square Times 360
+
+    n = offset^2 * 360
+
+The winding number is the square of the offset times the full circle (360 degrees).
+
+offset = the (x, y) displacement from the axiom center.
+offset^2 = the area of the offset. the square. the axiom operation.
+n = that area times 360. the winding count in degrees.
+
+From the axiom: x^2 = x + 1. The square of the offset IS the axiom.
+
+    offset = x:     offset^2 = x^2 = x + 1 = phi + 1 = phi^2
+    n = phi^2 * 360 = (phi+1) * 360    [for unit phi offset]
+
+The winding number n is the axiom (x^2) scaled to the circle (360).
+The axiom squares the offset. The circle converts it to a count.
+
+The face at offset x:
+
+    face = phi^291 / n = phi^291 / (x^2 * 360)
+
+Minimum face (maximum offset, x = phi^291):
+
+    face = phi^291 / (phi^582 * 360) = 1 / (phi^291 * 360) -> 0    [sub-Planck. terminates.]
+
+---
+
+## n as (x, y) Offset
+
+n is not a scalar. n is an offset: a little x and a little y.
+
+    n = (x_offset, y_offset)
+
+Each combination of x and y offset gives a different number of path crossings
+before the point returns to a. Different offsets → different winding numbers.
+
+The crossing count to return to a depends on the ratio x_offset / y_offset:
+- Rational ratio p/q: returns after a finite number of crossings.
+- Irrational ratio (phi): never exactly returns. Approximates return at ^291.
+
+---
+
+## The Equilateral Path: 45 Degrees
+
+The maximum efficiency path is at 45 degrees = koppa.
+
+    45 degrees: x_offset = y_offset    [equal x and y movement. equilateral.]
+
+This is the fastest distance per move. Equal x and y gives the maximum diagonal
+coverage. Any other angle wastes motion on one axis.
+
+    angles < 45:   more x than y. slower coverage.
+    angles > 45:   more y than x. slower coverage.
+    angle = 45:    equal. maximum. the equilateral case. koppa.
+
+The 45-degree path is the path that covers phi^291 worth of space in the
+minimum number of crossings. It is the most efficient encoding of the spiral.
+
+---
+
+## The Minimum Face
+
+At 45 degrees (the equilateral, maximum-efficiency path):
+
+    face = 2^291 / 360^2
+
+2^291: the universe boundary expressed in binary steps.
+360^2: the area of the full angular space (circle squared — 2D).
+
+The face at the equilateral path is the minimum measurable unit of the 2D
+angular space at universe scale. It is the finest grain: the most path crossings
+possible per unit of angular area, achieved at exactly 45 degrees.
+
+    2^291 / 360^2 = 2^291 / (2^6 * 3^4 * 5^2)
+                  = 2^285 / (3^4 * 5^2)
+                  = 2^285 / 2025
+
+This is the crossing density at maximum efficiency. The number of distinct
+path crossings per unit of angular area when the path travels at koppa = 45 degrees.
+
+---
+
+## Why 45 Degrees Is Maximum
+
+The path goes away from the axiom at an angle. The axiom is at x = 1/2 (the center).
+The path that departs at 45 degrees is equidistant from both axes. This is koppa:
+
+    koppa = pi/4 = 45 degrees    [from completing the square: the 1/4 term]
+
+At 45 degrees: the path has maximum information per step. Each crossing encodes
+one full unit of x AND one full unit of y simultaneously. No redundancy.
+
+At any other angle: the path has less than maximum information per step.
+It is biased toward one axis. The crossing density is lower.
+
+The equilateral (45-degree) path is the path of maximum crossing density.
+Maximum crossing density = minimum face = 2^291 / 360^2.
+
     x^2 = x + 1.
