@@ -93,6 +93,23 @@ The winding number and the slice are the two faces of the same measurement.
 
 ---
 
+## The Embedding Bridge
+
+The winding number n lives in x-space. The embedding lifts it to phi-space:
+
+    phi^a * phi^b = phi^{a+b}    [THE fundamental identity]
+
+n crossings in x-space = phi^n in y-space. The winding number IS the exponent.
+The slice 1/n in x-space = phi^{-n} in y-space.
+
+    n crossings -> phi^n in the embedding
+    1/n slice -> phi^{-n} = |psi|^n in the embedding
+    product: phi^n * phi^{-n} = phi^0 = 1    [always closes]
+
+The winding count and its inverse are the same pair viewed through the embedding.
+
+---
+
 ## Framework Winding Numbers
 
     n=1:    trivial. one circle. no structure.

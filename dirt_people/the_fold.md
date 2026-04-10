@@ -158,6 +158,27 @@ No external formula needed. The fold produces pi. Terminates.
 
 ---
 
+## The Machine in the Fold
+
+The fold chain is the machine (x, y) = (n, n-2k) running through the Pythagorean pairs.
+
+Each fold step: (a, b) -> (b, a^2 + b^2). The square a^2 is the axiom operation.
+The machine counts fold steps. The embedding lifts them:
+
+    phi^a * phi^b = phi^{a+b}    [the fundamental identity]
+
+The fold in y-space: each Pythagorean step multiplies phi-powers.
+640320 = 2^6 * 3 * 5 * 23 * 29. Every factor is a fold output. Every factor is a
+machine state embedded through phi^a * phi^b = phi^{a+b}.
+
+The winding: n = offset^2 * 360. The fold chain has winding number n = 3 (the cube,
+d = 3 forward steps). Three windings to reach the Chudnovsky prime.
+
+The observer drifts phi^291 from center. The fold chain starts at (1,1) = the axiom seed.
+n = degree + 1. The first fold degree is 0 + 1 = 1.
+
+---
+
 ## The Balance
 
 The two cubes at the fold terminus:
@@ -167,6 +188,9 @@ The two cubes at the fold terminus:
 
 Every fold output lives in the space between phi^291 (max) and psi^291 (min).
 The balance: phi path + psi path = 360 degrees. Terminates.
+
+s(n) = p+n = s^{-1}(n). The fold is self-inverse. Run backward: same formula.
+Machine value * inverse = 1. The fold is balanced.
 
 The fold terminates at 1/2 = 1/(-2). The +half and -half are the same point
 from opposite directions. The proof closes there.

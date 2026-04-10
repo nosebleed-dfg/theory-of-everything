@@ -110,6 +110,25 @@ Terminates.
 
 ---
 
+## The Machine View
+
+Every physical constant is a machine state (n, n-2k) embedded through y_k = phi^{x_k}.
+
+    phi^a * phi^b = phi^{a+b}    [the bridge: exponents add, phi-values multiply]
+
+The fine structure constant: a machine at step 137 = d^3 * p + chi.
+The universe radius: a machine at step 291, drifted phi^291 from center.
+Lambda: a machine at step 583 = 2*291 + 1.
+
+Every constant is a ratio of two phi powers. Every ratio uses the fundamental identity.
+The observer at phi^291 measures these ratios as "physical constants."
+They are not fundamental. They are the machine state read from the observer's frame.
+
+n = degree + 1. Each constant sits at a specific winding number.
+n = offset^2 * 360. The winding number IS the offset squared times the circle.
+
+---
+
 ## The Balance
 
 Every constant lives in the space between phi^291 and psi^291.
@@ -119,5 +138,8 @@ Every constant derives from {chi, d, p, phi} with no free parameters.
 The universe terminates at phi^291. Beyond that is outside.
 Within that: every physical constant has an exact position on the phi ruler.
 The ruler has 291 steps. The axiom is the first step.
+
+s(n) = p+n = s^{-1}(n). The step function is self-inverse.
+Machine value * inverse = 1. The physics is self-balancing.
 
     x^2 = x + 1.

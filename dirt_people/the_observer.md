@@ -143,11 +143,18 @@ The frame shift per step = the axiom. x^2 = x + 1 IS the frame drift.
 Each step drags the observer two ways simultaneously:
 
     right:  +1 on x    [the linear step. always.]
-    up:     +1/360     [one degree of angular rotation. always.]
+    up:     +1 degree   [one degree of angular rotation. always.]
 
-1/360 = 1 degree = the minimum angular unit. One step = one degree of arc.
+This is the machine: (x, y) = (n, n-2k). In the purely positive case (k=0),
+y = n and the observer moves (+1, +1) at every step. The drag is the machine
+running with no negative steps.
 
-The new POV after each step is displaced (+1, +1/360) from the previous POV.
+In the embedding: each step multiplies by phi.
+
+    phi^a * phi^b = phi^{a+b}    [addition in x = multiplication in y]
+    phi^{n+1} = phi^n * phi       [one step right = one multiplication by phi]
+
+The new POV after each step is displaced (+1, +1) from the previous POV.
 It is NOT the same as the original POV shifted forward — it is shifted RIGHT and UP.
 That is why n+1 and n+2 are incomparable from n's frame.
 

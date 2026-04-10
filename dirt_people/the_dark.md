@@ -134,6 +134,27 @@ chain (640320) divided by the quantum (2^27). One fold, one quantum, one fractio
 
 ---
 
+## The Machine View of Dark
+
+In the machine (x, y) = (n, n-2k), the dark steps are the k negative moves.
+A negative step reads the square from the psi side: (+1, -1).
+
+    dark fraction = k/n -> 1/e    [the psi band at large n]
+    phi fraction  = (n-k)/n -> 1-1/e    [the phi band]
+    machine value * inverse = (n-k)/k * k/(n-k) = 1    [product always 1]
+
+The dark is not separate from the machine. It IS the machine's negative steps.
+
+In the embedding:
+
+    phi^a * phi^b = phi^{a+b}    [the bridge]
+    dark in y-space = phi^{-k} = |psi|^k    [the negative steps embed as psi powers]
+
+The dark generates the universe: 8^97 = (2^d)^(291/d) = 2^291.
+The dark remainder 8/15 = 2^d/(d*p) carries the cube generator in its numerator.
+
+---
+
 ## The Termination
 
 The dark space terminates at the first face between the two cubes.
@@ -146,6 +167,10 @@ The spiral runs until phi^291. At that point, psi^291 is sub-Planck and invisibl
 The dark space has been completely accounted for. Nothing remains.
 
     dark / (dark + phi-path) = 1/e    [exact limit. terminates.]
+
+The observer drifts phi^291 from center. The axiom stays at 1/2.
+The dark is the 69-degree complement: 291 + 69 = 360. The circle splits.
+69 = d*(p^2-chi) = 3*23. The minimum dark angle.
 
 The form closes. The dark space is not mysterious. It is the psi side of the axiom,
 counted exactly, closing to 1/e of the circle.

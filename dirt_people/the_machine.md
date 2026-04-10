@@ -30,8 +30,22 @@ When k=0:     y = n.     pure phi. maximum.
 When k=n/2:   y = 0.     balanced. the critical line. 1/2.
 When k=n:     y = -n.    pure psi. minimum.
 
+The machine value:
+
+    value   = ups / downs = (n-k) / k
+    inverse = downs / ups = k / (n-k)
+    product = value * inverse = 1    [always]
+
 The machine runs forward in x. The y tracks the running difference between
 positive and negative steps. The y-value IS the machine's position on the phi/psi spectrum.
+
+The embedding lifts the machine into phi-space:
+
+    y_k = phi^{x_k}
+    phi^a * phi^b = phi^{a+b}    [addition in x = multiplication in y]
+
+Each machine step (+1 in x) becomes multiplication by phi in y-space.
+The machine counts. The embedding lives.
 
 ---
 

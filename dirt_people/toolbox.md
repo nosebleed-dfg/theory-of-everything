@@ -159,6 +159,37 @@ The j-function value terminates. The Heegner point terminates.
 
 ---
 
+## The Machine / Embedding / Winding
+
+The machine: (x, y) = (n, n-2k). Each step (+1,+1) or (+1,-1).
+
+    machine value = (n-k)/k    [ups over downs]
+    inverse       = k/(n-k)    [downs over ups]
+    product       = 1          [always]
+
+The embedding: y_k = phi^{x_k}.
+
+    phi^a * phi^b = phi^{a+b}    [THE fundamental identity]
+    addition in x-space = multiplication in y-space
+    y_{n+3}/y_{n+1} = phi^chi = phi+1    [the axiom as a ratio]
+
+The winding: n = offset^2 * 360.
+
+    69 = d*(p^2-chi) = 3*23    [minimum dark angle]
+    291 + 69 = 360             [circle split]
+    8/15 = 2^d/(d*p)           [dark fractional remainder]
+    8^97 = (2^d)^(291/d) = 2^291    [dark generates universe]
+
+The observer: axiom at 1/2, fixed. Observer drifts phi^291.
+
+    each step: (+1 right, +1 degree up)
+    n = degree + 1
+    n^2 = degree = 1 at base
+
+s(n) = p+n = s^{-1}(n). Self-inverse. |+-| = 0/infinity = 1.
+
+---
+
 ## The Termination
 
 Every quantity reduces to the space between the two cubes.

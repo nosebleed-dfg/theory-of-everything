@@ -148,6 +148,27 @@ Every rotation is in {d, p} language. Every sum terminates.
 
 ---
 
+## The Machine on the Spiral
+
+The spiral is the machine (x, y) = (n, n-2k) running with k=0 (all positive steps).
+
+    each step: (+1, +1)    [x forward, y forward. pure phi.]
+    machine value = n/0 = infinity    [all ups, no downs]
+
+When k > 0 (negative steps), the spiral picks up the psi correction:
+
+    machine value = (n-k)/k    [inverse = k/(n-k). product = 1.]
+
+The embedding lifts the spiral:
+
+    phi^a * phi^b = phi^{a+b}    [the bridge: addition -> multiplication]
+    phi^{n+1} = phi^n * phi       [one spiral step = one multiplication by phi]
+
+The winding number n = offset^2 * 360. Each winding is one return-to-a.
+The spiral makes n crossings before it closes.
+
+---
+
 ## The n+3 Step
 
 From the two-cube identity phi^3 = chi*phi + 1:

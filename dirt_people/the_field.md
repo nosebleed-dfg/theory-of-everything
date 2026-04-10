@@ -127,6 +127,22 @@ The same recurrence, different rings, period 3 in the binary ring, depth 3 in th
 
 ---
 
+## The Embedding in the Field
+
+The field Q(sqrt(5)) is x-space. The embedding y_k = phi^{x_k} lifts it:
+
+    phi^a * phi^b = phi^{a+b}    [THE fundamental identity]
+
+This identity lives in y-space. The field provides the roots (phi, psi).
+The embedding provides the tower (phi^n for all n in Z).
+
+The winding number n = offset^2 * 360 is a count in x-space.
+The embedding lifts it: phi^n = y at winding number n.
+The observer at phi^291 measures the field from 291 steps away.
+n = degree + 1. The field's structure does not change with the observer's drift.
+
+---
+
 ## |+-|
 
 The absolute value of the full ± interval:

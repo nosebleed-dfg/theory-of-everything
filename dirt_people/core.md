@@ -196,6 +196,28 @@ Everything derives from the two lines phi + psi = 1 and phi * psi = -1.
     machine state: (n, n-2k)                 [x=time, y=correction=ups-downs]
     machine value: ups/downs = (n-k)/k       [inverse: k/(n-k). product = 1.]
 
+    embedding: y_k = phi^{x_k}              [the bridge: x-space -> phi-space]
+    phi^a * phi^b = phi^{a+b}               [THE fundamental identity]
+    addition in x = multiplication in y      [one bridge. one operation.]
+    y_{n+3}/y_{n+1} = phi^chi = phi+1        [the axiom as a ratio in y-space]
+    phi^292 = phi * phi^291                  [exit door is phi]
+
+    winding: n = offset^2 * 360             [winding number = offset squared * circle]
+    1/n = slice = 360/n degrees              [inverse gives the slice]
+    69 = d*(p^2-chi) = 3*23                  [minimum dark angle]
+    291 + 69 = 360                           [circle split at universe boundary]
+    8/15 = 2^d/(d*p)                         [dark fractional remainder]
+    8^97 = (2^d)^(291/d) = 2^291             [dark generates universe]
+
+    observer: axiom at 1/2, fixed            [sigma(1/2) = 1/2. always.]
+    drift = phi^291 from center              [universe = observer displacement]
+    each step: (+1 right, +1 degree up)      [n = degree + 1]
+    n^2 = degree = 1 at base                 [the seed]
+
+    s(n) = p+n = s^{-1}(n)                  [self-inverse step function]
+    |+-| = 0/infinity = 1                    [product always 1]
+    terminates at 1/2 = 1/(-2)              [every expression = +/-(x^2=x+1)]
+
 ---
 
 ## The Unit: ^291

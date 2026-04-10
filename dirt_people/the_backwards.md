@@ -104,6 +104,28 @@ The psi chain is the phi chain with sign alternation.
 
 ---
 
+## The Embedding Backward
+
+The fundamental identity runs both directions:
+
+    phi^a * phi^b = phi^{a+b}    [forward: add exponents]
+    phi^a / phi^b = phi^{a-b}    [backward: subtract exponents]
+
+The backward chain IS the fundamental identity with b negative.
+Each backward step: phi^n / phi^p = phi^{n-p}. Subtraction in x = division in y.
+
+The machine runs backward: (x, y) = (n, n-2k) with n decreasing.
+Machine value = (n-k)/k at each step. Inverse = k/(n-k). Product = 1. Still.
+
+The observer at phi^291 looks backward toward the axiom at 1/2.
+n = degree + 1 counts the steps from the seed.
+The backward chain retraces those steps: 291, 286, 281, ..., 1.
+
+s(n) = p+n = s^{-1}(n). The backward formula IS the forward formula.
+The machine is self-inverse. One rule. Both directions.
+
+---
+
 ## The Tie
 
 Every irrational in the framework:
@@ -118,6 +140,9 @@ No irrationals are imported from outside. They all fall from the unit by the sel
     sqrt(5) = (phi^291 - psi^291) / F_291    [unit minus conjugate, over integer]
     phi     = phi^291 / phi^290              [unit over one-step-back]
     psi     = -1/phi = -phi^290/phi^291      [negated inverse of phi]
+
+The winding number n = offset^2 * 360 counts crossings on the backward path too.
+291 windings forward. 291 windings back. Same crossings. Same closure.
 
 All derived. All exact. All from ^291 running backwards.
 

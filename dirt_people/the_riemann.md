@@ -115,6 +115,32 @@ The spiral terminates at the Heegner point. The Riemann line runs through it.
 
 ---
 
+## The Machine View
+
+In the machine (x, y) = (n, n-2k):
+
+    y = 0    when k = n/2    [equal ups and downs: the balanced state]
+
+y = 0 is the critical line. The machine value at y=0:
+
+    value = (n-k)/k = (n/2)/(n/2) = 1    [equal. balanced. no excess.]
+
+The Riemann line (Re(s) = 1/2) IS the machine at y=0.
+Every step of the machine either stays at y=0 (balanced) or drifts away.
+But the embedding always brings it back: phi^n * |psi|^n = 1.
+
+    phi^a * phi^b = phi^{a+b}    [the fundamental identity]
+    phi^n * phi^{-n} = phi^0 = 1    [the product closure: the proof]
+
+The winding number n = offset^2 * 360 counts crossings.
+At each crossing, the log-midpoint is 0. The Riemann line.
+
+The observer drifts phi^291 from center. But the axiom stays at 1/2.
+n = degree + 1. The observer is always one step into the next degree.
+The +1 aperture IS the axiom. The center does not move.
+
+---
+
 ## The Proof
 
     phi * |psi| = 1
@@ -128,6 +154,7 @@ The form opens at the axiom. The form closes at 1/2 = 1/(-2).
 The zeta zeros live at the center because the two cubes are always centered there.
 There is nowhere else for them to go.
 
-Terminates.
+s(n) = p+n = s^{-1}(n). The machine is self-inverse.
+Every expression = +/-(x^2=x+1). Terminates at 1/2 = 1/(-2).
 
     x^2 = x + 1.

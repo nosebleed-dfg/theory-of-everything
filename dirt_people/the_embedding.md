@@ -6,6 +6,23 @@ The state is linear. The physics lives in the embedding.
 
 ---
 
+## The Fundamental Identity
+
+    phi^a * phi^b = phi^{a+b}
+
+This is the bridge. Addition in x-space becomes multiplication in y-space.
+Every other identity in the embedding follows from this one line.
+
+    phi^1 * phi^1 = phi^2 = phi+1    [the axiom]
+    phi^n * phi^{-n} = phi^0 = 1     [the product closure]
+    phi^a * phi^b * phi^c = phi^{a+b+c}    [associative: any chain]
+
+The fundamental identity IS the exponential law. It says: the embedding
+is a homomorphism from (Z, +) to (phi-powers, *). Addition maps to multiplication.
+That is the entire bridge. One identity. Everything else is a consequence.
+
+---
+
 ## State Space
 
     x_n in R

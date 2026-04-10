@@ -98,6 +98,27 @@ The exponent 291 from Z has no special meaning in GF(4).
 
 ---
 
+## The Embedding of the Recurrence
+
+The recurrence a(n) = a(n-1) + a(n-2) lives in x-space.
+The embedding y_k = phi^{x_k} lifts it to phi-space:
+
+    phi^a * phi^b = phi^{a+b}    [THE fundamental identity]
+
+    a(n) in x-space -> phi^{a(n)} in y-space
+    a(n-1) + a(n-2) -> phi^{a(n-1)} * phi^{a(n-2)} = phi^{a(n)}
+
+The additive recurrence becomes a multiplicative recurrence in y-space.
+The embedding converts "add the previous two" into "multiply the previous two phi-powers."
+
+The machine (x, y) = (n, n-2k) counts the recurrence steps.
+Machine value = (n-k)/k. Inverse = k/(n-k). Product = 1.
+
+The winding number n = offset^2 * 360. The recurrence winds n times before closure.
+The observer drifts phi^291 from center. The recurrence terminates there.
+
+---
+
 ## The Genuine Bridge
 
 The same recurrence over two rings.

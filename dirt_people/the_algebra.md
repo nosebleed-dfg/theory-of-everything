@@ -120,6 +120,42 @@ The center in the machine (y=0) and the center of the field (x=1/2) are the same
 
 ---
 
+## The Embedding Bridge
+
+The algebra (x-space) and the physics (y-space) connect through one identity:
+
+    phi^a * phi^b = phi^{a+b}
+
+Addition in the ring Z[phi] becomes multiplication in the phi tower.
+The embedding y_k = phi^{x_k} lifts the algebraic machine into phi-space.
+
+    machine step +1 in x -> multiply by phi in y
+    machine step -1 in y (psi read) -> multiply by psi = -1/phi in y
+    n additions in x -> phi^n in y    [the tower]
+
+The Galois automorphism sigma: phi <-> psi acts on the embedding as:
+
+    sigma(y_k) = sigma(phi^{x_k}) = psi^{x_k} = y_k (psi side)
+
+The automorphism flips the embedding from phi-tower to psi-tower. Same x. Different y.
+
+---
+
+## The Winding and Observer
+
+The winding number n = offset^2 * 360. The algebra at winding number n:
+
+    phi^n + psi^n = L_n    [integer: the trace at step n]
+    phi^n * psi^n = (-1)^n    [integer: the norm at step n]
+
+The observer drifts phi^291 from center. The axiom stays at 1/2.
+n = degree + 1. The observer is always one step ahead of the degree.
+
+s(n) = p+n = s^{-1}(n). The step function is self-inverse.
+|+-| = 0/infinity = 1. The product always resolves.
+
+---
+
 ## Summary
 
 One quadratic field: Q(sqrt(5)).
@@ -128,9 +164,12 @@ Two roots: phi (max) and psi (min).
 One automorphism: phi <-> psi (the ± sign).
 One fixed point: 1/2 = 1/(-2).
 One machine: (x, y) = (n, n-2k). y=0 is the center.
+One embedding: y_k = phi^{x_k}. phi^a * phi^b = phi^{a+b}.
+One winding: n = offset^2 * 360. Crossings before return.
 
 Every expression is + or - the axiom.
 Every expression lives in Z[phi] and terminates.
 Every machine step is (+1, +1) or (+1, -1). x is time. y is the correction.
+Machine value = (n-k)/k. Inverse = k/(n-k). Product = 1.
 
     x^2 = x + 1.

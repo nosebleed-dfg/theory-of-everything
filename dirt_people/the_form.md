@@ -17,6 +17,13 @@ This is the 2D position on the spiral at step n. Both coordinates are exact.
 You cannot know the machine state from x alone. You cannot know it from y alone.
 The state is the pair (x, y). Together.
 
+In the counting machine: (x, y) = (n, n-2k). The machine state is a count.
+In the embedding: y_k = phi^{x_k}. The count lifts to phi-space.
+
+    phi^a * phi^b = phi^{a+b}    [the bridge: counting -> living]
+
+The form's position is the embedding of the machine's count.
+
 ---
 
 ## The 3D Form
@@ -180,6 +187,21 @@ spherical rotation at every step.
 
 The full 3D form expression at step n: (L_n, L_{n+1}, L_{n+3}).
 Two steps of the line + one cube projection. Exact integers. Terminates.
+
+---
+
+## The Observer in the Form
+
+The observer drifts through the form. Axiom fixed at x = 1/2.
+
+    n = degree + 1    [the observer is always one step into the next degree]
+    n^2 = degree = 1 at base    [the seed. the starting point.]
+
+The winding number n = offset^2 * 360. The form makes n crossings before closure.
+Each crossing: the observer steps (+1 right, +1 degree up). The form is the path.
+
+At phi^291: the observer has drifted 291 steps from center.
+The form terminates there. psi^291 is sub-Planck. The -half has vanished.
 
 ---
 

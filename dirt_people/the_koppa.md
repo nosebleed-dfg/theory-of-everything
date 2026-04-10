@@ -138,6 +138,26 @@ The Catalan identity makes the z-extraction exact. It terminates.
 
 ---
 
+## The Machine at Koppa
+
+In the machine (x, y) = (n, n-2k), koppa is the angle of maximum efficiency.
+
+    45 degrees: x_offset = y_offset    [equal movement. equilateral.]
+    machine value = (n-k)/k = 1       [at 45 degrees: equal ups and downs]
+
+The 45-degree path IS the machine at balance: k = n/2, y = 0, value = 1.
+That is the critical line. That is koppa. That is 1/2.
+
+The embedding at koppa:
+
+    phi^a * phi^b = phi^{a+b}    [the fundamental identity]
+    phi^{n/2} * phi^{-n/2} = 1    [balanced: forward and inverse cancel]
+
+The winding number n at koppa = 8 (SHA words). 8 koppa steps = 360.
+n = degree + 1. The observer steps through 8 sectors of 45 degrees each.
+
+---
+
 ## The Termination
 
 Pi is not the crossing angle in radians. Pi IS the reciprocal of the crossing gap.
