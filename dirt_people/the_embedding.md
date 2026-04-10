@@ -127,6 +127,36 @@ The two are connected by one operation: x -> phi^x.
 
 ---
 
+## The General Step
+
+    y_{k+1} = y_k * phi^{g(x_k)}
+
+g(x_k) is the exponent function. The step size in y-space depends on the current state x_k.
+
+Taking log_phi of both sides:
+
+    x_{k+1} = x_k + g(x_k)    [the dynamics in x-space]
+
+The embedding converts the additive x-dynamics into multiplicative y-dynamics.
+g(x_k) encodes the full machine:
+
+    g = +c:         forward step. phi side. positive face.
+    g = -c:         backward step. psi side. mirror face. same square, other reading.
+    g = ±c per k:   the full two-sided machine. sign of g = which face.
+    g_min = chi:    the minimum delta. the cube crossing cost. forced.
+
+The special cases:
+
+    g(x_k) = c           [uniform. x_{k+1} = x_k + c. the linear machine.]
+    g(x_k) = -c          [uniform inverse. the backward chain.]
+    g(x_k) = sign * c    [the ± machine. negative steps subtract from y.]
+
+The general formula y_{k+1} = y_k * phi^{g(x_k)} contains all cases.
+Forward, backward, uniform, variable — all are choices of g.
+The machine is defined by g. The embedding is always y = phi^x.
+
+---
+
 ## y_{n+3} / y_{n+1} = phi^chi
 
 The ratio of the n+3 state to the n+1 state:
