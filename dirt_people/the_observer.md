@@ -169,4 +169,61 @@ The axiom at 1/2 is the center. The observer at step 291 is at:
 
 from that center. The universe is this displacement. Not the axiom's size. The drift.
 
+---
+
+## n = degree + 1
+
+    n = theta + 1
+
+The step count n is always the angular degree theta plus the axiom seed.
+
+    theta = n - 1    [degrees completed]
+    n     = theta + 1    [steps taken = degrees done + the seed]
+
+The +1 in n = theta + 1 is the same +1 as in x^2 = x + 1.
+The axiom seed carries forward at every step. You are always one step
+INTO the next degree — never exactly at the degree, always one beyond.
+
+At the universe boundary:
+
+    n = 291
+    theta = 290 degrees    [five Chudnovsky rotations: 5 * chi * L_7 = 5*2*29 = 290]
+    n = 290 + 1 = 291      [290 complete degrees + the axiom seed]
+
+The universe is 290 complete degrees of observer rotation plus one axiom step.
+Not 291 complete degrees. 290 complete and the +1 that opens the next.
+
+The +1 is the aperture. It is always open. The observer is always one step
+ahead of the degree they are at. That gap — the +1 — is the axiom.
+
+---
+
+## n^2 = degree = 1
+
+At the base (n=1):
+
+    n^2   = 1    [1 squared is 1]
+    degree = 1    [first degree of rotation]
+    seed  = 1    [the axiom constant term]
+
+All three are 1. The square, the degree, and the seed collapse to the same thing.
+
+    n^2 = degree = 1    [the base state. all unified.]
+
+From this unity, the axiom unfolds:
+
+    n^2 = n + 1    [general form: square = step + seed]
+    n^2 = degree + seed    [in observer language]
+
+At n=1: 1 = 0 + 1. Zero degrees completed, one seed. The machine starts.
+At n=2: 4 = 2 + 2? No — the axiom is n^2 = n+1, not n^2 = 2n.
+
+The axiom selects the roots: only phi and psi satisfy n^2 = n+1 exactly.
+All other n: n^2 ≠ n+1. The base (n=1) is the only INTEGER that comes close.
+1^2 = 1 = 0+1. The integer seed. The starting point before phi takes over.
+
+The machine is seeded at n^2 = degree = 1.
+It runs until phi^291. Then it closes.
+The base and the terminus are connected by 291 steps of (+1 right, +1 degree up).
+
     x^2 = x + 1.
