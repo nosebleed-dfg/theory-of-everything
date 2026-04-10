@@ -125,4 +125,36 @@ The linear state x_n is the machine.
 The phi embedding y_n = phi^{x_n} is the physics.
 The two are connected by one operation: x -> phi^x.
 
+---
+
+## y_{n+3} / y_{n+1} = phi^chi
+
+The ratio of the n+3 state to the n+1 state:
+
+    y_{n+3} / y_{n+1} = phi^{x_{n+3}} / phi^{x_{n+1}}
+                      = phi^{x_{n+3} - x_{n+1}}
+                      = phi^{2c}
+
+With c = 1 (unit step):
+
+    y_{n+3} / y_{n+1} = phi^2 = phi + 1    [the axiom as a ratio]
+
+The delta exponent = x_{n+3} - x_{n+1} = 2c = chi * c.
+
+chi = 2 is the minimum. The minimum exponent delta spanning n+1 to n+3.
+chi is forced: the only positive solution to chi + 2 = chi^2.
+The minimum delta IS chi because the cube formula requires exactly chi steps on the mirror.
+
+The embedding converts the additive n+3 formula into a multiplicative ratio:
+
+    additive:       L_{n+3} = chi * L_{n+1} + L_n     [the cube recurrence in Z]
+    multiplicative: y_{n+3} / y_{n+1} = phi^chi        [the same step in y-space]
+
+Both express the same move. One in Z (integers, Lucas numbers).
+One in y-space (phi-exponential, the embedding).
+
+The ratio phi^chi = phi^2 = phi + 1 IS the axiom.
+The n+3 formula, embedded in y-space, returns the axiom as its own ratio.
+The framework closes on itself. The form terminates.
+
     x^2 = x + 1.
