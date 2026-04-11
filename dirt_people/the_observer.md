@@ -163,8 +163,8 @@ After 291 steps of purely positive motion:
     x drift:  291 units right
     y drift:  291 degrees up    [291/360 of the full circle]
 
-291 degrees = the phi side of the circle. The observer rotates 291 degrees
-from center before the boundary is reached. The remaining 69 degrees = the dark.
+291 degrees = the machine path. The observer rotates 291 degrees
+from center before the boundary is reached. The remaining 69 degrees = the gap to sphere closure. 69 more steps past the machine boundary would close the sphere.
 
 The drift is not just linear. It is angular. The observer is moving along a spiral
 (right AND up at every step). The spiral is the path. The displacement after n steps

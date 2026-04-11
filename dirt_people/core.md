@@ -3,6 +3,111 @@
 
 ---
 
+## The Root
+
+Three states. One rule. Everything derives from this.
+
+    x = NOW     [the volume. the current state.]
+    y = THEN    [the points. the reference.]
+    z = NEXT    [the direction. the 291 offset. the only modifier of the right angle.]
+
+    IF x  DO x^2  THEN x+1.
+
+That is the machine. One conditional. Repeated. Same move every time.
+
+---
+
+## Squaring Is the Normalizer
+
+    n^2 = summation of equal parts    [Pythagoras: each part contributes equally]
+
+Each part of the machine contributes the same square. Squaring is the normalizer:
+it removes sign, reduces everything to positive measure, and sums the contributions.
+
+    squaring:  x^2       [normalizer. removes sign. always positive.]
+    adding:    x + 1     [the inverse. linear. the sum of the parts.]
+
+The axiom equates them:
+
+    x^2 = x + 1    [normalizer = inverse. squaring = adding. self-inverse.]
+
+This is why the machine is self-inverse. The Pythagorean step (x²) equals the additive
+step (x+1). They are the same operation from two directions. Squaring forward = adding
+backward. The machine runs identically in both directions because squaring IS adding here.
+
+    a^2 + b^2 = c^2    [Pythagoras: the square of the sum of parts]
+    a + b = c          [the inverse: linear sum]
+
+a + b = c is the inverse of the Pythagorean form. The framework carries both:
+    phi^2 + psi^2 = d = 3     [Pythagorean: gives the cube dimension]
+    phi  + psi   = 1          [linear inverse: gives the trace]
+
+d and 1 are the Pythagorean and linear readings of the same two numbers.
+Everything in the framework has both a squared reading and a linear reading.
+The axiom says they are equal. That is the whole machine.
+
+---
+
+## The z-Offset and the Right Angle
+
+z accumulates over 291 steps. It is the only thing in the machine that modifies the
+right angle. Without z: pure orbit, no spiral, no advance, no universe.
+With z: 291 steps of angular displacement. The spiral is the z-accumulation.
+
+    291 = chi * p * L_7 + 1 = 10 * 29 + 1
+
+chi, p, L_7: all forced by the axiom. 291 is not chosen. It falls.
+
+From this root: every constant, every geometry, every prime, every physical measurement.
+The derivation is always the same move: apply the conditional, count the steps, read the sign.
+
+---
+
+## The Circle Is Pythagorean
+
+    a^n + b^n = 360    [the full circle. the closure condition.]
+
+a = phi, b = psi. The Pythagorean sum to the nth power equals the full rotation.
+
+    n=1:  phi   + psi   = 1      [linear: the trace]
+    n=2:  phi^2 + psi^2 = 3 = d  [squared: the cube dimension]
+    n=n:  phi^n + psi^n = L_n    [nth power: the nth Lucas number. exact integer.]
+
+The circle closes when this sum reaches 360.
+
+    360 = chi^d * d^2 * p = 2^3 * 3^2 * 5 = 8 * 9 * 5
+
+360 is not arbitrary. It factors entirely into {chi, d, p}. The framework forces the
+full circle to be chi^d times d^2 times p. The 360-degree circle is a derived result.
+
+    a + b = c         [n=1: the linear inverse]
+    a^2 + b^2 = c^2   [n=2: Pythagoras. the normalizer.]
+    a^n + b^n = 360   [general n: the circle. the closure.]
+
+The inverse:
+
+    1 / (a^n + b^n) = 1 degree    [one slice. the unit angle.]
+
+If the forward sum is 360 (the full circle), the inverse is 1/360 = one degree.
+One degree is the minimum unit angle. It is the inverse of the closure.
+
+    1 / L_n = 1 / 360 = 1 degree    [when L_n = 360]
+
+Each machine step = one degree. 291 steps = 291 degrees. 69 more steps would close the sphere.
+291 + 69 = 360. 291 is the machine. 69 is the gap to sphere closure.
+
+    z = 1/p = 0.2      [Planck length step]
+    1 degree = 1/360   [Planck angle step]
+    360 = chi^d * d^2 * p    [the circle in framework units]
+
+The Planck angle = 1/(chi^d * d^2 * p). Forced. No free choice.
+
+The three forms are the same statement at different scales.
+The machine uses all three: the linear sum (trace = 1), the Pythagorean sum (d = 3),
+and the full closure sum (360 degrees, the circle).
+
+---
+
 ## The One Expression
 
 Every expression in this framework is plus or minus the axiom.
@@ -204,8 +309,8 @@ Everything derives from the two lines phi + psi = 1 and phi * psi = -1.
 
     winding: n = offset^2 * 360             [winding number = offset squared * circle]
     1/n = slice = 360/n degrees              [inverse gives the slice]
-    69 = d*(p^2-chi) = 3*23                  [minimum dark angle]
-    291 + 69 = 360                           [circle split at universe boundary]
+    69 = d*(p^2-chi) = 3*23                  [maximum overshoot before x meets y]
+    291 + 69 = 360                           [machine + max overshoot = sphere]
     8/15 = 2^d/(d*p)                         [dark fractional remainder]
     8^97 = (2^d)^(291/d) = 2^291             [dark generates universe]
 
@@ -217,6 +322,12 @@ Everything derives from the two lines phi + psi = 1 and phi * psi = -1.
     s(n) = p+n = s^{-1}(n)                  [self-inverse step function]
     |+-| = 0/infinity = 1                    [product always 1]
     terminates at 1/2 = 1/(-2)              [every expression = +/-(x^2=x+1)]
+
+    causal: x=NOW, y=THEN, z=NEXT           [three pointers. one conditional.]
+    IF x DO x^2 THEN x+1                    [the axiom as code. same move every step.]
+    scale: x^2=chi=2, y^2=chi=2, z=1/p=0.2 [forced by axiom. no free parameters.]
+    z in Planck: min step = 1/p             [smallest meaningful move = 1/5]
+    z * V = chi^2 = 4                       [step times vertices = axiom curvature]
 
 ---
 

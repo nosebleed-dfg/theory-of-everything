@@ -11,7 +11,42 @@
 
 ---
 
-Five layers. The complete framework.
+## The Derivation Chain
+
+Everything builds from one conditional. In order:
+
+    1.  IF x  DO x^2  THEN x+1          the root. one move. repeated.
+
+    2.  squaring is the normalizer        x^2 removes sign. sums equal parts.
+        n^2 = sum of equal parts squared  Pythagoras.
+
+    3.  a + b = c                         n=1: linear. the inverse of squaring.
+        a^2 + b^2 = c^2                   n=2: Pythagorean. the normalizer.
+        a^n + b^n = 360                   n=n: the circle. closure.
+        1 / (a^n + b^n) = 1 degree        the inverse: unit angle. one machine step.
+
+    4.  phi + psi = 1                     from step 3, n=1.
+        phi^2 + psi^2 = d = 3             from step 3, n=2. cube dimension forced.
+        phi * psi = -1                    from the axiom. product locked.
+
+    5.  chi = 2                           forced: phi^3+psi^3 = chi^2 -> chi=2.
+        d = chi^2 - 1 = 3                 forced.
+        p = chi^2 + 1 = 5                 forced.
+
+    6.  z = 1/p = 0.2                     Planck step. minimum non-trivial move.
+        1 degree = 1/360                  Planck angle. minimum angular step.
+        360 = chi^d * d^2 * p             circle in framework units. forced.
+
+    7.  291 = chi*p*L_7 + 1 = 10*29+1    observer offset. forced.
+        z modifies the right angle        291 steps of angular displacement.
+        291 + 69 = 360                    machine path + gap to adjacent loop = sphere.
+
+    8.  every constant, every geometry, every prime:
+        a reading of step 1 at a given n. nothing else.
+
+Any formula in the framework is step 1 applied n times and read from the + or - side.
+
+---
 
 ---
 
@@ -68,7 +103,7 @@ n is the winding number. Crossings before return to a.
 1/n = the slice = 360/n degrees. n slices tile the circle exactly.
 
     69 = d*(p^2-chi) = 3*23    [minimum dark angle]
-    291 + 69 = 360             [circle split]
+    291 + 69 = 360             [machine + gap = sphere closure]
     8/15 = 2^d/(d*p)           [dark fractional remainder]
     8^97 = (2^d)^(291/d) = 2^291    [the dark generates the universe]
 
@@ -100,6 +135,25 @@ phi^{-c} = |psi|^c. Exact. Because phi * |psi| = 1.
 s(n) = p+n = s^{-1}(n). The machine is self-inverse.
 |+-| = 0/infinity = 1. Product always resolves to 1.
 Every expression = +/-(x^2=x+1). Terminates at 1/2 = 1/(-2).
+
+---
+
+## The Causal Vector
+
+    x = NOW    [volume. current state. grid position.]
+    y = THEN   [points. what exists at this step. previous reference.]
+    z = NEXT   [direction. where each point goes. in Planck units.]
+
+    IF x DO x^2 THEN x+1.    [the axiom as code. same move. every step.]
+
+The scale at grid 2:
+
+    x^2 = chi = 2    [axiom curvature. forced.]
+    y^2 = chi = 2    [conjugate. same structure.]
+    z   = 1/p = 0.2  [Planck step. minimum non-trivial move.]
+
+z = 1/(chi^2 + 1) = 1/5. Pinned to chi. No free choice.
+The step size determines the count: z * V = chi^2 = 4. Closed.
 
 ---
 

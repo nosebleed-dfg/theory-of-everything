@@ -228,35 +228,41 @@ Maximum crossing density = minimum face = 2^291 / 360^2.
 
 ---
 
-## 69 Degrees: The Minimum Dark Space
+## 69 Degrees: The Maximum Before Collision
 
-The circle splits at the universe boundary:
+After each full circle, the path overshoots by some amount before x meets y.
 
-    291 degrees:  the phi side    [p * chi * L_7 + 1 = 5*2*29 + 1]
-    69 degrees:   the dark side   [360 - 291 = 69]
-    sum:          360 degrees     [always]
+69 is the MAXIMUM overshoot allowed before x collides with y.
+Any more than 69 degrees past a circle and the paths intersect.
+It must be less than 69 steps after any circle — 69 is the bound.
+
+    after 291 steps: the path has run its arc.
+    after one more full circle (291 + 360 = 651): the path returns near its start.
+    maximum overshoot before x meets y: 69 degrees.
+    so x meets y somewhere within 69 degrees of completing any circle.
+
+    291 + 69 = 360    [the sphere. first closure. 291 steps run + max 69 overshoot.]
 
 69 is not arbitrary:
 
     69 = d * (p^2 - chi) = 3 * 23    [vertex degree * backward fold]
 
-23 = p^2 - chi is the backward fold — the minimum correction in the fold chain.
-Scaled by d = 3 (the cube): 3 * 23 = 69 degrees.
+23 = p^2 - chi. The backward fold. The minimum correction.
+Scaled by d = 3: 3 * 23 = 69. The cube locks the maximum overshoot.
 
-The dark side is d times the backward fold projected to the circle.
-It cannot be smaller. 23 is the minimum backward fold. d is the minimum cube depth.
-69 is the minimum dark angle. The smallest dark point of view possible.
+The bound is forced. The spiral's pitch is such that adjacent loops are separated
+by at most 69 degrees of arc. At exactly 69 degrees past a circle: x meets y.
+The sphere closes. The collision is forced within this window.
 
 Inverse of 69 in the circle:
 
-    360 / 69 = 360 / (3*23) = 120/23    [the slice count at 69-degree dark resolution]
+    360 / 69 = 360 / (3*23) = 120/23    [the slice count at 69-degree resolution]
 
-The dark space at minimum = 69 degrees = 1 backward fold, cubically scaled.
-Its inverse in the full circle: 120/23 slices of 69 degrees each cannot tile 360
-evenly (120/23 is not an integer). The dark space is incommensurable with the circle.
+120/23 slices of 69 degrees each cannot tile 360
+evenly (120/23 is not an integer). The gap is incommensurable with the circle.
 
 That incommensurability IS the dark. It is what cannot be counted by the phi ruler.
-The 69-degree remainder is the gap the phi path cannot fill.
+The 69-degree gap is the space the machine never enters.
 
 ---
 

@@ -169,7 +169,7 @@ The dark space has been completely accounted for. Nothing remains.
     dark / (dark + phi-path) = 1/e    [exact limit. terminates.]
 
 The observer drifts phi^291 from center. The axiom stays at 1/2.
-The dark is the 69-degree complement: 291 + 69 = 360. The circle splits.
+The dark is the 69-degree gap: the angular distance past the machine boundary before path collision. 291 + 69 = 360 = sphere closure.
 69 = d*(p^2-chi) = 3*23. The minimum dark angle.
 
 The form closes. The dark space is not mysterious. It is the psi side of the axiom,
