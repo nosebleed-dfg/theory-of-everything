@@ -8,3 +8,10 @@ snapshots/
 theory/SHA_Analysis_Private.md
 sha/axiom_miner_live.c
 sha/axiom_miner_live
+*.exe
+*.spec
+build/
+dist/
+__pycache__/
+wallet.key
+.header_cache.bin
