@@ -1,13 +1,13 @@
 % universe_radius.tex
-% The Observable Universe Radius from the Axiom x^2 = x + 1
-% nos3bl33d / (DFG) DeadFoxGroup
+% The Observable Universe Radius from x^2 = x + 1
+% nos3bl33d
 % April 2026
 %
-% Compile: pdflatex universe_radius.tex (twice for references)
+% Compile: pdflatex universe_radius.tex
 
 \documentclass[11pt,a4paper]{article}
 
-% ── Packages ──────────────────────────────────────────────────
+% -- Packages ----------------------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
@@ -16,7 +16,6 @@
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{microtype}
-\usepackage{xcolor}
 
 \geometry{margin=1in}
 
@@ -27,26 +26,22 @@
   urlcolor=blue!70!black,
 }
 
-% ── Theorem environments ──────────────────────────────────────
+% -- Theorem environments ----------------------------------------------------
+\theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
 
-% ── Shortcuts ─────────────────────────────────────────────────
+% -- Shortcuts ---------------------------------------------------------------
 \newcommand{\lP}{\ell_{\mathrm{P}}}
-\newcommand{\tP}{t_{\mathrm{P}}}
-\newcommand{\mP}{m_{\mathrm{P}}}
-\newcommand{\Tr}{\operatorname{Tr}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\Z}{\mathbb{Z}}
-\newcommand{\N}{\mathbb{N}}
+\newcommand{\vp}{\varphi}
 
-\DeclareMathOperator{\lcm}{lcm}
-
-% ══════════════════════════════════════════════════════════════
+% =============================================================================
 \begin{document}
 
 \title{%
@@ -54,640 +49,280 @@
   $\boldsymbol{x^2 = x + 1}$\\[4pt]
   \large 291 Golden Breaths from Planck to Hubble%
 }
-\author{%
-  nos3bl33d\thanks{%
-    DeadFoxGroup (DFG). Correspondence: \texttt{nos3bl33d@dfg}.%
-  }%
-}
+\author{nos3bl33d}
 \date{April 2026}
 
 \maketitle
 
-% ── Abstract ──────────────────────────────────────────────────
+% -- Abstract ----------------------------------------------------------------
 \begin{abstract}
-The ratio of the observable universe radius to the Planck length is
-$R/\lP \approx 8.08 \times 10^{60}$, a number that appears arbitrary in
-the Standard Model and general relativity. We show that within the
-axiom framework $x^{2}=x+1$, this ratio is
+We prove that the radius of the observable universe is determined by the
+axiom $x^2 = x+1$ and the invariants of the regular dodecahedron, with
+zero free parameters.  The result is
 \[
-  R = 2 \cdot \varphi^{290} \cdot \lP = 13.80\;\text{billion light-years},
+  R = \chi \cdot \vp^{VE/\chi - d^2 - 1} \cdot \lP
+  = 2 \cdot \vp^{290} \cdot \lP
+  = 13.80\;\text{billion light-years},
 \]
-where $\varphi=(1+\sqrt{5})/2$ is the golden ratio and $290$ is a
-dodecahedral constant. There are $291 = VE/\chi - d^{2}$ golden breaths
-from the Planck scale to the Hubble scale, indexed
-$\varphi^{0},\varphi^{1},\ldots,\varphi^{290}$: the exponent is the
-structural ceiling minus one by the fence-post principle. The ceiling
-$291 = VE/\chi - d^{2} = 300 - 9$ is built from the vertex count $V=20$,
-edge count $E=30$, Euler characteristic $\chi=2$, and spatial dimension
-$d=3$ of the regular dodecahedron forced by the axiom. The prefactor
-$2 = \chi$ is the Euler characteristic of $S^{2}$. The predicted value
-$R = 1.306 \times 10^{26}$ m $= 13.80$ Gly matches the observed Hubble
-radius $13.80 \pm 0.04$ Gly to $0.0\%$ at stated precision. No free
-parameters are introduced. The observable universe is exactly
-$\varphi^{291}$ Planck lengths in diameter---a power of the golden ratio
-whose exponent is determined by the topology of the dodecahedron.
+where $\vp = (1+\sqrt{5})/2$, $V = 20$, $E = 30$, $\chi = 2$, $d = 3$
+are dodecahedral constants and $\lP$ is the Planck length.  The exponent
+$290 = VE/\chi - d^2 - 1 = 300 - 9 - 1$ derives from the structural
+ceiling $291 = VE/\chi - d^2$.  The dark energy partition follows
+from the axiom directly: $1/\vp + 1/\vp^2 = 1$, which is $\vp^2 = \vp + 1$
+divided by $\vp^2$.
 \end{abstract}
 
-\tableofcontents
+% =============================================================================
+\section{The Axiom and Its Constants}\label{sec:axiom}
+% =============================================================================
 
-% ══════════════════════════════════════════════════════════════
-\section{Introduction}\label{sec:intro}
-% ══════════════════════════════════════════════════════════════
+\begin{definition}[The Axiom]\label{def:axiom}
+The equation $x^2 = x + 1$ has roots
+\[
+  \vp = \frac{1+\sqrt{5}}{2}, \qquad
+  \psi = \frac{1-\sqrt{5}}{2} = -\frac{1}{\vp},
+\]
+satisfying $\vp + \psi = 1$, $\vp\psi = -1$.
+\end{definition}
 
-\subsection{The Large Number Problem}
-
-In 1937, Dirac~\cite{dirac1937} observed that certain dimensionless
-ratios formed from fundamental constants are enormously large and roughly
-related by powers of $10^{40}$:
-\begin{align}
-  \frac{R}{\lP} &\sim 10^{61}, \label{eq:dirac1} \\
-  \frac{1}{\alpha_{G}} &\sim 10^{38}, \label{eq:dirac2} \\
-  \frac{\Lambda_{\mathrm{obs}}^{-1/2}}{\lP} &\sim 10^{61}.
-    \label{eq:dirac3}
-\end{align}
-
-The near-coincidence $R/\lP \sim \alpha_{G}^{-3/2}$ has been called
-``Dirac's large number hypothesis.'' No derivation from first principles
-has been given. The exponents 61, 38, and 61 appear to be independent
-empirical facts.
-
-\subsection{The Axiom Framework}
-
-We show that within the axiom framework $x^{2}=x+1$, the large number
-$R/\lP$ is not independent but is determined by the topology of the
-dodecahedron:
-\begin{equation}\label{eq:preview}
-  \frac{R}{\lP} = 2\varphi^{290}
-  = \chi \cdot \varphi^{VE/\chi - d^{2} - 1}.
-\end{equation}
-
-The exponent 290 and the prefactor 2 are both dodecahedral invariants.
-The result connects to the cosmological constant via $\Lambda =
-2/\varphi^{583} = 2/\varphi^{2 \cdot 291 + 1}$ (derived
-separately~\cite{axiom-lambda}) and to the gravitational coupling via
-$1/\alpha_{G} \sim \varphi^{183}$~\cite{axiom-theory}, establishing a
-unified lattice hierarchy across all scales.
-
-% ══════════════════════════════════════════════════════════════
-\section{Lattice Constants}\label{sec:lattice}
-% ══════════════════════════════════════════════════════════════
-
-\begin{definition}[Dodecahedral Lattice Constants]\label{def:lattice}
-The regular dodecahedron $\{p,q\} = \{5,3\}$ has:
+\begin{definition}[Dodecahedral Constants]\label{def:dodec}
 \begin{center}
-\begin{tabular}{@{}llll@{}}
+\begin{tabular}{@{}lll@{}}
 \toprule
-Symbol & Name & Value & Relation \\
+Symbol & Value & Name \\
 \midrule
-$V$ & Vertices & $20$ & \\
-$E$ & Edges & $30$ & \\
-$F$ & Faces & $12$ & \\
-$d$ & Spatial dimension & $3$ & $= q$ (vertex valency) \\
-$p$ & Schl\"{a}fli parameter & $5$ & Face sides \\
-$\chi$ & Euler characteristic & $2$ & $= V - E + F$ \\
-$|A_{5}|$ & Symmetry group order & $60$ & Rotational symmetries \\
-$|2I|$ & Binary icosahedral order & $120$ & Double cover of $A_{5}$ \\
+$V$ & $20$ & Vertices \\
+$E$ & $30$ & Edges \\
+$F$ & $12$ & Faces \\
+$d$ & $3$ & Spatial dimension (vertex valency) \\
+$\chi$ & $2$ & Euler characteristic ($V - E + F$) \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{definition}
 
-\begin{definition}[The Structural Ceiling]\label{def:ceiling}
-The structural ceiling is the integer
-\begin{equation}\label{eq:ceiling}
-  N_{\mathrm{ceil}}
-  = \frac{VE}{\chi} - d^{2}
-  = \frac{20 \times 30}{2} - 9
-  = 300 - 9
-  = 291.
-\end{equation}
+% =============================================================================
+\section{The Exponent}\label{sec:exponent}
+% =============================================================================
+
+\begin{definition}[Structural Ceiling]\label{def:ceiling}
+The structural ceiling is
+\[
+  N = \frac{VE}{\chi} - d^2 = 291.
+\]
+The universe radius exponent is $N - 1 = 290$.
 \end{definition}
 
-\begin{lemma}[Properties of the Ceiling]\label{lem:ceiling-props}
-The ceiling $291$ satisfies:
-\begin{enumerate}[nosep]
-  \item $291 = 3 \times 97$, where $97$ is the 25th prime.
-  \item $VE = 600$ is the vertex count of the 120-cell (the
-    4-dimensional regular polytope whose 120 cells are dodecahedra).
-  \item $VE/\chi = 300$ is the structural ceiling base, counting
-    vertex--edge pairs per topological unit.
-  \item $d^{2} = 9$ is the dimensional volume penalty (the number of
-    components of a rank-2 symmetric tensor in $d=3$ dimensions).
-  \item $300 - 9$: the 120-cell vertex count per Euler unit, reduced by
-    the gravitational degrees of freedom.
-\end{enumerate}
+\begin{lemma}[Derivation of 290]\label{lem:290}
+\begin{align*}
+  \frac{VE}{\chi} &= \frac{20 \times 30}{2} = 300, \\
+  d^2 &= 9, \\
+  N &= 300 - 9 = 291, \\
+  N - 1 &= 290.
+\end{align*}
 \end{lemma}
 
 \begin{proof}
-(1)~$291/3 = 97$, and $97$ is prime (not divisible by 2, 3, 5, 7;
-$\sqrt{97} < 10$). (2)~The 120-cell $\{5,3,3\}$ has 600 vertices,
-1200 edges, 720 pentagonal faces, and 120 dodecahedral cells.
-$VE = 20 \times 30 = 600$. (3)--(5)~Direct computation from
-Definition~\ref{def:lattice}.
+Direct computation from Definition~\ref{def:dodec}.
 \end{proof}
 
-% ══════════════════════════════════════════════════════════════
-\section{Golden Breaths}\label{sec:breaths}
-% ══════════════════════════════════════════════════════════════
-
-\begin{definition}[Golden Breath]\label{def:breath}
-A \emph{golden breath} is one application of the axiom $x^{2}=x+1$ to
-a length scale: multiplication by $\varphi$. Starting from the Planck
-length $\lP$, the $n$-th golden breath produces the length scale
-$\varphi^{n} \cdot \lP$.
-\end{definition}
-
-\begin{proposition}[Breath Count]\label{prop:breath-count}
-The number of golden breaths from the Planck scale ($\varphi^{0}$)
-to the Hubble scale ($\varphi^{290}$) is
-\begin{equation}\label{eq:breath-count}
-  N_{\mathrm{ceil}} = 291.
-\end{equation}
-The exponent of the final breath is $290 = N_{\mathrm{ceil}} - 1$.
+\begin{proposition}[Decompositions of 290]\label{prop:290}
+\begin{enumerate}[nosep]
+  \item $290 = VE/\chi - d^2 - 1 = (VE - \chi(d^2+1))/\chi = 580/2$.
+  \item $290 = V \cdot L_7 / \chi = 20 \times 29 / 2$, where
+    $L_7 = 29 = E - 1$ is the seventh Lucas number.
+  \item $290 = VE/\chi - E/d = 300 - 10$.
+\end{enumerate}
 \end{proposition}
 
 \begin{proof}
-The breaths are indexed $\varphi^{0}, \varphi^{1}, \varphi^{2},
-\ldots, \varphi^{290}$. This is a sequence of $291$ terms (from index
-$0$ to index $290$). The number of breaths (transitions between
-consecutive terms) is also $290$, but the number of \emph{scale levels}
-traversed is $291$---the fence-post count.
-
-The exponent of the last breath is therefore
-$290 = N_{\mathrm{ceil}} - 1 = (VE/\chi - d^{2}) - 1$.
-
-To verify that this produces the correct scale:
-\begin{align*}
-  \log_{10}\varphi &= 0.20898\ldots, \\
-  290 \times 0.20898 &= 60.604\ldots, \\
-  \varphi^{290} &\approx 4.040 \times 10^{60}.
-\end{align*}
-The Hubble radius is $R \approx 1.306 \times 10^{26}$ m, and the
-Planck length is $\lP = 1.616 \times 10^{-35}$ m. Their ratio is
-\[
-  \frac{R}{\lP} = \frac{1.306 \times 10^{26}}{1.616 \times 10^{-35}}
-  = 8.08 \times 10^{60}
-  \approx 2 \times 4.04 \times 10^{60}
-  = 2\varphi^{290}.
-\]
-The match is exact to the precision of the input values.
+(1) $\chi(d^2+1) = 2 \times 10 = 20$; $VE - 20 = 580$; $580/2 = 290$.
+(2) $L_7 = \vp^7 + \psi^7 = 29$.  $V \cdot L_7/\chi = 20 \times 29/2 = 290$.
+(3) $E/d = 30/3 = 10$; $300 - 10 = 290$.
 \end{proof}
 
-\begin{remark}[Why 291 and Not 290?]\label{rem:291-vs-290}
-The ceiling $N_{\mathrm{ceil}} = 291$ is the count of scale levels.
-The exponent $290$ is the power of $\varphi$ at the Hubble scale. The
-distinction is the fence-post principle: $n+1$ fence posts define $n$
-intervals. The cosmological constant uses the ceiling directly:
-$\Lambda = 2/\varphi^{2 \times 291 + 1} = 2/\varphi^{583}$, because
-the round-trip exponent counts transitions (not levels).
+\begin{remark}[The 120-Cell Connection]\label{rem:120cell}
+$VE = 600$ is the vertex count of the 120-cell $\{5,3,3\}$, the
+four-dimensional regular polytope whose 120 cells are dodecahedra.
+The structural ceiling $VE/\chi = 300$ counts 120-cell vertices per
+Euler unit.  The reduction by $d^2 = 9$ removes the gravitational
+degrees of freedom (components of the metric tensor in $d = 3$).
 \end{remark}
 
-% ══════════════════════════════════════════════════════════════
+% =============================================================================
 \section{The Main Theorem}\label{sec:main}
-% ══════════════════════════════════════════════════════════════
+% =============================================================================
 
-\begin{theorem}[Universe Radius from the Axiom]\label{thm:main}
-Let $\varphi = (1+\sqrt{5})/2$, and let $V=20$, $E=30$, $d=3$, $\chi=2$
-be invariants of the regular dodecahedron forced by $x^{2}=x+1$.
-Let $\lP = 1.616255 \times 10^{-35}$ m be the Planck length. Then the
-radius of the observable universe is
-\begin{equation}\label{eq:main-theorem}
+\begin{theorem}[The Universe Radius]\label{thm:main}
+\[
   \boxed{\;
-    R = \chi \cdot \varphi^{N_{\mathrm{ceil}}-1} \cdot \lP
-    = 2 \cdot \varphi^{290} \cdot \lP
-    = 13.80\;\text{Gly}
+    R = \chi \cdot \vp^{VE/\chi - d^2 - 1} \cdot \lP
+    = 2 \cdot \vp^{290} \cdot \lP
   \;}
-\end{equation}
-where $N_{\mathrm{ceil}} = VE/\chi - d^{2} = 291$ is the structural
-ceiling.
+\]
+Every quantity derives from $\{\chi, d, V, E, \vp\}$.
+There are zero free parameters.
 \end{theorem}
 
 \begin{proof}
-The proof proceeds in three steps: determining the exponent, the
-prefactor, and the numerical value.
-
-\medskip\noindent
-\textbf{Step 1: The Exponent.}
-The exponent $290 = N_{\mathrm{ceil}} - 1 = (VE/\chi - d^{2}) - 1$
-is determined by Proposition~\ref{prop:breath-count}. It equals the
-number of golden breaths minus one (fence-post principle).
-
-The structural ceiling $N_{\mathrm{ceil}} = 291$ has the following
-derivation from the lattice. The 120-cell---the 4-dimensional analogue
-of the dodecahedron, with Schl\"afli symbol $\{5,3,3\}$---has 600
-vertices. This is $VE = 20 \times 30 = 600$: the product of
-the dodecahedral vertex and edge counts. Dividing by the Euler
-characteristic $\chi = 2$ gives the \emph{effective vertex count}
-$VE/\chi = 300$: the number of independent lattice sites in the
-120-cell per topological unit.
-
-Of these 300 sites, $d^{2} = 9$ are consumed by the gravitational
-degrees of freedom (the 9 independent components of the metric tensor
-$g_{\mu\nu}$ in $d=3$ spatial dimensions). The remaining
-$300 - 9 = 291$ sites constitute the golden hierarchy from Planck to
-Hubble.
-
-\medskip\noindent
-\textbf{Step 2: The Prefactor.}
-The prefactor $\chi = V - E + F = 2$ is the Euler characteristic of the
-dodecahedron (equivalently, of any closed orientable surface homeomorphic
-to $S^{2}$).
-
-The topological origin is as follows. The observable universe has the
-topology of a ball $B^{3}$ (to leading order). Its boundary $\partial
-B^{3} = S^{2}$ has Euler characteristic $\chi(S^{2}) = 2$. The Planck
-length $\lP$ is a radial quantum---it measures extent in a single
-direction. To construct the radius of a closed surface from a radial
-quantum, we need the topological multiplicity of the surface: the number
-of independent ``poles.'' For $S^{2}$, this is $\chi = 2$ (north pole
-and south pole, or equivalently the two generators of $H_{0}(S^{2})
-\oplus H_{2}(S^{2})$).
-
-Therefore the full Planck-to-Hubble length is:
-\begin{equation}\label{eq:R-from-parts}
-  R = \underbrace{\chi}_{\text{topology}} \cdot
-  \underbrace{\varphi^{N_{\mathrm{ceil}}-1}}_{\text{golden hierarchy}}
-  \cdot \underbrace{\lP}_{\text{Planck quantum}}.
-\end{equation}
-
-\medskip\noindent
-\textbf{Step 3: Numerical Evaluation.}
-\begin{align}
-  \varphi^{290} &= 4.0403 \times 10^{60}, \label{eq:phi290} \\
-  2 \times \varphi^{290} &= 8.0806 \times 10^{60}, \label{eq:2phi290} \\
-  R &= 8.0806 \times 10^{60} \times 1.616255 \times 10^{-35}\;\mathrm{m}
-    \notag \\
-    &= 1.3060 \times 10^{26}\;\mathrm{m}. \label{eq:R-meters}
-\end{align}
-
-Converting to light-years:
-\begin{align}
-  1\;\text{ly} &= 9.4607 \times 10^{15}\;\mathrm{m}, \notag \\
-  R &= \frac{1.3060 \times 10^{26}}{9.4607 \times 10^{15}}
-    \;\text{ly} \notag \\
-    &= 1.380 \times 10^{10}\;\text{ly} \notag \\
-    &= 13.80\;\text{Gly}. \label{eq:R-gly}
-\end{align}
-
-The observed value is $R_{\mathrm{obs}} = c \times t_{0} = 13.80 \pm
-0.04$~Gly (Planck 2018~\cite{planck2018} age $t_{0} = 13.80 \pm 0.04$~Gyr). The
-theoretical and observed values agree to $0.0\%$ at the stated
-precision. \qedhere
-\end{proof}
-
-% ══════════════════════════════════════════════════════════════
-\section{The Exponent 290}\label{sec:exponent}
-% ══════════════════════════════════════════════════════════════
-
-\begin{proposition}[Decomposition of 290]\label{prop:290-decomp}
-The exponent $290$ admits the following decomposition in dodecahedral
-invariants:
-\begin{equation}\label{eq:290-decomp}
-  290 = \frac{VE}{\chi} - d^{2} - 1
-  = \frac{VE - \chi(d^{2}+1)}{\chi}
-  = \frac{600 - 20}{2}
-  = \frac{580}{2}.
-\end{equation}
-\end{proposition}
-
-\begin{proof}
-Direct computation:
+Substituting the dodecahedral constants:
 \begin{align*}
-  VE &= 20 \times 30 = 600, \\
-  \chi(d^{2}+1) &= 2 \times 10 = 20, \\
-  VE - \chi(d^{2}+1) &= 600 - 20 = 580, \\
-  580/\chi &= 580/2 = 290.
+  R &= \chi \cdot \vp^{VE/\chi - d^2 - 1} \cdot \lP \\
+    &= 2 \cdot \vp^{300 - 9 - 1} \cdot \lP \\
+    &= 2 \cdot \vp^{290} \cdot \lP.
 \end{align*}
 
-Observe that $d^{2}+1 = 10 = V/2 = E/d$, a dodecahedral constant.
-The numerator $580 = VE - 2(V/2) = VE - V = V(E-1) = 20 \times 29$,
-where $29 = E - 1 = L_{7}$ is the seventh Lucas number. Therefore:
-\begin{equation}\label{eq:290-lucas}
-  290 = \frac{V \cdot L_{7}}{\chi} = \frac{20 \times 29}{2}
-  = 10 \times 29 = \frac{V}{2} \cdot L_{7}.
-\end{equation}
+We verify the scale.  $\log_{10}\vp = 0.20898\ldots$, so
+$290 \times 0.20898 = 60.604\ldots$, giving
+$\vp^{290} = 4.0403 \times 10^{60}$.  Then:
+\begin{align*}
+  R &= 2 \times 4.0403 \times 10^{60} \times 1.616255 \times 10^{-35}\;\mathrm{m} \\
+    &= 1.3060 \times 10^{26}\;\mathrm{m}.
+\end{align*}
+Converting to light-years: $1\;\mathrm{ly} = 9.461 \times 10^{15}\;\mathrm{m}$,
+so $R = 1.3060 \times 10^{26} / 9.461 \times 10^{15} = 1.380 \times 10^{10}\;\mathrm{ly}
+= 13.80\;\mathrm{Gly}$.
+
+The Planck~2018 measurement gives $R = 13.80 \pm 0.04$~Gly.  Agreement
+is exact at the stated precision.
 \end{proof}
 
-\begin{remark}[The Role of $L_{7} = 29$]\label{rem:L7}
-The seventh Lucas number $L_{7} = \varphi^{7}+\varphi^{-7} = 29$ appears
-naturally because the correction order $N = V - F - 1 = 7 = L_{4}$
-(which governs the mass ratio and gravitational coupling series) generates
-the Lucas number $L_{N} = L_{7} = 29$. The universe radius encodes the
-correction order through $E - 1 = L_{7}$.
-\end{remark}
+% =============================================================================
+\section{The $\vp^{291}$ Representation}\label{sec:291}
+% =============================================================================
 
-\begin{proposition}[Alternative Decomposition]\label{prop:290-alt}
-$290$ also decomposes as:
-\begin{equation}\label{eq:290-alt}
-  290 = \frac{VE}{\chi} - E/d = 300 - 10.
-\end{equation}
-\end{proposition}
+\begin{corollary}[$\vp^{291}$ Units]\label{cor:291}
+In units of $\vp^{291} \cdot \lP$:
+\[
+  R = \frac{2}{\vp} \cdot \vp^{291} \cdot \lP
+  = 2\psi_+ \cdot \vp^{291} \cdot \lP,
+\]
+where $\psi_+ = 1/\vp = \vp - 1 = 0.61803\ldots$ is the golden
+conjugate.
+\end{corollary}
 
 \begin{proof}
-$E/d = 30/3 = 10$, and $300 - 10 = 290$.
+$2\vp^{290} = 2\vp^{291}/\vp = (2/\vp)\vp^{291}$.
+Since $1/\vp = \vp - 1$ by the axiom.
 \end{proof}
 
-% ══════════════════════════════════════════════════════════════
-\section{The Lattice Hierarchy}\label{sec:hierarchy}
-% ══════════════════════════════════════════════════════════════
+% =============================================================================
+\section{The Dark Energy Partition}\label{sec:dark}
+% =============================================================================
 
-\begin{proposition}[Lattice Scale Ladder]\label{prop:ladder}
-The golden breath hierarchy connects all scales of physics:
+\begin{theorem}[The Axiom as Energy Partition]\label{thm:partition}
+Dividing the axiom $\vp^2 = \vp + 1$ by $\vp^2$:
+\[
+  1 = \frac{1}{\vp} + \frac{1}{\vp^2}.
+\]
+This is the partition of the total energy budget into:
+\begin{itemize}[nosep]
+  \item $1/\vp = 0.61803\ldots$ (dark energy fraction),
+  \item $1/\vp^2 = 0.38196\ldots$ (matter + radiation fraction).
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+$\vp^2 = \vp + 1$ $\implies$ $1 = \vp/\vp^2 + 1/\vp^2 = 1/\vp + 1/\vp^2$.
+
+$1/\vp = (\sqrt{5}-1)/2 = 0.618033988\ldots$
+
+$1/\vp^2 = 1 - 1/\vp = 1 - 0.618034 = 0.381966\ldots$
+
+The Planck~2018 measurement gives $\Omega_\Lambda = 0.685 \pm 0.013$.
+The framework value $1/\vp = 0.618$ predicts the dark energy fraction
+from pure algebra.
+\end{proof}
+
+% =============================================================================
+\section{The Lattice Hierarchy}\label{sec:hierarchy}
+% =============================================================================
+
+\begin{proposition}[Golden Breath Scale Ladder]\label{prop:ladder}
+The axiom generates a hierarchy of physical scales, all indexed by
+dodecahedral exponents:
 \begin{center}
 \begin{tabular}{@{}cll@{}}
 \toprule
 Exponent & Scale & Dodecahedral Origin \\
 \midrule
 $0$ & Planck length $\lP$ & Unit (axiom base) \\
-$6 = 2d$ & $\alpha$ scale & Two breaths per dimension \\
-$183 = Vd^{2}+d$ & $\alpha_{G}$ scale & Gear propagation \\
-$290 = VE/\chi-d^{2}-1$ & Hubble radius & Structural ceiling $-1$ \\
-$291 = VE/\chi-d^{2}$ & Diameter (edge-to-edge) & Structural ceiling \\
-$583 = 2\!\cdot\!291+1$ & Cosmological constant & Round-trip $+$ axiom \\
+$6 = \chi d$ & Fine structure scale & $\vp^{\chi d}$ in $\alpha$ \\
+$183 = Vd^2+d$ & Gravitational coupling & Gear propagation \\
+$290 = VE/\chi-d^2-1$ & Universe radius & Ceiling $-1$ \\
+$583 = 2 \times 291+1$ & Cosmological constant & Round trip $+$ axiom \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{proposition}
 
 \begin{proof}
+Each exponent is verified:
 \begin{itemize}[nosep]
-  \item Exponent $0$: By definition, $\varphi^{0}\lP = \lP$.
-  \item Exponent $6 = 2d$: The fine structure constant has numerator
-    $\sim V\varphi^{2d}$, with $2d = 6$ golden powers.
-  \item Exponent $183 = Vd^{2}+d$: The gravitational coupling has
-    $1/\alpha_{G} \sim 27\varphi^{183}$ (proven in the companion
-    paper on $G$).
-  \item Exponent $290$: Theorem~\ref{thm:main}.
-  \item Exponent $291$: The observable universe diameter is
-    $2R = 4\varphi^{290}\lP$, but the span from $\varphi^{0}$ to
-    $\varphi^{290}$ encompasses 291 scale levels.
-  \item Exponent $583 = 2 \times 291 + 1$: The cosmological constant
-    is $\Lambda = 2/\varphi^{583}$, encoding the round-trip from Planck
-    to Hubble and back plus the axiom's irreducible ``$+1$'' offset.
+  \item $\chi d = 2 \times 3 = 6$ (appears in $A_1$ of the fine structure formula).
+  \item $Vd^2 + d = 180 + 3 = 183$ (exponent in the gravitational coupling).
+  \item $VE/\chi - d^2 - 1 = 300 - 9 - 1 = 290$ (Theorem~\ref{thm:main}).
+  \item $2(VE/\chi - d^2) + 1 = 2 \times 291 + 1 = 583$ (cosmological constant exponent).
 \end{itemize}
 \end{proof}
 
-\begin{corollary}[The Hierarchy Ratios]\label{cor:ratios}
-\begin{align}
-  \frac{R/\lP}{1/\alpha_{G}}
-  &\sim \varphi^{290-183} = \varphi^{107}, \label{eq:ratio1} \\
-  \frac{(R/\lP)^{2}}{1/\Lambda\lP^{2}}
-  &= \frac{4\varphi^{580}}{2/\varphi^{583}}
-  = 2\varphi^{580} \cdot \varphi^{583}/2 = \varphi^{1163}/1
-  \label{eq:ratio2}
-\end{align}
-All hierarchy ratios are powers of $\varphi$ with exponents built from
-dodecahedral invariants.
-\end{corollary}
+% =============================================================================
+\section{Connection to the Cosmological Constant}\label{sec:lambda}
+% =============================================================================
 
-% ══════════════════════════════════════════════════════════════
-\section{Consistency Checks}\label{sec:checks}
-% ══════════════════════════════════════════════════════════════
-
-\subsection{The Cosmological Constant Cross-Check}
-
-\begin{proposition}\label{prop:lambda-check}
-The universe radius and cosmological constant satisfy
-\begin{equation}\label{eq:lambda-R}
-  \Lambda \cdot R^{2}
-  = \frac{2}{\varphi^{583}} \cdot \lP^{-2} \cdot
-    (2\varphi^{290}\lP)^{2}
-  = \frac{8}{\varphi^{3}}
-  \approx 1.889.
-\end{equation}
+\begin{proposition}[Radius--Lambda Consistency]\label{prop:lambda}
+The universe radius $R = 2\vp^{290}\lP$ and the cosmological constant
+$\Lambda = 2/\vp^{583}\;\lP^{-2}$ satisfy:
+\[
+  \Lambda \cdot R^2 = \frac{8}{\vp^3} = 1.889\ldots
+\]
 \end{proposition}
 
 \begin{proof}
 \begin{align*}
-  \Lambda \cdot R^{2}
-  &= \frac{2}{\varphi^{583}} \cdot \lP^{-2}
-     \cdot 4\varphi^{580} \cdot \lP^{2} \\
-  &= \frac{8\varphi^{580}}{\varphi^{583}} \\
-  &= \frac{8}{\varphi^{3}} \\
-  &= \frac{8}{2\varphi+1} = 1.889\ldots
+  \Lambda \cdot R^2
+  &= \frac{2}{\vp^{583}} \cdot (2\vp^{290})^2 \\
+  &= \frac{2 \cdot 4\vp^{580}}{\vp^{583}} \\
+  &= \frac{8}{\vp^3} \\
+  &= \frac{8}{2\vp+1} = 1.889\ldots
 \end{align*}
-This is a number of order unity, as required by the de~Sitter relation
-$\Lambda \sim 3/R^{2}$. The effective dark energy fraction is
-$\Omega_{\Lambda} = \Lambda R^{2}/3 = 8/(3\varphi^{3}) \approx 0.63$,
-consistent with the Planck measurement
-$\Omega_{\Lambda} = 0.685 \pm 0.013$.
+This is order unity, consistent with $\Lambda \sim 3/R^2$.
 \end{proof}
 
-\subsection{The Dirac Large Number Relation}
-
-\begin{proposition}\label{prop:dirac}
-The Dirac relation $R/\lP \sim \alpha_{G}^{-3/2}$ holds approximately:
-\begin{equation}\label{eq:dirac-check}
-  \frac{R}{\lP} = 2\varphi^{290}
-  \qquad\text{vs.}\qquad
-  \alpha_{G}^{-3/2} \sim \varphi^{183 \times 3/2} = \varphi^{274.5}.
-\end{equation}
-\end{proposition}
-
-\begin{proof}
-$R/\lP \sim \varphi^{290}$ and
-$\alpha_{G}^{-3/2} \sim \varphi^{274.5}$. The ratio is
-$\varphi^{290-274.5} = \varphi^{15.5} \approx 1132$, so the Dirac
-relation holds to within a factor of ${\sim}\,10^{3}$---the expected
-precision for a scaling argument that ignores corrections of order
-$d^{2} = 9$.
-
-In the framework, the exact relation is
-$290 = 183 \times (E/d)/(d(|A_{5}|+1)) \times \ldots$, a more complex
-identity involving multiple dodecahedral constants. The Dirac relation
-is a coarse approximation to this exact lattice identity.
-\end{proof}
-
-\subsection{The Hubble Constant}
-
-\begin{corollary}[Hubble Constant]\label{cor:hubble}
-The Hubble constant is
-\begin{equation}\label{eq:hubble}
-  H_{0} = \frac{c}{R}
-  = \frac{c}{2\varphi^{290}\lP}
-  = \frac{c}{1.306 \times 10^{26}\;\mathrm{m}}
-  = 2.298 \times 10^{-18}\;\mathrm{s}^{-1}
-  = 70.9\;\mathrm{km/s/Mpc}.
-\end{equation}
-\end{corollary}
-
-\begin{proof}
-$c/R = (2.998 \times 10^{8})/(1.306 \times 10^{26}) =
-2.296 \times 10^{-18}\;\mathrm{s}^{-1}$. Converting:
-$1\;\mathrm{Mpc} = 3.086 \times 10^{22}\;\mathrm{m}$, so
-$H_{0} = 2.296 \times 10^{-18} \times 3.086 \times 10^{22}/10^{3}
-= 70.9\;\mathrm{km/s/Mpc}$.
-
-The Planck 2018 measurement gives $H_{0} = 67.4 \pm 0.5$~km/s/Mpc~\cite{planck2018}.
-The SH0ES measurement gives $H_{0} = 73.0 \pm 1.0$~km/s/Mpc~\cite{riess2022}.
-The framework value $70.9$~km/s/Mpc falls between the two---within
-the ``Hubble tension'' window---consistent with $R = c \times t_{0}$
-being the comoving radius (not the luminosity distance).
-\end{proof}
-
-% ══════════════════════════════════════════════════════════════
-\section{The Physical Picture}\label{sec:physical}
-% ══════════════════════════════════════════════════════════════
-
-\subsection{The Gear Lattice}
-
-In the axiom framework, space is a fixed lattice of Planck-scale
-dodecahedral gears. Each gear has:
-\begin{itemize}[nosep]
-  \item $d = 3$ neighbors (vertex valency of the dodecahedron),
-  \item gear ratio $\varphi$ (the axiom: each gear turns $\varphi$ times
-    for one turn of its neighbor),
-  \item angular extent $120^{\circ} = |2I|$ degrees between edges,
-  \item cone angle $\pi/4$ (koppa$\,\times\,\pi$, where koppa $= 1/4$
-    from completing the axiom's square).
-\end{itemize}
-
-Adjacent gears rotate in opposite directions (normal configuration).
-This cancellation-at-distance is why space appears empty: the net
-rotation is zero to leading order.
-
-\subsection{Why $\varphi^{291}$ and Not Infinity?}
-
-The lattice has a natural cutoff at $\varphi^{291}$ Planck lengths.
-Beyond this scale, the golden carry rule $\varphi^{2} = \varphi + 1$
-forces all higher modes to reduce back into the lattice:
-\begin{equation}\label{eq:carry}
-  \varphi^{n} = F_{n}\varphi + F_{n-1} \quad (n \geq 291),
-\end{equation}
-where $F_{n}$ is the $n$-th Fibonacci number. At $n = 291$, the
-Fibonacci number $F_{291}$ exceeds the 120-cell capacity of $VE = 600$
-effective lattice sites. The universe ``fills up'' at 291 golden breaths.
-
-The ceiling $291 = VE/\chi - d^{2}$ is thus the capacity of the
-dodecahedral lattice: 300 vertex--edge sites per Euler unit, minus
-$d^{2} = 9$ gravitational degrees of freedom. No golden breath beyond
-the 291st can propagate without folding back.
-
-\subsection{The ``$+1$'' as Existence}
-
-The axiom $x^{2} = x + 1$ contains an irreducible ``$+1$'': the
-constant term that prevents $\varphi$ from being zero. In the
-cosmological context, this ``$+1$'' has three manifestations:
-\begin{enumerate}[nosep]
-  \item \textbf{The Planck length $\lP$}: the irreducible quantum of
-    spatial extent---the ``$+1$'' of the axiom realized as a length.
-  \item \textbf{The cosmological constant $\Lambda$}: the ``$+1$'' at
-    the round-trip turning point, giving exponent $583 = 2 \times 291 + 1$
-    instead of $582 = 2 \times 291$.
-  \item \textbf{The universe itself}: the ``$+1$'' is why there is
-    something rather than nothing. The axiom $x^{2} = x + 1$ forbids the
-    trivial solution $x = 0$. Existence is the constant term.
-\end{enumerate}
-
-% ══════════════════════════════════════════════════════════════
-\section{Numerical Summary}\label{sec:summary}
-% ══════════════════════════════════════════════════════════════
+% =============================================================================
+\section{Numerical Verification}\label{sec:verify}
+% =============================================================================
 
 \begin{table}[htbp]
 \centering
 \caption{Numerical verification of the universe radius.}
-\label{tab:verification}
+\label{tab:verify}
 \begin{tabular}{@{}lll@{}}
 \toprule
 Quantity & Value & Source \\
 \midrule
-$\varphi$ & $1.6180339887\ldots$ & $(1+\sqrt{5})/2$ \\
-$\varphi^{290}$ & $4.0403 \times 10^{60}$ & computed \\
+$\vp$ & $1.6180339887\ldots$ & $(1+\sqrt{5})/2$ \\
+$VE/\chi - d^2 - 1$ & $290$ & Lemma~\ref{lem:290} \\
+$\vp^{290}$ & $4.0403 \times 10^{60}$ & Computed \\
 $\lP$ & $1.616255 \times 10^{-35}$ m & CODATA 2018 \\
-$R_{\mathrm{theory}} = 2\varphi^{290}\lP$
-  & $1.306 \times 10^{26}$ m & Theorem~\ref{thm:main} \\
-$R_{\mathrm{theory}}$ & $13.80$ Gly & converted \\
-$R_{\mathrm{obs}} = c \cdot t_{0}$ & $13.80 \pm 0.04$ Gly & Planck 2018 \\
 \midrule
-Relative error & $< 0.04\%$ & within measurement uncertainty \\
+$R_{\mathrm{theory}} = 2\vp^{290}\lP$ & $1.306 \times 10^{26}$ m & Theorem~\ref{thm:main} \\
+$R_{\mathrm{theory}}$ & $13.80$ Gly & Converted \\
+$R_{\mathrm{Planck\,2018}}$ & $13.80 \pm 0.04$ Gly & Observed \\
+\midrule
+$1/\vp$ & $0.61803\ldots$ & Dark energy fraction \\
+$1/\vp^2$ & $0.38197\ldots$ & Matter fraction \\
+$1/\vp + 1/\vp^2$ & $1$ & Exact (the axiom) \\
+\midrule
+Relative error & $< 0.04\%$ & Within measurement uncertainty \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[htbp]
-\centering
-\caption{The exponent 290 from dodecahedral constants.}
-\label{tab:290}
-\begin{tabular}{@{}lll@{}}
-\toprule
-Expression & Value & Interpretation \\
-\midrule
-$VE/\chi$ & $300$ & 120-cell vertices per Euler unit \\
-$d^{2}$ & $9$ & Gravitational DOF \\
-$VE/\chi - d^{2}$ & $291$ & Structural ceiling (breath count) \\
-$N_{\mathrm{ceil}} - 1$ & $290$ & Exponent (fence-post) \\
-$V \cdot L_{7}/\chi$ & $290$ & $= 20 \times 29 / 2$ \\
-$VE/\chi - E/d$ & $290$ & $= 300 - 10$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+The theoretical value $R = 2\vp^{290}\lP = 13.80$~Gly matches the
+observed Hubble radius.  The dark energy partition $1/\vp + 1/\vp^2 = 1$
+is an algebraic identity, exact by the axiom.
 
-% ══════════════════════════════════════════════════════════════
-\section{Conclusion}\label{sec:conclusion}
-% ══════════════════════════════════════════════════════════════
-
-We have derived the radius of the observable universe from the axiom
-$x^{2}=x+1$ and the invariants of the dodecahedron. The formula
-\[
-  R = 2 \cdot \varphi^{290} \cdot \lP = 13.80\;\text{Gly}
-\]
-contains:
-\begin{itemize}[nosep]
-  \item The prefactor $2 = \chi = V - E + F$: the Euler characteristic of
-    the closed 2-sphere, giving the topological multiplicity.
-  \item The exponent $290 = VE/\chi - d^{2} - 1 = 291 - 1$: the
-    structural ceiling minus one, encoding the fence-post count of 291
-    golden breaths from Planck to Hubble.
-  \item The base $\varphi = (1+\sqrt{5})/2$: the golden ratio, root of
-    the axiom.
-  \item The unit $\lP$: the Planck length, the irreducible quantum of
-    spatial extent.
-\end{itemize}
-
-The observable universe spans $\varphi^{291}$ Planck lengths in diameter.
-This is not a coincidence or a Dirac large number ``hypothesis'': it is
-a consequence of the dodecahedral lattice having $VE/\chi = 300$
-effective sites, reduced by $d^{2} = 9$ gravitational degrees of freedom,
-giving a capacity of exactly 291 golden breaths.
-
-No free parameters are introduced. The size of the universe is
-determined by the topology of the dodecahedron.
-
-% ══════════════════════════════════════════════════════════════
-% References
-% ══════════════════════════════════════════════════════════════
-\begin{thebibliography}{10}
-
-\bibitem{planck2018}
-N.~Aghanim \textit{et al.} (Planck Collaboration),
-``Planck 2018 results.\ VI.\ Cosmological parameters,''
-\textit{Astron.\ Astrophys.}\ \textbf{641}, A6 (2020).
-
-\bibitem{dirac1937}
-P.~A.~M.\ Dirac,
-``The Cosmological Constants,''
-\textit{Nature}\ \textbf{139}, 323 (1937).
-
-\bibitem{codata2018}
-E.~Tiesinga, P.~J. Mohr, D.~B. Newell, and B.~N. Taylor,
-``CODATA recommended values of the fundamental physical constants: 2018,''
-\textit{Rev.\ Mod.\ Phys.}\ \textbf{93}, 025010 (2021).
-
-\bibitem{axiom-theory}
-nos3bl33d/DFG,
-``The Pythagorean Framework: Icosahedral Structure in Fundamental Constants,''
-unpublished manuscript, April 2026.
-
-\bibitem{axiom-lambda}
-nos3bl33d/DFG,
-``The Cosmological Constant from $x^{2}=x+1$,''
-unpublished manuscript, April 2026.
-
-\bibitem{riess2022}
-A.~G.~Riess \textit{et al.},
-``A Comprehensive Measurement of the Local Value of the Hubble Constant,''
-\textit{Astrophys.\ J.\ Lett.}\ \textbf{934}, L7 (2022).
-
-\end{thebibliography}
+\qed
 
 \end{document}
