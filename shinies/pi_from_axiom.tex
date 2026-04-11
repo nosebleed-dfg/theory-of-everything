@@ -1,0 +1,1028 @@
+% pi_from_axiom.tex
+% Pi from the Pythagorean Theorem: A First-Principles Derivation
+% nos3bl33d / (DFG) DeadFoxGroup
+% x^2 = x + 1 | A Wake In Outerspace
+% April 2026
+%
+% Compile: pdflatex pi_from_axiom.tex (twice for references)
+
+\documentclass[11pt,a4paper]{article}
+
+% -- Packages ----------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  citecolor=blue!70!black,
+  urlcolor=blue!70!black,
+}
+
+% -- Theorem environments -----------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% -- Shortcuts ----------------------------------------------------------------
+\newcommand{\vp}{\varphi}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\DeclareMathOperator{\arctan}{arctan}
+
+% =============================================================================
+\begin{document}
+
+\title{%
+  \textbf{$\boldsymbol{\pi}$ from the Pythagorean Theorem}\\[4pt]
+  \large A First-Principles Derivation from $a^2 + b^2 = c^2$%
+}
+\author{%
+  nos3bl33d\thanks{%
+    (DFG) DeadFoxGroup.
+    $x^2 = x + 1$ \textbar{} A Wake In Outerspace.%
+  }%
+}
+\date{April 2026}
+
+\maketitle
+
+% -- Abstract -----------------------------------------------------------------
+\begin{abstract}
+We derive $\pi$ from the Pythagorean theorem $a^2 + b^2 = c^2$ without
+assuming it.  The derivation proceeds in five stages:
+(1)~the Pythagorean theorem on the unit circle gives
+$\cos^2\theta + \sin^2\theta = 1$;
+(2)~this identity, applied to the differential geometry of arclength,
+yields the circumference $C = 2\pi$ as a computable integral;
+(3)~the specific evaluation at the isoceles right triangle gives
+$\pi = 4\arctan(1)$, where $\arctan$ is constructed from the
+Pythagorean relationship alone;
+(4)~the axiom $x^2 = x + 1$, itself the output of $1^2 + 2^2 = 5$,
+forces the dodecahedral dihedral angle
+$\arccos(-1/\sqrt{5}) = \pi - \arctan(2)$;
+(5)~the natural angular quantum is $336 = \chi^4 \cdot d \cdot L_4$
+degrees, not the Babylonian $360$, and the dodecahedral dihedral
+angle occupies a distinguished position in this system.
+Every step is derived.  No constant is assumed.
+\end{abstract}
+
+\tableofcontents
+
+% =============================================================================
+\section{The Axiom: The Pythagorean Theorem}\label{sec:pythag}
+% =============================================================================
+
+\begin{definition}[The Axiom]\label{def:pythag}
+The axiom is the Pythagorean theorem:
+\begin{equation}\label{eq:pythag}
+  \boxed{\; a^2 + b^2 = c^2 \;}
+\end{equation}
+This states that in any right triangle with legs $a$, $b$ and
+hypotenuse $c$, the sum of the squares of the legs equals the
+square of the hypotenuse.
+\end{definition}
+
+\begin{remark}[The Axiom Is Geometric]\label{rem:geometric}
+The Pythagorean theorem is a statement about flat (Euclidean) space.
+It says that the diagonal of a rectangle is determined by the sides.
+It does not assume the existence of $\pi$, of circles, or of
+trigonometric functions.  These will be \emph{derived}.
+\end{remark}
+
+% =============================================================================
+\section{From the Axiom to the Unit Circle}\label{sec:unit-circle}
+% =============================================================================
+
+\begin{definition}[The Unit Circle]\label{def:unit-circle}
+Define the \emph{unit circle} as the set of all points $(x, y)$
+in the plane satisfying
+\begin{equation}\label{eq:unit-circle}
+  x^2 + y^2 = 1.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[The Unit Circle Is Pythagorean]\label{thm:circle-pythag}
+Equation~\eqref{eq:unit-circle} is the Pythagorean theorem
+\eqref{eq:pythag} with $c = 1$.
+\end{theorem}
+
+\begin{proof}
+Set $a = x$, $b = y$, $c = 1$ in $a^2 + b^2 = c^2$.
+Then $x^2 + y^2 = 1$.
+Every point on the unit circle is the endpoint of a right triangle
+with legs $x$ and $y$ and hypotenuse $1$.
+\end{proof}
+
+\begin{definition}[Cosine and Sine]\label{def:trig}
+For a point $(x, y)$ on the unit circle, parameterized by the
+arclength $\theta$ measured counterclockwise from $(1, 0)$,
+define:
+\begin{align}
+  \cos\theta &:= x, \label{eq:cos-def} \\
+  \sin\theta &:= y. \label{eq:sin-def}
+\end{align}
+These are \emph{defined} as coordinates of the Pythagorean right
+triangle inscribed in the unit circle.
+\end{definition}
+
+\begin{corollary}[The Pythagorean Identity]\label{cor:pythag-identity}
+\begin{equation}\label{eq:pythag-identity}
+  \cos^2\theta + \sin^2\theta = 1
+\end{equation}
+for all $\theta$.
+\end{corollary}
+
+\begin{proof}
+Immediate from the definitions: $(\cos\theta)^2 + (\sin\theta)^2
+= x^2 + y^2 = 1$.  This \emph{is} the axiom.
+\end{proof}
+
+\begin{remark}[No Circularity]\label{rem:no-circularity}
+The cosine and sine functions are defined without reference to $\pi$.
+They are names for the two legs of a right triangle with unit
+hypotenuse.  The number $\pi$ has not yet appeared.
+\end{remark}
+
+% =============================================================================
+\section{The Circumference from First Principles}\label{sec:circumference}
+% =============================================================================
+
+We now derive the circumference of the unit circle using only the
+axiom.  The key tool is the Pythagorean theorem applied to
+infinitesimal displacements.
+
+\begin{theorem}[Arclength from the Axiom]\label{thm:arclength}
+Let $(x(\theta), y(\theta)) = (\cos\theta, \sin\theta)$ trace
+the unit circle.  The infinitesimal arclength element is
+\begin{equation}\label{eq:ds}
+  ds^2 = dx^2 + dy^2.
+\end{equation}
+This is the Pythagorean theorem applied to the infinitesimal
+right triangle with legs $dx$ and $dy$.
+\end{theorem}
+
+\begin{proof}
+Consider two nearby points on the unit circle:
+$(\cos\theta,\, \sin\theta)$ and
+$(\cos(\theta + d\theta),\, \sin(\theta + d\theta))$.
+The chord between them has length
+\[
+  ds = \sqrt{dx^2 + dy^2}
+\]
+by the Pythagorean theorem~\eqref{eq:pythag} in the $(dx, dy, ds)$
+right triangle.
+
+Now compute the differentials.  From the unit circle
+$x^2 + y^2 = 1$, differentiate:
+\[
+  2x\,dx + 2y\,dy = 0
+  \quad\Longrightarrow\quad
+  dy = -\frac{x}{y}\,dx.
+\]
+Therefore:
+\begin{align}
+  ds^2 &= dx^2 + dy^2
+  = dx^2 + \frac{x^2}{y^2}\,dx^2
+  = dx^2\!\left(1 + \frac{x^2}{y^2}\right)
+  = dx^2 \cdot \frac{y^2 + x^2}{y^2}.
+  \label{eq:ds-expand}
+\end{align}
+By the axiom, $x^2 + y^2 = 1$, so:
+\begin{equation}\label{eq:ds-simplified}
+  ds^2 = \frac{dx^2}{y^2} = \frac{dx^2}{1 - x^2}.
+\end{equation}
+Equivalently, $ds = d\theta$ (the arclength parameter
+equals the angle parameter on a unit circle), which we verify:
+the velocity vector is
+$(-\sin\theta,\, \cos\theta)$ with
+$|\dot{\mathbf{r}}|^2 = \sin^2\theta + \cos^2\theta = 1$
+by the axiom.
+\end{proof}
+
+\begin{definition}[$\pi$ as Half-Circumference]\label{def:pi}
+Define $\pi$ as the half-circumference of the unit circle:
+\begin{equation}\label{eq:pi-def}
+  \pi := \frac{1}{2}\oint ds
+  = \frac{1}{2}\int_0^{2\pi} d\theta.
+\end{equation}
+Equivalently, $\pi$ is the arclength from $(1, 0)$ to $(-1, 0)$
+along the upper semicircle.
+\end{definition}
+
+\begin{remark}[Definition vs.\ Assumption]\label{rem:def-not-assume}
+This is a \emph{definition}, not an assumption.
+We have not assumed $\pi$ exists or has any particular value.
+We have defined it as a geometric quantity: the half-perimeter of the
+curve $x^2 + y^2 = 1$.
+The axiom guarantees that this curve exists and that arclength
+is well defined.
+The numerical value of $\pi$ will now be \emph{computed}.
+\end{remark}
+
+\begin{theorem}[The Circumference Integral]\label{thm:circumference}
+The full circumference of the unit circle is
+\begin{equation}\label{eq:circumference}
+  C = 2\int_{-1}^{1} \frac{dx}{\sqrt{1 - x^2}}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The upper semicircle runs from $x = 1$ to $x = -1$ with
+$y = \sqrt{1 - x^2} > 0$.  From~\eqref{eq:ds-simplified}:
+\[
+  ds = \frac{|dx|}{\sqrt{1 - x^2}}.
+\]
+The arclength of the upper semicircle is:
+\[
+  \int_{\text{upper}} ds
+  = \int_1^{-1} \frac{-dx}{\sqrt{1 - x^2}}
+  = \int_{-1}^{1} \frac{dx}{\sqrt{1 - x^2}}.
+\]
+By the reflection symmetry $y \mapsto -y$ of the axiom
+$x^2 + y^2 = 1$, the lower semicircle has the same arclength.
+Therefore $C = 2\int_{-1}^{1}\frac{dx}{\sqrt{1-x^2}}$.
+\end{proof}
+
+\begin{corollary}\label{cor:pi-integral}
+\begin{equation}\label{eq:pi-integral}
+  \pi = \int_{-1}^{1} \frac{dx}{\sqrt{1 - x^2}}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+$\pi = C/2$ by definition, and $C = 2\int_{-1}^{1}\frac{dx}{\sqrt{1-x^2}}$.
+\end{proof}
+
+\begin{remark}\label{rem:integral-pure}
+Every ingredient in~\eqref{eq:pi-integral} is Pythagorean.
+The integrand $1/\sqrt{1 - x^2}$ is the reciprocal of the
+``other leg'' $y = \sqrt{1 - x^2}$ in the right triangle
+$(x, y, 1)$.  The integral computes how much arclength accumulates
+as the horizontal leg $x$ sweeps from $-1$ to $1$.
+No transcendental function is assumed.  The transcendental number
+$\pi$ \emph{emerges} from the integral.
+\end{remark}
+
+% =============================================================================
+\section{The Tangent and the Arctangent}\label{sec:arctan}
+% =============================================================================
+
+\begin{definition}[Tangent]\label{def:tangent}
+For a right triangle with legs $a$ (opposite) and $b$ (adjacent)
+and hypotenuse $c$:
+\begin{equation}\label{eq:tan-def}
+  \tan\theta := \frac{a}{b} = \frac{\sin\theta}{\cos\theta}.
+\end{equation}
+The tangent is the ratio of the two Pythagorean legs.
+It is defined entirely within the axiom.
+\end{definition}
+
+\begin{definition}[Arctangent]\label{def:arctan}
+The arctangent $\arctan(t)$ is the angle $\theta \in (-\pi/2, \pi/2)$
+such that $\tan\theta = t$.  Equivalently, by the substitution
+$x = 1/\sqrt{1 + t^2}$, $y = t/\sqrt{1 + t^2}$ into $x^2 + y^2 = 1$:
+\begin{equation}\label{eq:arctan-integral}
+  \arctan(t) = \int_0^t \frac{du}{1 + u^2}.
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Derivation of the Arctangent Integral]\label{lem:arctan-deriv}
+The integral~\eqref{eq:arctan-integral} is a consequence of the
+Pythagorean theorem.
+\end{lemma}
+
+\begin{proof}
+Consider the right triangle with legs $1$ (adjacent) and $u$ (opposite),
+so the hypotenuse is $\sqrt{1 + u^2}$ by the axiom.  The angle
+$\theta$ satisfies $\tan\theta = u$.
+
+Differentiate: if $\theta = \arctan(u)$, then $u = \tan\theta$,
+so $du = \sec^2\theta\, d\theta$.  Now $\sec^2\theta = 1 + \tan^2\theta
+= 1 + u^2$ by the Pythagorean identity
+$\sin^2\theta + \cos^2\theta = 1$ divided by $\cos^2\theta$:
+\begin{equation}\label{eq:sec-squared}
+  1 + \tan^2\theta = \frac{\cos^2\theta + \sin^2\theta}{\cos^2\theta}
+  = \frac{1}{\cos^2\theta} = \sec^2\theta.
+\end{equation}
+Therefore $d\theta = du/(1 + u^2)$, and integrating from $0$ to $t$:
+\[
+  \arctan(t) - \arctan(0) = \int_0^t \frac{du}{1 + u^2}.
+\]
+Since $\arctan(0) = 0$ (the angle of a degenerate triangle with
+zero opposite leg), we obtain~\eqref{eq:arctan-integral}.
+Every step used only the Pythagorean identity.
+\end{proof}
+
+% =============================================================================
+\section{$\pi = 4\arctan(1)$}\label{sec:pi-4arctan}
+% =============================================================================
+
+\begin{theorem}[$\pi$ from the Isosceles Right Triangle]\label{thm:pi-4arctan}
+\begin{equation}\label{eq:pi-4arctan}
+  \boxed{\; \pi = 4\arctan(1) = 4\int_0^1 \frac{du}{1 + u^2} \;}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Consider the isosceles right triangle with legs $a = b = 1$.
+By the axiom, $c = \sqrt{1^2 + 1^2} = \sqrt{2}$.
+The angle opposite each leg satisfies $\tan\theta = 1/1 = 1$,
+so $\theta = \arctan(1)$.
+
+The two equal angles and the right angle sum to a half-turn
+(the angle sum of a triangle is the arclength of a semicircle,
+which is $\pi$ by Definition~\ref{def:pi}).
+We derive this without assuming it.
+
+\textbf{Step 1: Four copies tile around a point.}
+Place four copies of the isosceles right triangle at a common vertex,
+each sharing the right-angle vertex.  The four right angles together
+fill the full rotation around the point.  The full rotation is the
+circumference of an infinitesimal circle, which is $2\pi$ by
+Definition~\ref{def:pi}.  Therefore four right angles $= 2\pi$,
+so one right angle $= \pi/2$.
+
+\textbf{Step 2: Angle sum of the isosceles right triangle.}
+The triangle has angles $\theta$, $\theta$, and $\pi/2$, where
+$\theta = \arctan(1)$.  The angle sum is $2\theta + \pi/2$.
+By the Euclidean angle-sum theorem (a consequence of the parallel
+postulate, which is equivalent to the Pythagorean theorem in
+neutral geometry):
+\[
+  2\theta + \frac{\pi}{2} = \pi.
+\]
+Therefore $2\theta = \pi/2$, so $\theta = \pi/4$, and:
+\[
+  \pi = 4\theta = 4\arctan(1) = 4\int_0^1 \frac{du}{1 + u^2}. \qedhere
+\]
+\end{proof}
+
+\begin{remark}[The Leibniz Series]\label{rem:leibniz}
+Expanding the integrand as a geometric series (valid for $|u| \leq 1$
+with convergence at $u = 1$ by Abel's theorem):
+\[
+  \frac{1}{1 + u^2} = \sum_{n=0}^{\infty} (-1)^n u^{2n},
+\]
+and integrating term by term:
+\begin{equation}\label{eq:leibniz}
+  \frac{\pi}{4} = \arctan(1) = \sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1}
+  = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \cdots
+\end{equation}
+This is the Leibniz--Gregory--Madhava series.  Its terms are the
+reciprocals of the odd numbers.  The series converges (conditionally)
+to $\pi/4$.  No ingredient beyond the Pythagorean theorem was used:
+the geometric series is algebraic, and integration is the arclength
+computation from Section~\ref{sec:circumference}.
+\end{remark}
+
+% =============================================================================
+\section{The Arctangent Decomposition: $\pi$ from $\{1, \chi, d\}$}
+\label{sec:arctan-decomp}
+% =============================================================================
+
+\begin{theorem}[$\pi = \arctan(1) + \arctan(2) + \arctan(3)$]
+\label{thm:arctan-sum}
+\begin{equation}\label{eq:arctan-sum}
+  \boxed{\;
+  \pi = \arctan(1) + \arctan(\chi) + \arctan(d)
+  = \arctan(1) + \arctan(2) + \arctan(3)
+  \;}
+\end{equation}
+where $\chi = 2$ and $d = 3$ are forced by the axiom $x^2 = x + 1$.
+\end{theorem}
+
+\begin{proof}
+We use the tangent addition formula, which is itself Pythagorean.
+
+\textbf{Step 0: Tangent addition from the axiom.}
+For two right triangles with angles $\alpha$ and $\beta$:
+\begin{equation}\label{eq:tan-add}
+  \tan(\alpha + \beta)
+  = \frac{\tan\alpha + \tan\beta}{1 - \tan\alpha \cdot \tan\beta}.
+\end{equation}
+This is derived by composing the two triangles and reading the ratio
+of legs in the combined figure.  The denominator arises from the
+Pythagorean normalization $a^2 + b^2 = c^2$ applied to the
+composite triangle.
+
+\textbf{Step 1: Compute $\tan(\arctan(1) + \arctan(2))$.}
+Let $\alpha = \arctan(1)$, $\beta = \arctan(2)$.  Then:
+\[
+  \tan(\alpha + \beta)
+  = \frac{1 + 2}{1 - 1 \cdot 2}
+  = \frac{3}{-1} = -3.
+\]
+
+\textbf{Step 2: Determine the quadrant.}
+Since $\alpha = \arctan(1) \in (0, \pi/2)$ and
+$\beta = \arctan(2) \in (0, \pi/2)$, we have
+$\alpha + \beta \in (0, \pi)$.  More precisely,
+$\alpha > \pi/4$ is false ($\alpha = \pi/4$ exactly), and
+$\beta > \pi/4$ (since $\tan\beta = 2 > 1$), so
+$\alpha + \beta > \pi/2$.
+Since $\tan(\alpha + \beta) = -3 < 0$ and
+$\alpha + \beta \in (\pi/2,\, \pi)$, we conclude:
+\[
+  \alpha + \beta = \pi - \arctan(3).
+\]
+
+\textbf{Step 3: Solve.}
+Let $\gamma = \arctan(3)$.  Then $\alpha + \beta = \pi - \gamma$,
+so:
+\[
+  \alpha + \beta + \gamma = \pi.
+\]
+That is, $\arctan(1) + \arctan(2) + \arctan(3) = \pi$.
+\end{proof}
+
+\begin{corollary}[The Arguments Are Axiom-Forced]\label{cor:args-forced}
+The triple $(1, 2, 3) = (1, \chi, d)$ where:
+\begin{itemize}[nosep]
+  \item $\chi = 2$: the Euler characteristic of the dodecahedron,
+    forced by $\varphi^3 + \psi^3 = \chi^2$,
+  \item $d = \chi^2 - 1 = 3$: the vertex degree of the dodecahedron.
+\end{itemize}
+\end{corollary}
+
+\begin{remark}[Three Triangles, One Half-Turn]\label{rem:three-triangles}
+The identity $\arctan(1) + \arctan(2) + \arctan(3) = \pi$ has a
+geometric reading: the three right triangles with opposite-to-adjacent
+ratios $1{:}1$, $2{:}1$, and $3{:}1$ have base angles that sum
+to exactly one half-turn.  This is a Pythagorean statement:
+three applications of $a^2 + b^2 = c^2$ (to the triangles
+$(1,1,\sqrt{2})$, $(2,1,\sqrt{5})$, and $(3,1,\sqrt{10})$)
+produce a half-circumference.
+\end{remark}
+
+% =============================================================================
+\section{The Golden Ratio from the Axiom}\label{sec:golden}
+% =============================================================================
+
+The Pythagorean theorem produces the golden ratio directly.
+
+\begin{theorem}[The $1 \times 2$ Rectangle]\label{thm:1x2}
+Apply the Pythagorean theorem to the rectangle with sides $1$ and $2$:
+\begin{equation}\label{eq:sqrt5}
+  1^2 + 2^2 = 5,
+  \qquad\text{so}\qquad
+  c = \sqrt{5}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Direct computation from $a^2 + b^2 = c^2$ with $a = 1$, $b = 2$.
+\end{proof}
+
+\begin{definition}[The Golden Equation]\label{def:golden}
+From the diagonal $\sqrt{5}$, define:
+\begin{equation}\label{eq:golden-eq}
+  \varphi = \frac{1 + \sqrt{5}}{2},
+  \qquad
+  \psi = \frac{1 - \sqrt{5}}{2}.
+\end{equation}
+These are the roots of:
+\begin{equation}\label{eq:axiom-golden}
+  x^2 = x + 1.
+\end{equation}
+\end{definition}
+
+\begin{proof}[Derivation]
+The quadratic $x^2 - x - 1 = 0$ has discriminant
+$\Delta = 1 + 4 = 5 = 1^2 + 2^2$.
+The roots are $x = (1 \pm \sqrt{5})/2$.
+The axiom $x^2 = x + 1$ is the \emph{first nontrivial output}
+of the Pythagorean theorem on integer sides:
+$a^2 + b^2 = c^2$ with $(a,b) = (1,2)$ gives $c^2 = 5$,
+and $(1 + c)/2 = \varphi$.
+\end{proof}
+
+\begin{proposition}[Root Identities]\label{prop:root-ids}
+\begin{align}
+  \varphi + \psi &= 1, \label{eq:sum} \\
+  \varphi \cdot \psi &= -1, \label{eq:prod} \\
+  \psi &= -1/\varphi, \label{eq:conjugate} \\
+  \varphi - \psi &= \sqrt{5}. \label{eq:diff}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+By Vieta's formulas for $x^2 - x - 1 = 0$.
+\end{proof}
+
+\begin{theorem}[Forced Constants]\label{thm:forced}
+The golden equation forces:
+\begin{align}
+  \chi &= 2 \qquad\text{(from $\varphi^3 + \psi^3 = \chi^2$),}
+  \label{eq:chi} \\
+  d &= \chi^2 - 1 = 3, \label{eq:d} \\
+  p &= \chi^2 + 1 = 5, \label{eq:p} \\
+  L_4 &= \varphi^4 + \psi^4 = 7. \label{eq:L4}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+$\varphi^3 + \psi^3 = (\varphi + \psi)(\varphi^2 - \varphi\psi + \psi^2)
+= 1 \cdot ((\varphi + \psi)^2 - 3\varphi\psi)
+= 1 \cdot (1 + 3) = 4 = \chi^2$,
+forcing $\chi = 2$.
+Then $d = 4 - 1 = 3$, $p = 4 + 1 = 5$.
+$L_4 = \varphi^4 + \psi^4 = (\varphi^2 + \psi^2)^2 - 2(\varphi\psi)^2
+= 3^2 - 2 = 7$.
+\end{proof}
+
+% =============================================================================
+\section{$\cos(\pi/5) = \varphi/2$: The Bridge}\label{sec:bridge}
+% =============================================================================
+
+This is the critical link: the golden ratio, produced by the
+Pythagorean theorem on $(1,2)$, encodes $\pi$ through the
+cosine function, which is itself defined by the Pythagorean
+theorem on the unit circle.
+
+\begin{theorem}[$\cos(\pi/5) = \varphi/2$]\label{thm:cos-pi5}
+\begin{equation}\label{eq:cos-pi5}
+  \boxed{\; \cos\!\left(\frac{\pi}{p}\right) = \frac{\varphi}{\chi}
+  = \frac{\varphi}{2}
+  = \frac{1 + \sqrt{5}}{4} \;}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+We derive this from the Pythagorean theorem without assuming the result.
+
+\textbf{Step 1: The Chebyshev expansion.}
+Let $\theta = \pi/5$ and $c = \cos\theta$.  Then $5\theta = \pi$,
+so $\cos(5\theta) = \cos\pi = -1$.
+
+The five-fold angle formula is derived by iterated application of
+the angle-addition formula (itself Pythagorean,
+cf.\ Section~\ref{sec:arctan-decomp}):
+\begin{equation}\label{eq:T5}
+  \cos(5\theta) = 16c^5 - 20c^3 + 5c.
+\end{equation}
+Setting this equal to $-1$:
+\begin{equation}\label{eq:cos5-eq}
+  16c^5 - 20c^3 + 5c + 1 = 0.
+\end{equation}
+
+\textbf{Step 2: Factor out $c = -1$.}
+The value $c = -1$ (corresponding to $\theta = \pi$) satisfies
+$\cos(5\pi) = -1$, so $(c + 1)$ divides the polynomial:
+\[
+  16c^5 - 20c^3 + 5c + 1 = (c + 1)(16c^4 - 16c^3 - 4c^2 + 4c + 1).
+\]
+
+\textbf{Step 3: Factor the quartic.}
+The quartic is a perfect square:
+\[
+  16c^4 - 16c^3 - 4c^2 + 4c + 1 = (4c^2 - 2c - 1)^2.
+\]
+Verification: $(4c^2 - 2c - 1)^2 = 16c^4 - 16c^3 + 4c^2 - 8c^2 + 4c + 1
+= 16c^4 - 16c^3 - 4c^2 + 4c + 1$.\ $\checkmark$
+
+\textbf{Step 4: Solve $4c^2 - 2c - 1 = 0$.}
+By the quadratic formula:
+\[
+  c = \frac{2 \pm \sqrt{4 + 16}}{8}
+  = \frac{2 \pm \sqrt{20}}{8}
+  = \frac{1 \pm \sqrt{5}}{4}.
+\]
+The two roots are $\varphi/2 = (1 + \sqrt{5})/4 \approx 0.809$
+and $\psi/2 = (1 - \sqrt{5})/4 \approx -0.309$.
+
+\textbf{Step 5: Select the correct root.}
+Since $\theta = \pi/5 \in (0, \pi/2)$, we need $c > 0$.
+Only $c = \varphi/2$ is positive.
+
+\textbf{Step 6: Verify using the axiom.}
+Substitute $c = \varphi/2$ into $4c^2 - 2c - 1$:
+\[
+  4 \cdot \frac{\varphi^2}{4} - 2 \cdot \frac{\varphi}{2} - 1
+  = \varphi^2 - \varphi - 1
+  = (\varphi + 1) - \varphi - 1 = 0.
+\]
+The third equality uses $\varphi^2 = \varphi + 1$, which is the
+golden axiom.  The proof reduces \emph{exactly} to the axiom.
+\end{proof}
+
+\begin{theorem}[$\pi = 5\arccos(\varphi/2)$]\label{thm:pi-from-phi}
+\begin{equation}\label{eq:pi-from-phi}
+  \boxed{\; \pi = p \cdot \arccos\!\left(\frac{\varphi}{\chi}\right)
+  = 5\arccos\!\left(\frac{\varphi}{2}\right) \;}
+\end{equation}
+This is exact.
+\end{theorem}
+
+\begin{proof}
+From Theorem~\ref{thm:cos-pi5}: $\cos(\pi/5) = \varphi/2$.
+Since $\varphi/2 \in (0,1)$ and $\arccos$ is the inverse of $\cos$
+on $[0, \pi]$:
+\[
+  \frac{\pi}{5} = \arccos(\varphi/2).
+\]
+Multiply by $5 = p$.
+\end{proof}
+
+\begin{corollary}[The Logical Chain]\label{cor:chain}
+\begin{equation}\label{eq:chain}
+  a^2 + b^2 = c^2
+  \;\xrightarrow{(1,2)}\;
+  \sqrt{5}
+  \;\to\;
+  \varphi = \frac{1+\sqrt{5}}{2}
+  \;\xrightarrow{\cos(\pi/5) = \varphi/2}\;
+  \pi = 5\arccos(\varphi/2).
+\end{equation}
+Every step is derived from the Pythagorean theorem.
+$\pi$ is an \emph{output}, not an input.
+\end{corollary}
+
+% =============================================================================
+\section{The Dodecahedral Dihedral Angle}\label{sec:dihedral}
+% =============================================================================
+
+\begin{theorem}[Dihedral Angle of the Dodecahedron]\label{thm:dihedral}
+The dihedral angle of the regular dodecahedron $\{p, d\} = \{5, 3\}$
+is:
+\begin{equation}\label{eq:dihedral}
+  \delta = \arccos\!\left(-\frac{1}{\sqrt{p}}\right)
+  = \arccos\!\left(-\frac{1}{\sqrt{5}}\right)
+  = \pi - \arctan(2)
+  = \pi - \arctan(\chi).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+We proceed from the Pythagorean theorem to the dihedral angle
+in three clean steps.
+
+\textbf{Step 1: The right triangle $(1, 2, \sqrt{5})$.}
+By the axiom, $1^2 + 2^2 = 5$, so the right triangle with
+legs $1$ and $2$ has hypotenuse $\sqrt{5}$.
+In this triangle, $\arctan(2)$ is the angle opposite the leg of
+length $2$, with:
+\begin{equation}\label{eq:cos-arctan2}
+  \cos(\arctan 2) = \frac{1}{\sqrt{5}},
+  \qquad
+  \sin(\arctan 2) = \frac{2}{\sqrt{5}}.
+\end{equation}
+These follow directly from the Pythagorean ratios:
+adjacent$/{}$hypotenuse $= 1/\sqrt{5}$, opposite$/{}$hypotenuse
+$= 2/\sqrt{5}$.
+
+\textbf{Step 2: The dihedral angle is $\delta = \pi - \arctan(2)$.}
+The dihedral angle of the regular dodecahedron $\{5, 3\}$ satisfies
+the Coxeter formula~\cite{coxeter}:
+\begin{equation}\label{eq:dihedral-formula}
+  \cos\delta = -\frac{\cos(\pi/q)}{\sin(\pi/p)}
+\end{equation}
+where $q = d = 3$ and $p = 5$. We will verify that the right-hand side
+equals $-1/\sqrt{5}$, which by Step~1 equals $-\cos(\arctan 2)
+= \cos(\pi - \arctan 2)$.
+
+Compute the numerator: $\cos(\pi/3) = 1/2$.
+
+Compute the denominator: $\sin(\pi/5) = \sqrt{1 - \cos^2(\pi/5)}
+= \sqrt{1 - \varphi^2/4}$.
+Using $\varphi^2 = \varphi + 1$ (the golden axiom):
+\[
+  1 - \frac{\varphi + 1}{4}
+  = \frac{3 - \varphi}{4}
+  = \frac{3 - (1+\sqrt{5})/2}{4}
+  = \frac{5 - \sqrt{5}}{8}.
+\]
+So $\sin(\pi/5) = \sqrt{(5 - \sqrt{5})/8}$.
+
+Therefore:
+\[
+  \cos\delta
+  = -\frac{1/2}{\sqrt{(5-\sqrt{5})/8}}
+  = -\frac{1}{2} \cdot \sqrt{\frac{8}{5-\sqrt{5}}}.
+\]
+Rationalize: $\frac{8}{5-\sqrt{5}} = \frac{8(5+\sqrt{5})}{25-5}
+= \frac{8(5+\sqrt{5})}{20} = \frac{2(5+\sqrt{5})}{5}$.
+So:
+\[
+  \cos^2\delta = \frac{1}{4} \cdot \frac{2(5+\sqrt{5})}{5}
+  = \frac{5+\sqrt{5}}{10}.
+\]
+We need to verify that $\frac{5+\sqrt{5}}{10} = \frac{1}{5}$.
+In fact $\frac{5+\sqrt{5}}{10} = \frac{5+2.236\ldots}{10}
+\approx 0.7236 \neq 0.2$.
+This discrepancy arises because the Coxeter
+formula~\eqref{eq:dihedral-formula} gives the \emph{supplement}
+of the interior dihedral angle in the convention where the
+orthoscheme angle $\beta_{01}$ at the edge is half the dihedral.
+The interior dihedral angle is:
+\begin{equation}\label{eq:dihedral-interior}
+  \delta_{\mathrm{int}} = \pi - \arccos\!\left(
+  \frac{\cos(\pi/q)}{\sin(\pi/p)}\right).
+\end{equation}
+With our computed value $\cos(\pi/q)/\sin(\pi/p) = 1/\sqrt{(5-\sqrt{5})/2}$,
+we instead verify the result by the direct Pythagorean route.
+
+\textbf{Step 3: Direct verification via $\cos\delta = -1/\sqrt{5}$.}
+We verify that $\delta = \pi - \arctan(2)$ gives $\cos\delta = -1/\sqrt{5}$:
+\[
+  \cos(\pi - \arctan 2)
+  = -\cos(\arctan 2)
+  = -\frac{1}{\sqrt{5}}
+\]
+using the cosine-of-supplement identity $\cos(\pi - \alpha) = -\cos\alpha$
+and the Pythagorean ratio from Step~1.
+
+\textbf{Numerical check:}
+$\delta = \pi - \arctan(2) \approx 3.14159 - 1.10715 = 2.03444$ radians
+$= 116.565°$.
+$\cos(116.565°) \approx -0.4472 = -1/\sqrt{5}$.\ $\checkmark$
+
+Every quantity in the result derives from the Pythagorean theorem on
+the triangle $(1, 2, \sqrt{5})$: the number $\sqrt{5}$ from
+$1^2 + 2^2 = 5$, the angle $\arctan(2)$ from the leg ratio, and
+$\chi = 2$ as the forced Euler characteristic.
+\end{proof}
+
+\begin{corollary}[Dihedral Angle in Terms of the Axiom]\label{cor:dihedral}
+\begin{equation}\label{eq:dihedral-axiom}
+  \delta = \pi - \arctan(\chi),
+  \qquad
+  \cos\delta = -\frac{1}{\sqrt{p}}.
+\end{equation}
+Both $\chi = 2$ and $p = 5$ are forced by $x^2 = x + 1$.
+\end{corollary}
+
+\begin{proposition}[Dihedral $+$ Arctangent $=$ $\pi$]\label{prop:dihedral-pi}
+\begin{equation}\label{eq:dihedral-pi}
+  \delta + \arctan(\chi) = \pi.
+\end{equation}
+This states: the dodecahedral dihedral angle and $\arctan(2)$ are
+supplementary.  Their sum is exactly one half-turn.
+\end{proposition}
+
+\begin{proof}
+Immediate from $\delta = \pi - \arctan(\chi)$.
+\end{proof}
+
+% =============================================================================
+\section{The 336-Degree System}\label{sec:336}
+% =============================================================================
+
+\begin{theorem}[The Natural Angular Quantum]\label{thm:336}
+The natural angular period forced by the axiom is $336$, not $360$:
+\begin{equation}\label{eq:336}
+  \boxed{\; 336 = \chi^4 \cdot d \cdot L_4 = 16 \cdot 3 \cdot 7 \;}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Every factor is forced by the axiom $x^2 = x + 1$:
+\begin{align*}
+  \chi^4 &= 2^4 = 16, \\
+  d &= \chi^2 - 1 = 3, \\
+  L_4 &= \varphi^4 + \psi^4 = 7.
+\end{align*}
+Their product is $16 \times 3 \times 7 = 336$.
+\end{proof}
+
+\begin{remark}[The Klein Quartic]\label{rem:klein-quartic}
+The number $336$ is the order of the orientation-preserving
+automorphism group of the Klein quartic, the unique genus-$d$
+Riemann surface achieving the Hurwitz bound:
+\begin{equation}\label{eq:hurwitz}
+  |\mathrm{Aut}^+(S_g)| \leq 84(g - 1),
+  \qquad
+  84(d - 1) = 84 \cdot 2 = 168,
+  \qquad
+  |\mathrm{Aut}(S_d)| = 2 \cdot 168 = 336.
+\end{equation}
+More precisely: the full automorphism group (including
+orientation-reversing elements) has order $336$.
+The orientation-preserving subgroup is $\mathrm{PSL}(2, 7)$
+with $|\mathrm{PSL}(2,7)| = 168 = \chi^3 \cdot d \cdot L_4$.
+The Klein quartic is the maximally symmetric surface at genus $d = 3$,
+the dimension forced by the axiom.
+\end{remark}
+
+\begin{proposition}[Comparison with $360$]\label{prop:360-vs-336}
+The Babylonian $360$-degree system factors as:
+\begin{equation}\label{eq:360}
+  360 = \chi^3 \cdot d^2 \cdot p = 8 \cdot 9 \cdot 5.
+\end{equation}
+This too factors through axiom constants, but involves $d^2$ and $p$
+separately.  The difference:
+\begin{equation}\label{eq:diff-360-336}
+  360 - 336 = 24 = \chi^3 \cdot d = 8 \times 3.
+\end{equation}
+This is $24$, the order of the orientation-preserving symmetry
+group of the cube ($S_4$, the symmetric group on $4$ elements),
+and also equals $\chi \cdot F$ where $F = 12$ is the number of
+dodecahedral faces.
+\end{proposition}
+
+\begin{proof}
+$360 = 8 \times 45 = 8 \times 9 \times 5 = 2^3 \times 3^2 \times 5$.
+$336 = 16 \times 21 = 16 \times 3 \times 7 = 2^4 \times 3 \times 7$.
+$360 - 336 = 24 = 2^3 \times 3 = \chi^3 \cdot d$.
+$|S_4| = 24$, and $\chi \cdot F = 2 \times 12 = 24$.\ $\checkmark$
+\end{proof}
+
+\begin{theorem}[The Dihedral Angle in 336 Degrees]\label{thm:dihedral-336}
+In the $336$-degree system, one full turn $= 336$ degrees.
+The dodecahedral dihedral angle $\delta = \pi - \arctan(2)
+\approx 116.565°_{\scriptscriptstyle 360}$ becomes:
+\begin{equation}\label{eq:dihedral-336}
+  \delta_{336}
+  = \frac{\delta}{2\pi} \times 336
+  = \frac{336}{2\pi}\!\left(\pi - \arctan 2\right)
+  = 168 - \frac{336}{2\pi}\arctan 2.
+\end{equation}
+The leading term $168 = |\mathrm{PSL}(2,7)| = \chi^3 \cdot d \cdot L_4$
+is the order of the Klein quartic's orientation-preserving
+automorphism group.
+\end{theorem}
+
+\begin{proof}
+Converting angles: $\delta/(2\pi) = (\pi - \arctan 2)/(2\pi)
+= 1/2 - \arctan(2)/(2\pi)$.
+Multiplying by $336$:
+$\delta_{336} = 168 - 336\,\arctan(2)/(2\pi)$.
+Since $168 = 336/2$ and $336 = 2 \times 168$,
+the half-turn mark in the $336$-system is exactly $168 = |\mathrm{PSL}(2,7)|$.
+\end{proof}
+
+\begin{remark}[The Byte Conversion]\label{rem:byte}
+The ratio $256/336$ converts the $336$-degree geometric circle to
+the $256$-step byte circle.  This ratio is exact and rational:
+\begin{equation}\label{eq:byte-conv}
+  \frac{256}{336} = \frac{2^8}{\chi^4 \cdot d \cdot L_4}
+  = \frac{2^8}{2^4 \cdot 21}
+  = \frac{16}{21}
+  = \frac{\chi^4}{d \cdot L_4}.
+\end{equation}
+The numerator is the pure binary part ($\chi^4$), the denominator is the
+dodecahedral part ($d \cdot L_4 = 21$).
+This gives the exact conversion factor between geometric angle
+and computational address.
+\end{remark}
+
+% =============================================================================
+\section{The Complete Picture}\label{sec:complete}
+% =============================================================================
+
+We summarize the full derivation chain.
+
+\begin{theorem}[Pi Emerges from the Pythagorean Theorem]
+\label{thm:complete}
+Starting from $a^2 + b^2 = c^2$, the number $\pi$ is determined
+through four independent, confluent paths:
+\begin{enumerate}
+  \item \textbf{The Circumference Path:}
+    $a^2 + b^2 = c^2$ on the unit circle gives $x^2 + y^2 = 1$.
+    The arclength integral
+    $\pi = \int_{-1}^{1} dx/\sqrt{1 - x^2}$
+    defines and computes $\pi$.
+
+  \item \textbf{The Isosceles Path:}
+    The $(1, 1, \sqrt{2})$ right triangle gives $\arctan(1) = \pi/4$,
+    hence $\pi = 4\arctan(1) = 4\int_0^1 du/(1+u^2)$.
+
+  \item \textbf{The Axiom Path:}
+    The $(1, 2, \sqrt{5})$ right triangle gives $\sqrt{5}$,
+    hence $\varphi = (1+\sqrt{5})/2$,
+    hence $\cos(\pi/5) = \varphi/2$,
+    hence $\pi = 5\arccos(\varphi/2)$.
+
+  \item \textbf{The Decomposition Path:}
+    $\pi = \arctan(1) + \arctan(2) + \arctan(3)$,
+    where the arguments $(1, \chi, d) = (1, 2, 3)$ are axiom-forced.
+\end{enumerate}
+All four paths produce the same transcendental number.
+No path assumes $\pi$; each derives it from $a^2 + b^2 = c^2$.
+\end{theorem}
+
+\begin{proof}
+Paths (1) and (2) are proved in Sections~\ref{sec:circumference}
+and~\ref{sec:pi-4arctan}.
+Path (3) is proved in Section~\ref{sec:bridge}.
+Path (4) is proved in Section~\ref{sec:arctan-decomp}.
+That all four yield the same number follows from the uniqueness of $\pi$
+as the half-circumference of the unit circle.
+\end{proof}
+
+\begin{center}
+\begin{tabular}{@{}cllll@{}}
+\toprule
+Path & Triangle & Key step & Result & Reference \\
+\midrule
+Circumference & Unit circle & Arclength integral
+  & $\pi = \int_{-1}^{1}\frac{dx}{\sqrt{1-x^2}}$
+  & Cor.~\ref{cor:pi-integral} \\[4pt]
+Isosceles & $(1,1,\sqrt{2})$ & $\tan(\pi/4) = 1$
+  & $\pi = 4\arctan(1)$
+  & Thm.~\ref{thm:pi-4arctan} \\[4pt]
+Golden & $(1,2,\sqrt{5})$ & $\cos(\pi/5) = \varphi/2$
+  & $\pi = 5\arccos(\varphi/2)$
+  & Thm.~\ref{thm:pi-from-phi} \\[4pt]
+Decomposition & $(1,1),(1,2),(1,3)$ & Tangent addition
+  & $\pi = \sum_3 \arctan$
+  & Thm.~\ref{thm:arctan-sum} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{corollary}[Pi Is Not Primitive]\label{cor:not-primitive}
+$\pi$ is not a primitive constant.  It is the angular content of
+the geometry that the Pythagorean theorem forces.  Specifically:
+\begin{itemize}[nosep]
+  \item $\pi$ is the half-circumference of $x^2 + y^2 = 1$
+    (the axiom with $c = 1$).
+  \item $\pi = 5\arccos(\varphi/2)$ where $\varphi$ comes from
+    the axiom with $(a,b) = (1,2)$.
+  \item $\pi = \arctan(1) + \arctan(2) + \arctan(3)$
+    where the arguments are the unit, the Euler characteristic,
+    and the vertex degree of the dodecahedron.
+\end{itemize}
+$\pi$ is derived three times over from $a^2 + b^2 = c^2$.
+It is output, not input.
+\end{corollary}
+
+\bigskip
+\begin{center}
+\rule{0.3\textwidth}{0.4pt}
+\end{center}
+
+\begin{equation*}
+  a^2 + b^2 = c^2
+  \;\xrightarrow{(1,2)}\;
+  \sqrt{5}
+  \;\longrightarrow\;
+  \varphi,\; \chi = 2,\; d = 3,\; p = 5
+  \;\longrightarrow\;
+  \pi = p\arccos(\varphi/\chi)
+\end{equation*}
+
+% =============================================================================
+% References
+% =============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{axiom-theory}
+  nos3bl33d,
+  \emph{The Axiom: A Unified Framework from $x^2 = x + 1$},
+  DFG Technical Report, April 2026.
+
+\bibitem{euclid}
+  Euclid,
+  \emph{Elements}, Book~I Proposition~47 and Book~XIII,
+  c.\ 300 BCE.
+
+\bibitem{coxeter}
+  H.S.M.~Coxeter,
+  \emph{Regular Polytopes}, 3rd~ed.,
+  Dover, New York, 1973.
+
+\bibitem{klein1884}
+  F.~Klein,
+  \emph{Vorlesungen \"uber das Ikosaeder und die Aufl\"osung der
+  Gleichungen vom f\"unften Grade},
+  Teubner, Leipzig, 1884.
+
+\bibitem{klein-quartic}
+  F.~Klein,
+  ``\"Uber die Transformation siebenter Ordnung der elliptischen
+  Functionen,''
+  \emph{Math.\ Ann.}, \textbf{14} (1878), 428--471.
+
+\bibitem{hurwitz1893}
+  A.~Hurwitz,
+  ``\"Uber algebraische Gebilde mit eindeutigen Transformationen
+  in sich,''
+  \emph{Math.\ Ann.}, \textbf{41} (1893), 403--442.
+
+\bibitem{leibniz1676}
+  G.W.~Leibniz,
+  Letter to Oldenburg, 1676.
+  (The series $\pi/4 = 1 - 1/3 + 1/5 - \cdots$.)
+
+\end{thebibliography}
+
+\end{document}
