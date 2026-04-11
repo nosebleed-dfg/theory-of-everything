@@ -24,7 +24,11 @@ CACHE_DIR  = os.path.dirname(os.path.abspath(__file__))
 HEADER_CACHE = os.path.join(CACHE_DIR, ".header_cache.bin")
 OUTPUT_FILE  = os.path.join(CACHE_DIR, "btc_genesis_chain.txt")
 
-API = "https://blockstream.info/api"
+APIS = [
+    "https://blockstream.info/api",
+    "https://mempool.space/api",
+]
+RATE_LIMIT = 0.35
 
 def lp(x):
     return math.log(x) / math.log(PHI) if x > 0 else None
@@ -51,17 +55,26 @@ def bits_to_target(bits):
 
 # ── Fetch block headers ──────────────────────────────────────────────────────
 
+def _fetch_header_from(api_base, height, timeout=15):
+    """Fetch a single header from one API endpoint. Raises on failure."""
+    req_h = urllib.request.Request(f"{api_base}/block-height/{height}")
+    with urllib.request.urlopen(req_h, timeout=timeout) as r:
+        bh = r.read().decode().strip()
+    req_hdr = urllib.request.Request(f"{api_base}/block/{bh}/header")
+    with urllib.request.urlopen(req_hdr, timeout=timeout) as r:
+        return bytes.fromhex(r.read().decode().strip())
+
 def fetch_header(height, retries=3):
+    """Try each API in order, with exponential backoff between rounds."""
     for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(f"{API}/block-height/{height}", timeout=15) as r:
-                bh = r.read().decode().strip()
-            with urllib.request.urlopen(f"{API}/block/{bh}/header", timeout=15) as r:
-                return bytes.fromhex(r.read().decode().strip())
-        except:
-            if attempt < retries - 1:
-                time.sleep(1.5)
-    return None
+        for api in APIS:
+            try:
+                return _fetch_header_from(api, height)
+            except Exception:
+                pass
+        # backoff between retry rounds
+        backoff = 1.5 * (2 ** attempt)
+        time.sleep(min(backoff, 10))
 
 def load_cached_headers():
     """Load cached headers dict {height: 80-byte header}."""
@@ -125,31 +138,67 @@ def analyze_block(height, header):
 # ── Sample strategy ──────────────────────────────────────────────────────────
 
 def build_sample_heights(tip):
-    """Pick which blocks to fetch: genesis, early, halvening boundaries, samples."""
+    """Pick ~2000 blocks: first 100, every 500th, halvening +/-5, last 20."""
     heights = set()
 
-    # Genesis + first 50
-    heights.update(range(0, min(51, tip + 1)))
+    # First 100 blocks
+    heights.update(range(0, min(100, tip + 1)))
 
-    # Every 1000th block for first 10K
-    heights.update(range(0, min(10001, tip + 1), 1000))
+    # Every 500th block across entire chain
+    heights.update(range(0, tip + 1, 500))
 
-    # Every 10000th block
-    heights.update(range(0, tip + 1, 10000))
-
-    # Halvening boundaries (±2 blocks)
-    for h in range(0, 10):
+    # Halvening boundaries +/- 5 blocks
+    for h in range(0, 20):
         boundary = h * 210_000
-        for offset in range(-2, 3):
+        if boundary > tip + 5:
+            break
+        for offset in range(-5, 6):
             b = boundary + offset
             if 0 <= b <= tip:
                 heights.add(b)
 
-    # Current tip area
-    for b in range(max(0, tip - 10), tip + 1):
+    # Last 20 blocks near tip
+    for b in range(max(0, tip - 19), tip + 1):
         heights.add(b)
 
     return sorted(heights)
+
+
+# ── Future predictions ───────────────────────────────────────────────────────
+
+def compute_future_predictions(current_halvening):
+    """For each halvening from current through 49, compute 4 candidate nonces
+    (the 4 vertices of the predicted face) with their mirrors."""
+    predictions = []
+    for h in range(current_halvening, 50):
+        base_k = 6 + h * 2
+        candidates = []
+        for offset in range(4):
+            k = base_k + offset
+            nonce_val = quarter_step(k)
+            if nonce_val < 1:
+                candidates.append({
+                    'k': k, 'nonce': 0, 'nonce_hex': '00000000',
+                    'mirror': 0, 'mirror_hex': '00000000',
+                    'face': k // 4, 'vtx': k % 4, 'zero_space': True,
+                })
+            else:
+                m = mirror(nonce_val)
+                candidates.append({
+                    'k': k, 'nonce': nonce_val, 'nonce_hex': f'{nonce_val:08x}',
+                    'mirror': m, 'mirror_hex': f'{m:08x}',
+                    'face': k // 4, 'vtx': k % 4, 'zero_space': False,
+                })
+        reward = 50.0 / (2 ** h) if h < 64 else 0.0
+        predictions.append({
+            'halvening': h,
+            'block_start': h * 210_000,
+            'block_end': h * 210_000 + 209_999,
+            'base_k': base_k,
+            'reward': reward,
+            'candidates': candidates,
+        })
+    return predictions
 
 
 # ── Generate the chain output ─────────────────────────────────────────────────
@@ -162,15 +211,20 @@ def generate_chain():
     print("nos3bl33d  |  x^2 = x + 1  |  quarter-step cube geometry")
     print("=" * 70)
 
-    # Get tip height
+    # Get tip height -- try both APIs
     print("\n[1] Fetching chain tip...")
-    try:
-        with urllib.request.urlopen(f"{API}/blocks/tip/height", timeout=10) as r:
-            tip = int(r.read())
-        print(f"    tip: {tip:,}")
-    except Exception as e:
-        print(f"    offline: {e}")
-        tip = 944_000  # fallback estimate
+    tip = None
+    for api in APIS:
+        try:
+            with urllib.request.urlopen(f"{api}/blocks/tip/height", timeout=10) as r:
+                tip = int(r.read())
+            print(f"    tip: {tip:,}  (from {api})")
+            break
+        except Exception as e:
+            print(f"    {api}: {e}")
+    if tip is None:
+        tip = 944_000
+        print(f"    offline fallback: {tip:,}")
 
     # Load cache
     cache = load_cached_headers()
@@ -181,16 +235,26 @@ def generate_chain():
     to_fetch = [h for h in sample_heights if h not in cache]
     print(f"\n[2] Sample: {len(sample_heights):,} blocks, {len(to_fetch):,} to fetch")
 
-    # Fetch missing
+    # Fetch missing with adaptive rate limiting
     if to_fetch:
         print(f"    fetching {len(to_fetch)} headers...")
+        consecutive_fails = 0
+        current_rate = RATE_LIMIT
         for i, h in enumerate(to_fetch):
             hdr = get_header(h, cache)
             if hdr is None:
+                consecutive_fails += 1
                 print(f"    FAILED: block {h}")
+                if consecutive_fails >= 3:
+                    current_rate = min(current_rate * 2, 5.0)
+                    print(f"    rate -> {current_rate:.2f}s")
+            else:
+                if consecutive_fails > 0:
+                    consecutive_fails = 0
+                    current_rate = RATE_LIMIT
             if (i + 1) % 50 == 0:
                 print(f"    ... {i+1}/{len(to_fetch)}")
-            time.sleep(0.15)  # rate limit
+            time.sleep(current_rate)
         print(f"    done. cache now: {len(cache):,}")
 
     # Analyze all cached blocks
@@ -202,18 +266,24 @@ def generate_chain():
 
     print(f"    analyzed: {len(results)}")
 
+    # Compute future predictions
+    current_halvening = tip // 210_000
+    predictions = compute_future_predictions(current_halvening)
+    print(f"    future predictions: {len(predictions)} halvenings")
+
     # Write output
     print(f"\n[4] Writing {OUTPUT_FILE}")
-    write_chain_file(results, tip, time.time() - t0)
+    write_chain_file(results, predictions, tip, time.time() - t0)
 
     print(f"\n    DONE in {time.time()-t0:.1f}s")
     print(f"    output: {OUTPUT_FILE}")
     print(f"    size: {os.path.getsize(OUTPUT_FILE) / 1024:.1f} KB")
 
 
-def write_chain_file(results, tip, elapsed):
+def write_chain_file(results, predictions, tip, elapsed):
     L = []
 
+    # ── Header ──
     L.append("=" * 110)
     L.append("BTC GENESIS CHAIN -- PHI QUARTER-STEP CUBE GEOMETRY OF THE ENTIRE BITCOIN BLOCKCHAIN")
     L.append("nos3bl33d   |   x^2 = x + 1   |   2^32/phi^(k/4) quarter-step ladder")
@@ -237,7 +307,7 @@ def write_chain_file(results, tip, elapsed):
     L.append(f"  100yr_sec / phi^0.863043 = n0 EXACTLY")
     L.append("")
 
-    # Quarter-step ladder
+    # ── Quarter-step ladder ──
     L.append("-" * 110)
     L.append("QUARTER-STEP PHI LADDER (full chain to zero space)")
     L.append(f"  {'k':>4}  {'exp':>6}  {'nonce_scale':>14}  {'lp':>8}  {'face':>4}  {'vtx':>3}  note")
@@ -249,18 +319,18 @@ def write_chain_file(results, tip, elapsed):
             L.append(f"  {k:>4}  {exp:>6.2f}  {'< 1':>14}  {'---':>8}  {k//4:>4}  {k%4:>3}  ZERO SPACE REACHED")
             break
         note = ""
-        if k == 6: note = "<-- GENESIS NONCE (k=6)"
-        halvening = None
-        for h in range(20):
-            hk = 6 + h * 2
-            if k == hk:
-                if h == 0: continue  # already marked as genesis
-                note = f"<-- halvening {h} (block {h*210_000:,})"
+        if k == 6:
+            note = "<-- GENESIS NONCE (k=6)"
+        else:
+            for h in range(1, 20):
+                if k == 6 + h * 2:
+                    note = f"<-- halvening {h} (block {h*210_000:,})"
+                    break
         L.append(f"  {k:>4}  {exp:>6.2f}  {val:>14.0f}  {lp(val):>8.4f}  {k//4:>4}  {k%4:>3}  {note}")
 
     L.append("")
 
-    # Halvening summary
+    # ── Halvening schedule ──
     L.append("-" * 110)
     L.append("HALVENING SCHEDULE (each halvening = +2 quarter-steps = +0.5 lp)")
     L.append(f"  {'halvening':>9}  {'blocks':>15}  {'k':>4}  {'pred_nonce':>14}  {'lp':>8}  {'reward_BTC':>12}")
@@ -279,15 +349,16 @@ def write_chain_file(results, tip, elapsed):
 
     L.append("")
 
-    # Historical chain (sampled blocks)
+    # ── Historical chain ──
     L.append("-" * 110)
     L.append("HISTORICAL CHAIN -- SAMPLED BLOCKS WITH PHI CUBE ANALYSIS")
     L.append(f"  Blocks sampled: {len(results):,}  |  Chain tip: {tip:,}")
-    L.append(f"  {'HEIGHT':>8}  {'HASH':>64}  {'NONCE':>12}  {'k':>4}  {'k_exact':>8}  {'f':>2}  {'v':>2}  {'GRID':>4}  {'HALVENING':>3}")
+    L.append(f"  {'HEIGHT':>8}  {'HASH':>64}  {'NONCE':>12}  {'k':>4}  {'k_exact':>8}  {'FACE':>4}  {'VTX':>3}  {'ON_GRID':>7}")
     L.append("-" * 110)
 
     on_grid_count = 0
     face_dist = {}
+    k_fracs = []
     for r in results:
         h = r['height']
         bh = r['hash']
@@ -297,54 +368,68 @@ def write_chain_file(results, tip, elapsed):
         f = r.get('face', '?')
         v = r.get('vtx', '?')
         og = r.get('on_grid', False)
-        hv = r.get('halvening', 0)
 
         ke_str = f"{ke:>8.3f}" if ke is not None else "     N/A"
-        f_str = f"{f:>2}" if f is not None else " ?"
-        v_str = f"{v:>2}" if v is not None else " ?"
-        grid_str = " YES" if og else "    "
+        f_str = f"{f:>4}" if f is not None else "   ?"
+        v_str = f"{v:>3}" if v is not None else "  ?"
+        grid_str = "    YES" if og else "       "
 
-        if og: on_grid_count += 1
+        if og:
+            on_grid_count += 1
         if f is not None:
             face_dist[f] = face_dist.get(f, 0) + 1
+        if r.get('k_frac') is not None:
+            k_fracs.append(abs(r['k_frac']))
 
         marker = ">>" if h % 210_000 == 0 else "  "
-        L.append(f"{marker}{h:>8,}  {bh}  {n:>12,}  {k:>4}  {ke_str}  {f_str}  {v_str}  {grid_str}  {hv:>3}")
+        L.append(f"{marker}{h:>8,}  {bh}  {n:>12,}  {k:>4}  {ke_str}  {f_str}  {v_str}  {grid_str}")
 
     L.append("")
     L.append(f"  ON GRID (|k_frac| < 0.15): {on_grid_count}/{len(results)} ({on_grid_count/max(len(results),1)*100:.1f}%)")
     L.append(f"  Face distribution: {dict(sorted(face_dist.items()))}")
-
-    if results:
-        valid_frac = [r['k_frac'] for r in results if r['k_frac'] is not None]
-        if valid_frac:
-            L.append(f"  Mean |k_frac|: {sum(abs(f) for f in valid_frac)/len(valid_frac):.4f}")
+    if k_fracs:
+        L.append(f"  Mean |k_frac|: {sum(k_fracs)/len(k_fracs):.4f}")
 
     L.append("")
 
-    # Future projection
+    # ── Future predictions (4 candidates per halvening) ──
     L.append("-" * 110)
-    L.append("FUTURE PROJECTION -- PHI CUBE EXTRAPOLATION (post-tip)")
-    L.append(f"  {'HALVENING':>9}  {'BLOCK_RANGE':>20}  {'k':>4}  {'PRED_NONCE':>14}  {'lp':>8}  {'FACE':>4}  {'VTX':>3}")
+    L.append("FUTURE PREDICTIONS -- 4 CANDIDATE NONCES PER HALVENING (vertices of predicted face)")
+    L.append("  Each halvening advances +2 quarter-steps on the phi grid.")
+    L.append("  4 candidates = base_k, base_k+1, base_k+2, base_k+3 (the 4 vertices of that face).")
+    L.append("  Mirror = byte_reverse(nonce). Both nonce and mirror shown.")
     L.append("-" * 110)
 
-    current_halvening = tip // 210_000
-    for h in range(current_halvening, 50):
-        k = 6 + h * 2
-        pred = quarter_step(k)
-        if pred < 1:
-            L.append(f"  {h:>9}  {'---':>20}  {k:>4}  {'ZERO SPACE':>14}")
+    for p in predictions:
+        hv = p['halvening']
+        bs = p['block_start']
+        be = p['block_end']
+        bk = p['base_k']
+        rw = p['reward']
+
+        L.append("")
+        L.append(f"  HALVENING {hv}  |  blocks {bs:,}-{be:,}  |  base_k={bk}  |  reward={rw:.8f} BTC")
+        L.append(f"    {'VTX':>3}  {'k':>4}  {'NONCE':>14}  {'NONCE_HEX':>10}  {'MIRROR':>14}  {'MIRROR_HEX':>10}  {'FACE':>4}  {'VTX':>3}")
+
+        all_zero = True
+        for c in p['candidates']:
+            if c['zero_space']:
+                L.append(f"    {c['vtx']:>3}  {c['k']:>4}  {'---':>14}  {'---':>10}  {'---':>14}  {'---':>10}  {c['face']:>4}  {c['vtx']:>3}  ZERO SPACE")
+            else:
+                all_zero = False
+                L.append(f"    {c['vtx']:>3}  {c['k']:>4}  {c['nonce']:>14,}  {c['nonce_hex']:>10}  {c['mirror']:>14,}  {c['mirror_hex']:>10}  {c['face']:>4}  {c['vtx']:>3}")
+
+        if all_zero:
+            L.append("    >> ALL CANDIDATES IN ZERO SPACE -- chain terminus")
             break
-        block_start = h * 210_000
-        block_end = block_start + 209_999
-        face = k // 4
-        vtx = k % 4
-        L.append(f"  {h:>9}  {block_start:>7,}-{block_end:<7,}     {k:>4}  {pred:>14,}  {lp(pred):>8.4f}  {face:>4}  {vtx:>3}")
 
     L.append("")
+
+    # ── Footer ──
     L.append("=" * 110)
     L.append(f"  Chain tip: {tip:,}")
     L.append(f"  Sampled: {len(results):,} blocks")
+    L.append(f"  Future halvenings predicted: {len(predictions)}")
     L.append(f"  Terminal: halvening ~44 (k~94) -> ZERO SPACE")
     L.append(f"  Generated: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}")
     L.append(f"  Runtime: {elapsed:.1f}s")
