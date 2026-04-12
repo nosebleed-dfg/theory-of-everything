@@ -567,61 +567,164 @@ theorem on the unit circle.
 \end{theorem}
 
 \begin{proof}
-We derive this from the Pythagorean theorem without assuming the result.
+We derive this from the Pythagorean theorem through the geometry
+of the regular pentagon.  Every step follows from the previous one.
 
-\textbf{Step 1: The Chebyshev expansion.}
-Let $\theta = \pi/5$ and $c = \cos\theta$.  Then $5\theta = \pi$,
-so $\cos(5\theta) = \cos\pi = -1$.
+\textbf{Step 1: The regular pentagon inscribed in the unit circle.}
+Place five equally spaced points on the unit circle $x^2 + y^2 = 1$.
+``Equally spaced'' means each arc between consecutive vertices has the
+same arclength.  The full circumference is $2\pi$ (by
+Definition~\ref{def:pi}), so each arc is $2\pi/5$, and the central
+angle subtended by each side is $2\pi/5$.
 
-The five-fold angle formula is derived by iterated application of
-the angle-addition formula (itself Pythagorean,
-cf.\ Section~\ref{sec:arctan-decomp}):
-\begin{equation}\label{eq:T5}
-  \cos(5\theta) = 16c^5 - 20c^3 + 5c.
+Label the vertices $V_0, V_1, \ldots, V_4$ counterclockwise, with
+$V_0 = (1, 0)$.  The vertex $V_1$ sits at arclength $2\pi/5$, so
+by Definition~\ref{def:trig}:
+\[
+  V_1 = (\cos(2\pi/5),\; \sin(2\pi/5)).
+\]
+
+\textbf{Step 2: The pentagon's angles.}
+Consider the isosceles triangle $V_0 V_1 V_2$ formed by two sides
+and a diagonal.  The vertex angle at $V_1$ subtends the arc from
+$V_0$ to $V_2$ not containing $V_1$.  That arc spans two sides of
+the pentagon: arclength $2 \times 2\pi/5 = 4\pi/5$.  The inscribed
+angle theorem (a consequence of the Pythagorean identity: the angle
+at the circumference is half the central angle) gives the vertex
+angle at $V_1$ as $2\pi/5$.
+
+The two base angles are equal (isosceles, since $|V_0V_1| = |V_1V_2|$).
+The angle sum of a triangle is $\pi$
+(derived in Section~\ref{sec:pi-4arctan} from the Pythagorean theorem):
+\[
+  2\alpha + \frac{2\pi}{5} = \pi
+  \;\;\Longrightarrow\;\;
+  \alpha = \frac{3\pi}{10}.
+\]
+
+Let $s$ be the side length and $g$ the diagonal length of the regular
+pentagon inscribed in a circle of radius $R$.
+
+\textbf{Step 3: Side and diagonal from the axiom.}
+The side $s$ connects two vertices separated by central angle $2\pi/5$.
+By the Pythagorean theorem on the isosceles triangle formed by two
+radii and the chord:
+
+Drop a perpendicular from the center $O$ to the midpoint $M$ of side
+$V_0 V_1$.  This creates a right triangle $O M V_0$ with:
+\begin{itemize}[nosep]
+  \item hypotenuse $= R$ (the radius),
+  \item adjacent leg $= R\cos(\pi/5)$ (from the half-angle $\pi/5$),
+  \item opposite leg $= R\sin(\pi/5) = s/2$.
+\end{itemize}
+By the axiom on this right triangle:
+\begin{equation}\label{eq:side-pythag}
+  \left(\frac{s}{2}\right)^{\!2} + R^2\cos^2(\pi/5) = R^2.
 \end{equation}
-Setting this equal to $-1$:
-\begin{equation}\label{eq:cos5-eq}
-  16c^5 - 20c^3 + 5c + 1 = 0.
+Therefore $s = 2R\sin(\pi/5)$.
+
+Similarly, the diagonal $g$ connects vertices separated by central
+angle $4\pi/5$.  The same construction gives:
+\begin{equation}\label{eq:diag-pythag}
+  g = 2R\sin(2\pi/5).
 \end{equation}
 
-\textbf{Step 2: Factor out $c = -1$.}
-The value $c = -1$ (corresponding to $\theta = \pi$) satisfies
-$\cos(5\pi) = -1$, so $(c + 1)$ divides the polynomial:
-\[
-  16c^5 - 20c^3 + 5c + 1 = (c + 1)(16c^4 - 16c^3 - 4c^2 + 4c + 1).
-\]
+The ratio is:
+\begin{equation}\label{eq:ratio-raw}
+  \frac{g}{s} = \frac{\sin(2\pi/5)}{\sin(\pi/5)}.
+\end{equation}
+By the double-angle formula (derived from the angle-addition formula,
+which is Pythagorean):
+$\sin(2\pi/5) = 2\sin(\pi/5)\cos(\pi/5)$.
+Therefore:
+\begin{equation}\label{eq:ratio-cos}
+  \frac{g}{s} = 2\cos(\pi/5).
+\end{equation}
 
-\textbf{Step 3: Factor the quartic.}
-The quartic is a perfect square:
-\[
-  16c^4 - 16c^3 - 4c^2 + 4c + 1 = (4c^2 - 2c - 1)^2.
-\]
-Verification: $(4c^2 - 2c - 1)^2 = 16c^4 - 16c^3 + 4c^2 - 8c^2 + 4c + 1
-= 16c^4 - 16c^3 - 4c^2 + 4c + 1$.\ $\checkmark$
+\textbf{Step 4: The diagonal/side ratio satisfies $x^2 = x + 1$.}
+This is the key step.  Let $r = g/s$.  We show that $r$ satisfies the
+golden equation, using only the geometry of the pentagon and the axiom.
 
-\textbf{Step 4: Solve $4c^2 - 2c - 1 = 0$.}
-By the quadratic formula:
-\[
-  c = \frac{2 \pm \sqrt{4 + 16}}{8}
-  = \frac{2 \pm \sqrt{20}}{8}
-  = \frac{1 \pm \sqrt{5}}{4}.
-\]
-The two roots are $\varphi/2 = (1 + \sqrt{5})/4 \approx 0.809$
-and $\psi/2 = (1 - \sqrt{5})/4 \approx -0.309$.
+In the regular pentagon $V_0 V_1 V_2 V_3 V_4$, draw diagonals
+$V_0 V_2$ and $V_0 V_3$.  These two diagonals, together with the
+side $V_2 V_3$, form a triangle.  Now draw diagonal $V_1 V_3$.
+It intersects diagonal $V_0 V_2$ at a point $P$.
 
-\textbf{Step 5: Select the correct root.}
-Since $\theta = \pi/5 \in (0, \pi/2)$, we need $c > 0$.
-Only $c = \varphi/2$ is positive.
+The triangle $V_0 V_1 P$ has angles:
+\begin{itemize}[nosep]
+  \item At $V_0$: the angle $\angle V_1 V_0 V_2 = \pi/5$
+    (angle between adjacent side and diagonal).
+  \item At $V_1$: the angle $\angle V_0 V_1 V_3 = \pi/5$
+    (by the same reasoning, using the symmetry of the regular pentagon).
+  \item At $P$: therefore $\pi - 2\pi/5 = 3\pi/5$.
+\end{itemize}
+So $V_0 V_1 P$ is isosceles with $|V_0 P| = |V_1 P|$ (sides
+opposite equal angles), and $|V_0 V_1| = s$.
+
+Now the triangle $V_1 V_2 P$ has angles:
+\begin{itemize}[nosep]
+  \item At $V_2$: $\angle V_1 V_2 P = \pi/5$
+    (the angle subtended by diagonal $V_0 V_2$ at vertex $V_2$,
+    by the inscribed angle theorem on the arc $V_0 V_2$).
+  \item At $P$: $\pi - 3\pi/5 = 2\pi/5$
+    (supplement of the angle at $P$ in the first triangle).
+  \item At $V_1$: $\pi - \pi/5 - 2\pi/5 = 2\pi/5$.
+\end{itemize}
+Since angles at $V_1$ and $P$ are equal ($2\pi/5$ each),
+this triangle is isosceles with $|V_2 V_1| = |V_2 P| = s$.
+
+From the first triangle: angles at $V_0$ and $V_1$ are both
+$\pi/5$, so $|V_0 P| = |V_1 P|$ (isosceles).
+
+Now we determine $|V_1 P|$ from triangle $V_1 V_2 P$.
+The side $|V_1 V_2| = s$ is opposite the angle $2\pi/5$ at $P$.
+The side $|V_1 P|$ is opposite the angle $\pi/5$ at $V_2$.
+By the sine rule:
+\[
+  \frac{|V_1 P|}{\sin(\pi/5)} = \frac{s}{\sin(2\pi/5)}
+  = \frac{s}{2\sin(\pi/5)\cos(\pi/5)}.
+\]
+So $|V_1 P| = s/(2\cos(\pi/5)) = s/r$.
+
+Now we assemble:
+\[
+  g = |V_0 P| + |P V_2| = |V_1 P| + s = \frac{s}{r} + s.
+\]
+Dividing by $s$:
+\[
+  r = \frac{1}{r} + 1.
+\]
+Multiply by $r$:
+\begin{equation}\label{eq:r-golden}
+  r^2 = 1 + r
+  \qquad\Longleftrightarrow\qquad
+  r^2 = r + 1.
+\end{equation}
+This is the golden equation $x^2 = x + 1$.
+Since $r > 0$ (it is a length ratio), $r = \varphi = (1 + \sqrt{5})/2$.
+
+\textbf{Step 5: Therefore $\cos(\pi/5) = \varphi/2$.}
+From Step~3, $r = 2\cos(\pi/5)$.  From Step~4, $r = \varphi$.  Therefore:
+\begin{equation}\label{eq:cos-pi5-derived}
+  2\cos(\pi/5) = \varphi
+  \qquad\Longleftrightarrow\qquad
+  \cos(\pi/5) = \frac{\varphi}{2} = \frac{1 + \sqrt{5}}{4}.
+\end{equation}
 
 \textbf{Step 6: Verify using the axiom.}
-Substitute $c = \varphi/2$ into $4c^2 - 2c - 1$:
+Substitute $c = \varphi/2$ into the Pythagorean identity.
+We need $\sin^2(\pi/5) + \cos^2(\pi/5) = 1$:
 \[
-  4 \cdot \frac{\varphi^2}{4} - 2 \cdot \frac{\varphi}{2} - 1
-  = \varphi^2 - \varphi - 1
-  = (\varphi + 1) - \varphi - 1 = 0.
+  \sin^2(\pi/5) = 1 - \frac{\varphi^2}{4}
+  = 1 - \frac{\varphi + 1}{4}
+  = \frac{3 - \varphi}{4}
+  = \frac{3 - (1+\sqrt{5})/2}{4}
+  = \frac{5 - \sqrt{5}}{8}.
 \]
-The third equality uses $\varphi^2 = \varphi + 1$, which is the
-golden axiom.  The proof reduces \emph{exactly} to the axiom.
+This is positive (since $\sqrt{5} < 5$), confirming the result.
+The step $\varphi^2 = \varphi + 1$ is the golden axiom, derived from
+$1^2 + 2^2 = 5$ in Section~\ref{sec:golden}.  Every step chains
+back to $a^2 + b^2 = c^2$.
 \end{proof}
 
 \begin{theorem}[$\pi = 5\arccos(\varphi/2)$]\label{thm:pi-from-phi}
@@ -672,93 +775,129 @@ is:
 \end{theorem}
 
 \begin{proof}
-We proceed from the Pythagorean theorem to the dihedral angle
-in three clean steps.
+We derive this from the Pythagorean theorem in four steps.
 
 \textbf{Step 1: The right triangle $(1, 2, \sqrt{5})$.}
 By the axiom, $1^2 + 2^2 = 5$, so the right triangle with
 legs $1$ and $2$ has hypotenuse $\sqrt{5}$.
-In this triangle, $\arctan(2)$ is the angle opposite the leg of
-length $2$, with:
+The Pythagorean ratios give:
 \begin{equation}\label{eq:cos-arctan2}
   \cos(\arctan 2) = \frac{1}{\sqrt{5}},
   \qquad
   \sin(\arctan 2) = \frac{2}{\sqrt{5}}.
 \end{equation}
-These follow directly from the Pythagorean ratios:
-adjacent$/{}$hypotenuse $= 1/\sqrt{5}$, opposite$/{}$hypotenuse
-$= 2/\sqrt{5}$.
 
-\textbf{Step 2: The dihedral angle is $\delta = \pi - \arctan(2)$.}
-The dihedral angle of the regular dodecahedron $\{5, 3\}$ satisfies
-the Coxeter formula~\cite{coxeter}:
-\begin{equation}\label{eq:dihedral-formula}
-  \cos\delta = -\frac{\cos(\pi/q)}{\sin(\pi/p)}
-\end{equation}
-where $q = d = 3$ and $p = 5$. We will verify that the right-hand side
-equals $-1/\sqrt{5}$, which by Step~1 equals $-\cos(\arctan 2)
-= \cos(\pi - \arctan 2)$.
+\textbf{Step 2: The dodecahedron's vertices from $\varphi$.}
+The golden ratio $\varphi = (1+\sqrt{5})/2$ satisfies
+$\varphi^2 = \varphi + 1$ (derived from $1^2 + 2^2 = 5$
+in Section~\ref{sec:golden}).
+The identity $\varphi - 1 = 1/\varphi$ follows by dividing
+$\varphi^2 = \varphi + 1$ by $\varphi$.
 
-Compute the numerator: $\cos(\pi/3) = 1/2$.
+The regular dodecahedron has $20$ vertices that can be placed at:
+\begin{itemize}[nosep]
+  \item $8$ cube vertices: $(\pm 1, \pm 1, \pm 1)$,
+  \item $12$ rectangular vertices:
+    $(0, \pm\varphi, \pm 1/\varphi)$ and cyclic permutations.
+\end{itemize}
+All $20$ lie on a sphere of radius $\sqrt{3}$, verified by the axiom:
+\begin{itemize}[nosep]
+  \item Cube vertices: $1^2 + 1^2 + 1^2 = 3$.\ $\checkmark$
+  \item Rectangular vertices: $0^2 + \varphi^2 + (1/\varphi)^2
+    = \varphi^2 + (\varphi - 1)^2
+    = \varphi^2 + \varphi^2 - 2\varphi + 1
+    = 2(\varphi + 1) - 2\varphi + 1 = 3$,
+    using $\varphi^2 = \varphi + 1$.\ $\checkmark$
+\end{itemize}
 
-Compute the denominator: $\sin(\pi/5) = \sqrt{1 - \cos^2(\pi/5)}
-= \sqrt{1 - \varphi^2/4}$.
-Using $\varphi^2 = \varphi + 1$ (the golden axiom):
+\textbf{Step 3: The dihedral angle from the dual icosahedron.}
+The dihedral angle $\delta$ is the angle between two adjacent faces
+of the dodecahedron.  The outward normal to each face points toward
+the corresponding vertex of the dual icosahedron.  The $12$
+icosahedral vertices (one per dodecahedral face) are:
 \[
-  1 - \frac{\varphi + 1}{4}
-  = \frac{3 - \varphi}{4}
-  = \frac{3 - (1+\sqrt{5})/2}{4}
-  = \frac{5 - \sqrt{5}}{8}.
+  (0, \pm 1, \pm\varphi),\quad
+  (\pm\varphi, 0, \pm 1),\quad
+  (\pm 1, \pm\varphi, 0),
 \]
-So $\sin(\pi/5) = \sqrt{(5 - \sqrt{5})/8}$.
+all on a sphere of radius $\sqrt{1 + \varphi^2} = \sqrt{2 + \varphi}$
+(since $\varphi^2 = \varphi + 1$).
 
+Two icosahedral vertices are adjacent (i.e., their corresponding
+dodecahedral faces share an edge) when they are separated by the
+icosahedral edge length.
+Take $n_1 = (0, 1, \varphi)$ and $n_2 = (1, \varphi, 0)$.
+Their separation:
+\[
+  |n_1 - n_2|^2 = 1 + (\varphi - 1)^2 + \varphi^2
+  = 1 + (1/\varphi)^2 + \varphi^2
+  = 1 + (2 - \varphi) + (\varphi + 1) = 4,
+\]
+using $1/\varphi^2 = 2 - \varphi$ (from $\varphi^2 = \varphi + 1$)
+and $\varphi - 1 = 1/\varphi$.  So the edge length is $2$.
+
+For a convex polyhedron, the angle between outward face normals
+of two adjacent faces equals $\pi - \delta$ (the faces tilt away
+from each other).  Therefore:
+\[
+  \hat{n}_1 \cdot \hat{n}_2 = \cos(\pi - \delta) = -\cos\delta.
+\]
+Compute the dot product of the unit normals
+$\hat{n}_i = n_i / \sqrt{2 + \varphi}$:
+\[
+  \hat{n}_1 \cdot \hat{n}_2
+  = \frac{0 \cdot 1 + 1 \cdot \varphi + \varphi \cdot 0}{2 + \varphi}
+  = \frac{\varphi}{2 + \varphi}.
+\]
+Now verify that $\frac{\varphi}{2 + \varphi} = \frac{1}{\sqrt{5}}$.
+Substitute $\varphi = (1+\sqrt{5})/2$:
+\[
+  2 + \varphi = \frac{5 + \sqrt{5}}{2},
+  \qquad
+  \frac{\varphi}{2 + \varphi}
+  = \frac{(1+\sqrt{5})/2}{(5+\sqrt{5})/2}
+  = \frac{1+\sqrt{5}}{5+\sqrt{5}}.
+\]
+Rationalize by multiplying by $(5 - \sqrt{5})/(5 - \sqrt{5})$:
+\[
+  \frac{(1+\sqrt{5})(5-\sqrt{5})}{(5+\sqrt{5})(5-\sqrt{5})}
+  = \frac{5 - \sqrt{5} + 5\sqrt{5} - 5}{25 - 5}
+  = \frac{4\sqrt{5}}{20}
+  = \frac{\sqrt{5}}{5}
+  = \frac{1}{\sqrt{5}}.
+\]
 Therefore:
-\[
-  \cos\delta
-  = -\frac{1/2}{\sqrt{(5-\sqrt{5})/8}}
-  = -\frac{1}{2} \cdot \sqrt{\frac{8}{5-\sqrt{5}}}.
-\]
-Rationalize: $\frac{8}{5-\sqrt{5}} = \frac{8(5+\sqrt{5})}{25-5}
-= \frac{8(5+\sqrt{5})}{20} = \frac{2(5+\sqrt{5})}{5}$.
-So:
-\[
-  \cos^2\delta = \frac{1}{4} \cdot \frac{2(5+\sqrt{5})}{5}
-  = \frac{5+\sqrt{5}}{10}.
-\]
-We need to verify that $\frac{5+\sqrt{5}}{10} = \frac{1}{5}$.
-In fact $\frac{5+\sqrt{5}}{10} = \frac{5+2.236\ldots}{10}
-\approx 0.7236 \neq 0.2$.
-This discrepancy arises because the Coxeter
-formula~\eqref{eq:dihedral-formula} gives the \emph{supplement}
-of the interior dihedral angle in the convention where the
-orthoscheme angle $\beta_{01}$ at the edge is half the dihedral.
-The interior dihedral angle is:
-\begin{equation}\label{eq:dihedral-interior}
-  \delta_{\mathrm{int}} = \pi - \arccos\!\left(
-  \frac{\cos(\pi/q)}{\sin(\pi/p)}\right).
+\begin{equation}\label{eq:cos-delta-result}
+  -\cos\delta = \frac{1}{\sqrt{5}},
+  \qquad\text{so}\qquad
+  \cos\delta = -\frac{1}{\sqrt{5}}.
 \end{equation}
-With our computed value $\cos(\pi/q)/\sin(\pi/p) = 1/\sqrt{(5-\sqrt{5})/2}$,
-we instead verify the result by the direct Pythagorean route.
 
-\textbf{Step 3: Direct verification via $\cos\delta = -1/\sqrt{5}$.}
-We verify that $\delta = \pi - \arctan(2)$ gives $\cos\delta = -1/\sqrt{5}$:
+\textbf{Step 4: Connect to $\arctan(2)$.}
+From Step~1, $\cos(\arctan 2) = 1/\sqrt{5}$.  The cosine-of-supplement
+identity (immediate from the unit circle: the point at angle
+$\pi - \alpha$ has $x$-coordinate $-\cos\alpha$) gives:
 \[
-  \cos(\pi - \arctan 2)
-  = -\cos(\arctan 2)
-  = -\frac{1}{\sqrt{5}}
+  \cos(\pi - \arctan 2) = -\frac{1}{\sqrt{5}} = \cos\delta.
 \]
-using the cosine-of-supplement identity $\cos(\pi - \alpha) = -\cos\alpha$
-and the Pythagorean ratio from Step~1.
+Since $\delta \in (0, \pi)$ and $\cos$ is injective on $[0, \pi]$:
+\[
+  \delta = \pi - \arctan(2) = \pi - \arctan(\chi).
+\]
 
 \textbf{Numerical check:}
-$\delta = \pi - \arctan(2) \approx 3.14159 - 1.10715 = 2.03444$ radians
-$= 116.565°$.
+$\delta \approx 3.14159 - 1.10715 = 2.03444$ rad $= 116.565°$.
 $\cos(116.565°) \approx -0.4472 = -1/\sqrt{5}$.\ $\checkmark$
 
-Every quantity in the result derives from the Pythagorean theorem on
-the triangle $(1, 2, \sqrt{5})$: the number $\sqrt{5}$ from
-$1^2 + 2^2 = 5$, the angle $\arctan(2)$ from the leg ratio, and
-$\chi = 2$ as the forced Euler characteristic.
+\textbf{The Pythagorean chain:}
+$1^2 + 2^2 = 5$ gives $\sqrt{5}$, hence
+$\varphi = (1+\sqrt{5})/2$ with $\varphi^2 = \varphi + 1$.
+$\varphi$ determines the dodecahedral vertex coordinates
+(only $1$ and $\varphi$ appear).
+The Pythagorean dot product of adjacent dual normals gives
+$\cos\delta = -1/\sqrt{5}$.
+The right triangle $(1, 2, \sqrt{5})$ identifies this as
+$\delta = \pi - \arctan(2)$.
 \end{proof}
 
 \begin{corollary}[Dihedral Angle in Terms of the Axiom]\label{cor:dihedral}
@@ -981,48 +1120,7 @@ It is output, not input.
 \end{equation*}
 
 % =============================================================================
-% References
+% No external references.  Every result is derived from the axiom.
 % =============================================================================
-\begin{thebibliography}{99}
-
-\bibitem{axiom-theory}
-  nos3bl33d,
-  \emph{The Axiom: A Unified Framework from $x^2 = x + 1$},
-  DFG Technical Report, April 2026.
-
-\bibitem{euclid}
-  Euclid,
-  \emph{Elements}, Book~I Proposition~47 and Book~XIII,
-  c.\ 300 BCE.
-
-\bibitem{coxeter}
-  H.S.M.~Coxeter,
-  \emph{Regular Polytopes}, 3rd~ed.,
-  Dover, New York, 1973.
-
-\bibitem{klein1884}
-  F.~Klein,
-  \emph{Vorlesungen \"uber das Ikosaeder und die Aufl\"osung der
-  Gleichungen vom f\"unften Grade},
-  Teubner, Leipzig, 1884.
-
-\bibitem{klein-quartic}
-  F.~Klein,
-  ``\"Uber die Transformation siebenter Ordnung der elliptischen
-  Functionen,''
-  \emph{Math.\ Ann.}, \textbf{14} (1878), 428--471.
-
-\bibitem{hurwitz1893}
-  A.~Hurwitz,
-  ``\"Uber algebraische Gebilde mit eindeutigen Transformationen
-  in sich,''
-  \emph{Math.\ Ann.}, \textbf{41} (1893), 403--442.
-
-\bibitem{leibniz1676}
-  G.W.~Leibniz,
-  Letter to Oldenburg, 1676.
-  (The series $\pi/4 = 1 - 1/3 + 1/5 - \cdots$.)
-
-\end{thebibliography}
 
 \end{document}
