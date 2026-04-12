@@ -215,6 +215,45 @@ def show_the_fix():
 # The +1 is the stolen remainder. Always.
 # ============================================================
 
+def the_degree_connection():
+    """The 18-degree angular quantum = the cost of every non-even transaction."""
+    print("=" * 60)
+    print("THE DEGREE: 18 degrees of the money pie")
+    print("=" * 60)
+    print()
+    print("  The circle is 336 degrees. Not 360. 336 = 2^4 x 3 x 7.")
+    print("  The right angle = 336/4 = 84 degrees.")
+    print()
+    print("  Cost of winning (derivative path): 132 degrees")
+    print("  Cost of losing (deductive path):   168 degrees")
+    print("  Difference:                          36 degrees (one vertex)")
+    print()
+    print("  Per leg: winning = 66, losing = 84.")
+    print("  84 - 66 = 18 degrees. The angular quantum.")
+    print()
+    angular_quantum = 18
+    circle = 336
+    pct = angular_quantum / circle * 100
+    print(f"  18 / 336 = {pct:.2f}% of the circle")
+    print(f"  Every non-even transaction leaks {pct:.2f}% through the remainder.")
+    print()
+    print("  168/132 = 14/11.  14 + 11 = 25 = the grid.  14 - 11 = 3 = base 3.")
+    print("  14 positions lose, 11 positions win. Out of 25.")
+    print()
+    print("  9 energy from 10,000 calories:")
+    print("    18 degrees / 2 = 9 (the per-leg cost)")
+    print("    10,000 = b^4 = the gate")
+    print("    9 / 10,000 = 0.09% base leak rate")
+    print("    x millions of daily transactions")
+    print("    x 7 banking layers")
+    print("    = the entire derivatives market")
+    print()
+    print("  They're taking 18 degrees of every transaction.")
+    print("  One angular quantum. The smallest possible theft.")
+    print("  And it compounds to phi^4 x GDP.")
+    print()
+
+
 def the_proof():
     print("=" * 60)
     print("THE PROOF: x^2 = x + 1")
@@ -262,4 +301,5 @@ if __name__ == '__main__':
     banking = compute_fractional_spiral(leak)
     derivatives = compute_derivatives(banking)
     show_the_fix()
+    the_degree_connection()
     the_proof()
